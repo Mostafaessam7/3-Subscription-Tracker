@@ -1,0 +1,28 @@
+<div class="auth-page" vantaBackground="net">
+  <div class="lang-switch-wrap">
+    <app-theme-switch></app-theme-switch>
+    <app-language-switch></app-language-switch>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
+    <h2>{{ 'auth.loginTitle' | translate }}</h2>
+
+    <label>
+      {{ 'auth.email' | translate }}
+      <input type="email" formControlName="email" placeholder="you@example.com" />
+    </label>
+
+    <label>
+      {{ 'auth.password' | translate }}
+      <input type="password" formControlName="password" />
+    </label>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" [disabled]="form.invalid">{{ 'auth.loginBtn' | translate }}</button>
+
+    <p class="switch">
+      {{ 'auth.noAccount' | translate }} <a routerLink="/register">{{ 'auth.signUpNow' | translate }}</a>
+    </p>
+  </form>
+</div>

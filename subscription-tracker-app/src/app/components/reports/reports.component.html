@@ -1,0 +1,93 @@
+<div class="reports-page">
+  <div class="topbar no-print">
+    <a routerLink="/" class="back-link">{{ 'detail.back' | translate }}</a>
+    <div class="topbar-actions">
+      <app-theme-switch></app-theme-switch>
+      <app-language-switch></app-language-switch>
+    </div>
+  </div>
+
+  <h1 class="page-title">{{ 'reports.title' | translate }}</h1>
+
+  <!-- ملخص الـ Insights -->
+  <div class="insights-grid no-print" *ngIf="insights">
+    <div class="insight-card">
+      <p class="label">{{ 'reports.averageMonthly' | translate }}</p>
+      <p class="value mono">{{ insights.averageMonthlyCost | number:'1.0-0' }}</p>
+    </div>
+    <div class="insight-card" *ngIf="insights.mostExpensive">
+      <p class="label">{{ 'reports.mostExpensive' | translate }}</p>
+      <p class="value">{{ insights.mostExpensive.categoryIcon }} {{ insights.mostExpensive.name }}</p>
+      <p class="sub-value mono">{{ insights.mostExpensive.monthlyEquivalent | number:'1.0-0' }} {{ 'dashboard.currency' | translate }}</p>
+    </div>
+    <div class="insight-card" *ngIf="insights.cheapest">
+      <p class="label">{{ 'reports.cheapest' | translate }}</p>
+      <p class="value">{{ insights.cheapest.categoryIcon }} {{ insights.cheapest.name }}</p>
+      <p class="sub-value mono">{{ insights.cheapest.monthlyEquivalent | number:'1.0-0' }} {{ 'dashboard.currency' | translate }}</p>
+    </div>
+    <div class="insight-card highlight">
+      <p class="label">{{ 'reports.potentialSavings' | translate }}</p>
+      <p class="value mono">{{ insights.potentialYearlySavingsIfAllCancelled | number:'1.0-0' }}</p>
+    </div>
+  </div>
+
+  <!-- فلاتر سريعة -->
+  <div class="presets no-print">
+    <button class="pill" [class.pill-active]="preset === 'all'" (click)="applyPreset('all')">{{ 'reports.presetAll' | translate }}</button>
+    <button class="pill" [class.pill-active]="preset === 'active'" (click)="applyPreset('active')">{{ 'reports.presetActive' | translate }}</button>
+    <button class="pill" [class.pill-active]="preset === 'upcoming'" (click)="applyPreset('upcoming')">{{ 'reports.presetUpcoming' | translate }}</button>
+    <button class="pill" [class.pill-active]="preset === 'expired'" (click)="applyPreset('expired')">{{ 'reports.presetExpired' | translate }}</button>
+  </div>
+
+  <div class="date-range no-print">
+    <label>
+      {{ 'reports.fromDate' | translate }}
+      <input type="date" [(ngModel)]="fromDate" (ngModelChange)="onCustomDateChange()" />
+    </label>
+    <label>
+      {{ 'reports.toDate' | translate }}
+      <input type="date" [(ngModel)]="toDate" (ngModelChange)="onCustomDateChange()" />
+    </label>
+  </div>
+
+  <!-- أزرار التصدير -->
+  <div class="export-row no-print">
+    <button class="btn-export" (click)="exportCsv()">📊 {{ 'reports.exportExcel' | translate }}</button>
+    <button class="btn-export" (click)="exportPdf()">📄 {{ 'reports.exportPdf' | translate }}</button>
+    <button class="btn-export" (click)="print()">🖨 {{ 'reports.print' | translate }}</button>
+  </div>
+
+  <!-- الجدول -->
+  <div class="table-wrap">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>{{ 'form.name' | translate }}</th>
+          <th>{{ 'form.price' | translate }}</th>
+          <th>{{ 'form.billingCycle' | translate }}</th>
+          <th>{{ 'form.category' | translate }}</th>
+          <th>{{ 'form.status' | translate }}</th>
+          <th>{{ 'detail.nextRenewal' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of subscriptions">
+          <td>{{ s.name }}</td>
+          <td class="mono">{{ s.price }}</td>
+          <td>{{ billingCycleKey(s.billingCycle) | translate }}</td>
+          <td>{{ s.category ? (s.category.icon + ' ' + s.category.name) : ('form.noCategory' | translate) }}</td>
+          <td><span class="status-badge" [ngClass]="'status-' + s.status">{{ statusKey(s.status) | translate }}</span></td>
+          <td class="mono">{{ s.nextRenewalDate | date:'yyyy-MM-dd' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5">{{ 'reports.totalMonthly' | translate }}</td>
+          <td class="mono">{{ totalMonthly | number:'1.0-0' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p class="empty-hint" *ngIf="!loading && subscriptions.length === 0">{{ 'reports.noData' | translate }}</p>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "subscription-tracker-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "subscription-tracker-app", "start"],
+      "port": 4200
+    }
+  ]
+}

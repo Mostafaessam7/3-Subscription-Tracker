@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+*.user
+**/Logs/
+
+# أسرار حقيقية (Connection String, JWT Key, Email Password, Admin BootstrapKey) - استخدم
+# appsettings.example.json كنقطة بداية، ومتسيبش appsettings.json فيه قيم حقيقية متتبع في Git.
+# لو appsettings.json/appsettings.Development.json عندك فيهم Placeholders بس (زي القيم الأصلية في
+# الريبو دلوقتي) مأمون تسيبهم متتبعين، لكن أول ما تعبّي قيم حقيقية شيلهم من التتبع:
+#   git rm --cached src/SubscriptionTracker.Api/appsettings.json src/SubscriptionTracker.Api/appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json

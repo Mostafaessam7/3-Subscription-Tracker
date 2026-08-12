@@ -1,0 +1,541 @@
+.ticker-wrap {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+}
+
+.ticker-track {
+  display: inline-block;
+  animation: scroll-ticker 30s linear infinite;
+}
+
+.ticker-wrap:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 28px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-inline-end: 1px solid var(--border);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  flex-shrink: 0;
+}
+
+.dot-danger {
+  background: var(--danger);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.ticker-price {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ticker-days {
+  background: var(--surface);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+@keyframes scroll-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 93, 93, 0.5); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(255, 93, 93, 0); }
+}
+
+/* الحاوية الخارجية دي بعرض الشاشة كامل - هنا Vanta بتترسم فعليًا (edge-to-edge) */
+.dashboard-vanta-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dashboard {
+  position: relative;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 36px 24px 48px;
+}
+
+/* طبقة تعتيم فوق الـ Vanta canvas اللي بقت تغطي عرض الشاشة كله دلوقتي -
+   بتخف تدريجيًا كل ما تنزل تحت عشان الجزء العلوي (اللي فيه Vanta واضحة) يفضل مميز
+   والباقي (قائمة الاشتراكات) يفضل واضح ومريح للقراءة */
+.dashboard-vanta-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 17, 32, 0.4) 0%, rgba(11, 17, 32, 0.75) 300px, var(--bg) 600px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-theme .dashboard-vanta-wrap::before {
+  background: linear-gradient(180deg, rgba(244, 246, 251, 0.55) 0%, rgba(244, 246, 251, 0.85) 300px, var(--bg) 600px);
+}
+
+/* كل المحتوى الفعلي لازم يفضل فوق طبقة التعتيم (z-index: 1) */
+.ticker-wrap,
+.hero-zone,
+.summary,
+.search-row,
+.filter-row,
+.toolbar,
+app-subscription-list {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-zone {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 24px;
+  padding: 28px 24px;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.budget-zone {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
+}
+
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.budget-label {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.budget-edit-link,
+.budget-set-link {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: var(--cyan);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.budget-edit-link:hover,
+.budget-set-link:hover {
+  opacity: 1;
+  color: var(--amber);
+}
+
+.budget-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.budget-fill {
+  height: 100%;
+  background: var(--cyan);
+  border-radius: 999px;
+  transition: width 0.4s ease, background 0.2s ease;
+}
+
+.budget-fill.over {
+  background: var(--danger);
+}
+
+.budget-modal {
+  max-width: 380px;
+}
+
+.budget-input-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.budget-input-label input {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.budget-input-label input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px var(--cyan-dim);
+}
+
+.budget-hint {
+  margin: -8px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.budget-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-modal);
+}
+
+.budget-form-card .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.budget-form-card .form-header h3 {
+  font-size: 17px;
+  color: var(--text-primary);
+}
+
+.budget-form-card .close-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.budget-form-card .form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.budget-form-card .form-actions button {
+  flex: 1;
+}
+
+.budget-form-card .btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fade-up 0.4s ease forwards 0.08s;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up 0.4s ease forwards 0.14s;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-value {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--amber);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.hero-unit {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.btn-ghost {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+/* الـ button reset العام في styles.css بيغطي عناصر <button> بس، فـ <a> محتاجة نفس الشكل يدوي */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: #1A1300;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary:hover {
+  background: #FFCB63;
+  opacity: 1;
+  box-shadow: 0 0 0 4px var(--amber-dim), 0 8px 20px -6px rgba(245, 184, 65, 0.5);
+}
+
+.plus {
+  font-weight: 700;
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.metric:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.metric-danger {
+  border-color: var(--danger);
+  background: var(--danger-dim);
+}
+
+.metric-danger .value {
+  color: var(--danger);
+}
+
+.metric-muted .value {
+  color: var(--text-muted);
+}
+
+.chart-wrapper {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: fade-up 0.4s ease forwards 0.1s;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 9px 38px 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.sort-select,
+.cycle-select {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.sort-dir-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 38px;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.sort-dir-btn:hover {
+  color: var(--amber);
+  border-color: var(--border-strong);
+}
+
+.filter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up 0.4s ease forwards 0.12s;
+}
+
+.pill-manage {
+  background: transparent;
+  border-style: dashed;
+}
+
+.pill-clear {
+  color: var(--danger);
+  border-color: var(--danger-dim);
+}
+
+.label {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 999px;
+}
+
+.pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.pill-active {
+  background: var(--cyan-dim);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 9, 18, 0.7);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 440px;
+  animation: slideUp 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

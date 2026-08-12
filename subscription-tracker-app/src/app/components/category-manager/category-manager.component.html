@@ -1,0 +1,56 @@
+<div class="modal-overlay" *ngIf="open" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="manager-card">
+      <div class="manager-header">
+        <h3>{{ 'categories.manage' | translate }}</h3>
+        <button type="button" class="close-btn" (click)="close()">✕</button>
+      </div>
+
+      <div class="category-rows">
+        <div class="category-row" *ngFor="let c of categories">
+          <span class="swatch" [style.background]="c.color"></span>
+          <span class="cat-icon">{{ c.icon }}</span>
+          <span class="cat-name">{{ c.name }}</span>
+          <div class="row-actions">
+            <button class="icon-btn" (click)="startEdit(c)" title="{{ 'detail.edit' | translate }}">✎</button>
+            <button class="icon-btn icon-btn-danger" (click)="delete(c)" title="{{ 'detail.delete' | translate }}">✕</button>
+          </div>
+        </div>
+
+        <p class="empty-hint" *ngIf="categories.length === 0">{{ 'categories.empty' | translate }}</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <h4 class="form-title">{{ editingId ? ('categories.editTitle' | translate) : ('categories.addTitle' | translate) }}</h4>
+
+      <div class="form-row">
+        <label class="icon-field">
+          {{ 'categories.icon' | translate }}
+          <input type="text" [(ngModel)]="formIcon" maxlength="4" />
+        </label>
+        <label class="name-field">
+          {{ 'categories.name' | translate }}
+          <input type="text" [(ngModel)]="formName" placeholder="{{ 'categories.namePlaceholder' | translate }}" />
+        </label>
+      </div>
+
+      <label class="color-label">{{ 'categories.color' | translate }}</label>
+      <div class="color-swatches">
+        <button
+          *ngFor="let color of colors"
+          type="button"
+          class="color-swatch"
+          [class.selected]="formColor === color"
+          [style.background]="color"
+          (click)="formColor = color">
+        </button>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" *ngIf="editingId" (click)="startAdd()">{{ 'form.cancel' | translate }}</button>
+        <button type="button" class="btn-primary" (click)="save()">{{ (editingId ? 'form.save' : 'categories.add') | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (.NET)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CleanArch-updated
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: CleanArch-updated/global.json
+
+      - name: Build solution (all projects, no .sln needed)
+        run: |
+          dotnet build src/SubscriptionTracker.Domain/SubscriptionTracker.Domain.csproj -c Release
+          dotnet build src/SubscriptionTracker.Application/SubscriptionTracker.Application.csproj -c Release
+          dotnet build src/SubscriptionTracker.Infrastructure/SubscriptionTracker.Infrastructure.csproj -c Release
+          dotnet build src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj -c Release
+          dotnet build src/SubscriptionTracker.Tests/SubscriptionTracker.Tests.csproj -c Release
+
+      - name: Run unit tests
+        run: dotnet test src/SubscriptionTracker.Tests/SubscriptionTracker.Tests.csproj -c Release --no-build --logger "console;verbosity=normal"
+
+  frontend:
+    name: Frontend (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: subscription-tracker-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: subscription-tracker-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests (headless Chrome)
+        run: npx ng test --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+      - name: Build (production)
+        run: npm run build

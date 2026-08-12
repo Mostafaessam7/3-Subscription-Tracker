@@ -1,0 +1,23 @@
+# بيقلل حجم الـ Build Context ووقت الـ docker build - من غيره Docker بيبعت كل الريبو (bin/obj/node_modules)
+# للـ Daemon حتى لو مش هيستخدمهم
+
+# Backend
+CleanArch-updated/**/bin/
+CleanArch-updated/**/obj/
+CleanArch-updated/**/.vs/
+CleanArch-updated/**/Logs/
+CleanArch-updated/SubscriptionTracker.sln
+CleanArch-updated/SubscriptionTracker.slnx
+
+# Frontend
+subscription-tracker-app/node_modules/
+subscription-tracker-app/dist/
+subscription-tracker-app/.angular/
+subscription-tracker-app/coverage/
+
+# عام
+.git/
+.github/
+*.md
+.vscode/
+.idea/

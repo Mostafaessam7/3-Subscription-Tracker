@@ -1,0 +1,40 @@
+<div class="profile-page">
+  <div class="topbar">
+    <a routerLink="/" class="back-link">{{ 'detail.back' | translate }}</a>
+    <div class="topbar-actions">
+      <app-theme-switch></app-theme-switch>
+      <app-language-switch></app-language-switch>
+    </div>
+  </div>
+
+  <div class="profile-hero" vantaBackground="fog" *ngIf="profile">
+    <div class="profile-card">
+      <div class="avatar">{{ profile.name.charAt(0) }}</div>
+      <h2>{{ profile.name }}</h2>
+      <p class="email">{{ profile.email }}</p>
+      <p class="member-since">{{ 'profile.memberSince' | translate }} {{ profile.createdAt | date:'yyyy-MM-dd' }}</p>
+    </div>
+  </div>
+
+  <form [formGroup]="nameForm" (ngSubmit)="saveName()" class="section-card">
+    <h3>{{ 'profile.editName' | translate }}</h3>
+    <label>
+      {{ 'auth.name' | translate }}
+      <input type="text" formControlName="name" />
+    </label>
+    <button type="submit" class="btn-primary" [disabled]="nameForm.invalid">{{ 'form.save' | translate }}</button>
+  </form>
+
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="section-card">
+    <h3>{{ 'profile.changePassword' | translate }}</h3>
+    <label>
+      {{ 'profile.currentPassword' | translate }}
+      <input type="password" formControlName="currentPassword" />
+    </label>
+    <label>
+      {{ 'profile.newPassword' | translate }}
+      <input type="password" formControlName="newPassword" />
+    </label>
+    <button type="submit" class="btn-primary" [disabled]="passwordForm.invalid">{{ 'profile.changePasswordBtn' | translate }}</button>
+  </form>
+</div>

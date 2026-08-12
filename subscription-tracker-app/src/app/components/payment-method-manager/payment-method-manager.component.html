@@ -1,0 +1,44 @@
+<div class="modal-overlay" *ngIf="open" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="manager-card">
+      <div class="manager-header">
+        <h3>{{ 'paymentMethods.manage' | translate }}</h3>
+        <button type="button" class="close-btn" (click)="close()">✕</button>
+      </div>
+
+      <div class="rows">
+        <div class="row" *ngFor="let m of methods">
+          <span class="type-tag">{{ typeKey(m.type) | translate }}</span>
+          <span class="name">{{ m.name }}</span>
+          <div class="row-actions">
+            <button class="icon-btn" (click)="startEdit(m)" title="{{ 'detail.edit' | translate }}">✎</button>
+            <button class="icon-btn icon-btn-danger" (click)="delete(m)" title="{{ 'detail.delete' | translate }}">✕</button>
+          </div>
+        </div>
+
+        <p class="empty-hint" *ngIf="methods.length === 0">{{ 'paymentMethods.empty' | translate }}</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <h4 class="form-title">{{ editingId ? ('paymentMethods.editTitle' | translate) : ('paymentMethods.addTitle' | translate) }}</h4>
+
+      <label>
+        {{ 'paymentMethods.name' | translate }}
+        <input type="text" [(ngModel)]="formName" placeholder="{{ 'paymentMethods.namePlaceholder' | translate }}" />
+      </label>
+
+      <label>
+        {{ 'paymentMethods.type' | translate }}
+        <select [(ngModel)]="formType">
+          <option *ngFor="let t of types" [value]="t.value">{{ t.key | translate }}</option>
+        </select>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" *ngIf="editingId" (click)="startAdd()">{{ 'form.cancel' | translate }}</button>
+        <button type="button" class="btn-primary" (click)="save()">{{ (editingId ? 'form.save' : 'paymentMethods.add') | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="list">
+  <div class="row" *ngFor="let sub of subscriptions; let i = index" [style.animation-delay.ms]="i * 45">
+    <span class="status-dot" [class.status-danger]="sub.daysUntilRenewal <= 3 && sub.status === SubscriptionStatus.Active"></span>
+
+    <img *ngIf="getLogoUrl(sub.websiteUrl)" [src]="getLogoUrl(sub.websiteUrl)" class="logo" alt="" />
+    <div class="logo-placeholder" *ngIf="!getLogoUrl(sub.websiteUrl)">{{ sub.icon || sub.name.charAt(0) }}</div>
+
+    <div class="info">
+      <a [routerLink]="['/subscriptions', sub.id]" class="name">{{ sub.name }}</a>
+      <p class="meta">
+        <span *ngIf="sub.category" class="category-chip" [style.background]="sub.category.color + '22'" [style.color]="sub.category.color">
+          {{ sub.category.icon }} {{ sub.category.name }}
+        </span>
+        <span *ngIf="!sub.category">{{ 'form.noCategory' | translate }}</span>
+        · {{ billingCycleKey(sub.billingCycle) | translate }}
+        <span class="tag-chip" *ngFor="let tag of sub.tags" [style.color]="tag.color">#{{ tag.name }}</span>
+      </p>
+    </div>
+
+    <span class="status-badge" [ngClass]="'status-' + sub.status">{{ statusKey(sub.status) | translate }}</span>
+
+    <p class="price mono">{{ sub.price }} <span class="unit">{{ currencyLabel(sub.currency) }}</span></p>
+
+    <p class="renewal mono" [class.soon]="sub.daysUntilRenewal <= 3 && sub.status === SubscriptionStatus.Active">
+      {{ renewalKey(sub.daysUntilRenewal) | translate:{ days: sub.daysUntilRenewal } }}
+    </p>
+
+    <div class="actions">
+      <button
+        class="icon-btn star-btn"
+        [class.favorited]="sub.isFavorite"
+        (click)="onToggleFavorite(sub, $event)"
+        [title]="'list.favorite' | translate">
+        {{ sub.isFavorite ? '★' : '☆' }}
+      </button>
+      <button class="icon-btn" (click)="onDuplicate(sub, $event)" title="{{ 'list.duplicate' | translate }}">⧉</button>
+      <button class="icon-btn" (click)="edit.emit(sub)" title="{{ 'detail.edit' | translate }}">✎</button>
+      <button class="icon-btn icon-btn-danger" (click)="onDelete(sub.id)" title="{{ 'detail.delete' | translate }}">✕</button>
+    </div>
+  </div>
+
+  <div class="empty" *ngIf="subscriptions.length === 0">
+    <p class="empty-title">{{ 'list.empty' | translate }}</p>
+    <p class="empty-hint">{{ 'list.emptyHint' | translate }}</p>
+  </div>
+</div>

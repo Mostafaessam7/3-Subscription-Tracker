@@ -1,0 +1,9 @@
+<div class="toast-stack">
+  <div
+    class="toast"
+    [class.toast-error]="toast.type === 'error'"
+    *ngFor="let toast of toastService.toasts()">
+    <span class="dot"></span>
+    {{ toast.message }}
+  </div>
+</div>

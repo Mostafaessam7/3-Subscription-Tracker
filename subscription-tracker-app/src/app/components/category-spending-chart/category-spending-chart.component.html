@@ -1,0 +1,35 @@
+<div class="chart-card">
+  <h3 class="chart-title">{{ 'analytics.spendingByCategory' | translate }}</h3>
+
+  <div class="chart-loading" *ngIf="loading">{{ 'analytics.loading' | translate }}</div>
+
+  <div class="chart-empty" *ngIf="!loading && slices.length === 0">
+    <p>{{ 'analytics.noData' | translate }}</p>
+  </div>
+
+  <div class="chart-body" *ngIf="!loading && slices.length > 0">
+    <svg viewBox="0 0 180 180" class="donut">
+      <circle
+        *ngFor="let slice of slices"
+        cx="90" cy="90" [attr.r]="radius"
+        fill="none"
+        [attr.stroke]="slice.color"
+        stroke-width="24"
+        [attr.stroke-dasharray]="slice.dashArray"
+        [attr.stroke-dashoffset]="slice.dashOffset"
+        transform="rotate(-90 90 90)"
+        class="donut-slice">
+      </circle>
+      <text x="90" y="85" text-anchor="middle" class="donut-total mono">{{ total | number:'1.0-0' }}</text>
+      <text x="90" y="104" text-anchor="middle" class="donut-unit">{{ 'dashboard.currency' | translate }}</text>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item" *ngFor="let slice of slices">
+        <span class="legend-dot" [style.background]="slice.color"></span>
+        <span class="legend-name">{{ slice.icon }} {{ slice.categoryName }}</span>
+        <span class="legend-value mono">{{ slice.monthlyTotal | number:'1.0-0' }} · {{ slice.percentage | number:'1.0-0' }}%</span>
+      </div>
+    </div>
+  </div>
+</div>

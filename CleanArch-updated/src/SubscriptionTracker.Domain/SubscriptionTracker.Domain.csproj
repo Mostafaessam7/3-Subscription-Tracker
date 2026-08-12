@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SubscriptionTracker.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <!--
+    ملحوظة معمارية مهمة: المشروع ده عمدًا من غير أي PackageReference.
+    الـ Domain Layer المفروض تكون "نضيفة" تمامًا من أي تفاصيل تقنية (قاعدة بيانات، ويب، مكتبات خارجية) -
+    غير Data Annotations البسيطة اللي هي جزء من BCL نفسها (مش Package منفصل).
+    لو حسّيت إنك محتاج تضيف Package هنا، ده غالبًا معناه إن الكود ده مكانه الطبيعي طبقة تانية.
+  -->
+
+</Project>

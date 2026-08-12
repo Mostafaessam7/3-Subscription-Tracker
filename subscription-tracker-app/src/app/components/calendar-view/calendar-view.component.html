@@ -1,0 +1,52 @@
+<div class="calendar-page">
+  <div class="topbar">
+    <a routerLink="/" class="back-link">{{ 'detail.back' | translate }}</a>
+    <div class="topbar-actions">
+      <app-theme-switch></app-theme-switch>
+      <app-language-switch></app-language-switch>
+    </div>
+  </div>
+
+  <div class="calendar-header">
+    <h1>{{ currentMonth | date:'MMMM yyyy' }}</h1>
+    <div class="nav-buttons">
+      <button (click)="goToToday()">{{ 'calendar.today' | translate }}</button>
+      <button (click)="previousMonth()">‹</button>
+      <button (click)="nextMonth()">›</button>
+    </div>
+  </div>
+
+  <p class="month-total">{{ 'calendar.monthlyTotal' | translate:{ total: monthlyRenewalsTotal } }}</p>
+
+  <div class="weekday-row">
+    <span *ngFor="let d of ['calendar.sun','calendar.mon','calendar.tue','calendar.wed','calendar.thu','calendar.fri','calendar.sat']">
+      {{ d | translate }}
+    </span>
+  </div>
+
+  <div class="calendar-grid">
+    <div
+      class="day-cell"
+      *ngFor="let day of days"
+      [class.other-month]="!day.inCurrentMonth"
+      [class.today]="day.isToday"
+      [class.has-renewals]="day.renewals.length > 0"
+      (click)="selectDay(day)">
+      <span class="day-number">{{ day.date.getDate() }}</span>
+
+      <div class="renewal-dots" *ngIf="day.renewals.length > 0">
+        <span class="renewal-dot" *ngFor="let r of day.renewals.slice(0, 3)"></span>
+        <span class="renewal-more" *ngIf="day.renewals.length > 3">+{{ day.renewals.length - 3 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- تفاصيل اليوم المختار -->
+  <div class="day-detail" *ngIf="selectedDay">
+    <h3>{{ selectedDay.date | date:'yyyy-MM-dd' }}</h3>
+    <div class="detail-row" *ngFor="let r of selectedDay.renewals">
+      <a [routerLink]="['/subscriptions', r.id]">{{ r.name }}</a>
+      <span class="mono">{{ r.price }}</span>
+    </div>
+  </div>
+</div>

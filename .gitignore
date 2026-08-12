@@ -1,0 +1,19 @@
+# ملف عام لجذر الريبو - كل مشروع فرعي (CleanArch-updated/, subscription-tracker-app/) ليه .gitignore
+# خاص بيه كمان لتفاصيله الداخلية (bin/obj/node_modules...)
+
+# IDE / Editors
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.iml
+
+# أسرار محلية لو استخدمت .env مع docker-compose
+.env
+.env.local
+
+# System files
+.DS_Store
+Thumbs.db
