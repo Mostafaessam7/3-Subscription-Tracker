@@ -17,3 +17,6 @@
 # System files
 .DS_Store
 Thumbs.db
+
+# ملفات Runtime داخلية بتاعة أدوات التطوير (مش جزء من المشروع)
+.claude/scheduled_tasks.lock

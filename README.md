@@ -143,8 +143,11 @@ docker compose up --build
 ## حاجات ناقصة/معروفة (Known Gaps)
 
 - **Integration Tests** موجودة بس لـ `AuthController` (راجع قسم Testing فوق) — باقي الـ Controllers (Subscriptions, Categories, Admin...) لسه محتاجة تغطية.
-- **Component Tests في الفرونت اند** موجودة بس للـ Services والـ Toast — الـ Components الأكبر (`DashboardComponent`...) لسه محتاجة تغطية، ومفيش E2E Tests (Cypress/Playwright).
+- **Component Tests في الفرونت اند** موجودة للـ Services والـ Toast و`DashboardComponent` — باقي الـ Components المتوسطة (`subscription-form`, `subscription-list`...) لسه محتاجة تغطية، ومفيش E2E Tests (Cypress/Playwright).
 - **CD على Azure غير مُختبر فعليًا** (راجع تحذير قسم CD فوق) — الكود مكتوب حسب أفضل الممارسات المعروفة لكن محتاج تجربة على بيئة حقيقية.
 - **مفيش Provisioning تلقائي** لموارد Azure (App Services, SQL Database) — لازم تتعمل يدوي مرة واحدة قبل أول Deploy.
+- **مفيش CODEOWNERS ولا Issue/PR Templates** — اختياري، مش ضروري لمشروع شخصي.
+- **مفيش Forgot Password / Password Reset** — لا في الباك اند ولا الفرونت اند، رغم وجود `EmailService` جاهز بالفعل (بيستخدم بس للتذكير بالتجديد).
+- **تحذيرات NuGet لسه موجودة** (`AutoMapper 13.0.1`, `System.Security.Cryptography.Xml 9.0.0` عن طريق `JwtBearer`) — بتظهر في كل `dotnet build`/`restore`. الثغرات الأمنية في الفرونت اند (`jspdf`/`dompurify`) اتصلحت، لكن دي لسه محتاجة قرار (ترقية AutoMapper محتاجة مراجعة الـ License الجديد بتاعه بعد v13).
 
 راجع الـ README الخاص بكل مشروع للتفاصيل الكاملة (الـ Architecture، الفيتشرز، الـ Bugs اللي اتصلحت، والقرارات التصميمية).

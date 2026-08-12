@@ -4,29 +4,29 @@
 
 ## الهيكل
 
+> الشجرة دي ملخّص — المشروع كبر مع الوقت (P2/P3/Admin UI)، فراجع الجداول تحت كل قسم لتفاصيل كل Component/Service على حدة.
+
 ```
 src/
 ├── app/
-│   ├── components/
-│   │   ├── dashboard/              ← الشاشة الرئيسية (ملخص + قائمة + فورم)
-│   │   ├── subscription-list/      ← عرض قائمة الاشتراكات
-│   │   ├── subscription-form/      ← فورم إضافة/تعديل اشتراك
-│   │   ├── subscription-detail/    ← صفحة تفاصيل اشتراك واحد
-│   │   ├── login/                  ← شاشة تسجيل الدخول
-│   │   └── register/               ← شاشة إنشاء حساب جديد
-│   ├── models/
-│   │   ├── subscription.model.ts   ← Interfaces بتطابق DTOs بتاعة الاشتراكات
-│   │   └── auth.model.ts           ← Interfaces بتطابق DTOs بتاعة الـ Auth
-│   ├── services/
-│   │   ├── subscription.service.ts ← كل استدعاءات الـ HTTP للاشتراكات
-│   │   └── auth.service.ts         ← تسجيل الدخول/الخروج وتخزين الـ Token
-│   ├── guards/
-│   │   └── auth.guard.ts           ← بيمنع فتح الداشبورد من غير تسجيل دخول
+│   ├── components/          ← 17 Component (Standalone): dashboard, admin, reports, profile,
+│   │                            calendar-view, subscription-list/form/detail, login/register,
+│   │                            category-manager, tag-manager, payment-method-manager,
+│   │                            category-spending-chart, toast, confirm-dialog,
+│   │                            theme-switch, language-switch
+│   ├── models/               ← subscription.model.ts, auth.model.ts, admin.model.ts
+│   ├── services/             ← 16 Service: subscription, auth, admin, budget, category, tag,
+│   │                            payment-method, profile, analytics, export, toast,
+│   │                            confirm-dialog, celebration, theme, language
+│   ├── guards/                ← auth.guard.ts (تسجيل دخول)، admin.guard.ts (دور Admin)
+│   ├── directives/            ← count-up.directive.ts، vanta-background.directive.ts
 │   ├── interceptors/
-│   │   └── auth.interceptor.ts     ← بيضيف الـ Token تلقائيًا لكل طلب HTTP
+│   │   └── auth.interceptor.ts   ← بيضيف الـ Token تلقائيًا لكل طلب HTTP
+│   ├── utils/                 ← billing-cycle.util.ts، logo.util.ts، categories.const.ts
 │   ├── app.component.ts/html/css   ← الكومبوننت الجذر
-│   ├── app.routes.ts               ← تعريف الصفحات (login/register/dashboard)
+│   ├── app.routes.ts               ← تعريف كل الصفحات والـ Guards بتاعتها
 │   └── app.config.ts               ← تسجيل الـ Router والـ HttpClient والـ Interceptor
+├── assets/i18n/               ← ar.json، en.json (راجع قسم دعم اللغتين)
 ├── environments/
 │   ├── environment.ts              ← رابط الـ API في وضع التطوير (localhost:5000)
 │   └── environment.prod.ts         ← رابط الـ API في وضع الإنتاج

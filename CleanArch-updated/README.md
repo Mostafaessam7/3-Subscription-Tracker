@@ -199,7 +199,7 @@ http://localhost:5000/swagger
 ### ⚠️ ده فعليًا Breaking Change (خلاف الادعاء اللي كان هنا قبل كده)
 كنا بنقول قبل كده إن "مفيش أي Endpoint اتغيّر" — ده بقى مش دقيق 100% بعد الجولة دي:
 1. **`GET /api/users` (كل المستخدمين) اتشال نهائيًا** — البديل: `GET /api/admin/users` (محتاج Admin)
-2. **`AuthResponseDto` و `ProfileDto` بقى فيهم حقل `role` جديد** — لو الفرونت اند بيعمل TypeScript Interface صارم لشكل الرد، محتاج يضيف الحقل ده
+2. **`AuthResponseDto` و `ProfileDto` بقى فيهم حقل `role` جديد** — الفرونت اند (`AuthResponse`, `Profile` في `subscription-tracker-app`) بقى فيه الحقل ده بالفعل، وفيه واجهة Admin كاملة على `/admin` بتستخدمه (راجع [README الفرونت اند](../subscription-tracker-app/README.md#لوحة-تحكم-الأدمن-admin))
 3. **أي Endpoint فيه `{userId}` ممكن يرجع `403`** دلوقتي لو حاولت توصل لبيانات مستخدم مش انت (ده التصليح الأمني نفسه)
 
 باقي كل حاجة تانية (الـ Routes، شكل باقي الـ DTOs، منطق العمل) **زي ما هي بالظبط**.
@@ -219,11 +219,7 @@ POST /api/admin/bootstrap
 3. هيرجّعلك رد زي `/api/auth/login` بالظبط (Token جاهز تستخدمه فورًا كـ Admin)
 4. **بعد أول مرة، الـ Endpoint ده بيرفض يشتغل تاني** طول ما فيه Admin واحد على الأقل في النظام — آمن حتى لو حد لقى الـ Bootstrap Key بعدين
 
-### ⚠️ Migration جديدة مطلوبة
-```bash
-dotnet ef migrations add AddUserRoles --project src/SubscriptionTracker.Infrastructure --startup-project src/SubscriptionTracker.Api --output-dir Persistence/Migrations
-dotnet ef database update --project src/SubscriptionTracker.Infrastructure --startup-project src/SubscriptionTracker.Api
-```
+> ✅ الـ Migration بتاعة `Role` (`AddUserRoles`) متضافة ومتبعة في الريبو بالفعل (كانت لفترة ناقصة من الـ Migrations المتتبعة رغم إن الكود بيفترض وجودها — ده كان هيسبب `dotnet ef database update` يفشل بـ `PendingModelChangesWarning` لأي حد يعمل Clone جديد؛ اتصلح دلوقتي). مش محتاج تعمل حاجة إضافية غير خطوات "Migration جديدة بالكامل" في الأول.
 
 ## Testing
 
