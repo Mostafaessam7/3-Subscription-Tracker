@@ -91,4 +91,22 @@ describe('AuthService', () => {
     expect(service.isLoggedIn()).toBeFalse();
     expect(localStorage.getItem('subscription_tracker_token')).toBeNull();
   });
+
+  it('forgotPassword بيبعت POST بالإيميل لـ /forgot-password', () => {
+    service.forgotPassword({ email: 'mostafa@example.com' }).subscribe();
+
+    const req = httpMock.expectOne(`${baseUrl}/forgot-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'mostafa@example.com' });
+    req.flush({ message: 'ok' });
+  });
+
+  it('resetPassword بيبعت POST بالتوكن وكلمة السر الجديدة لـ /reset-password', () => {
+    service.resetPassword({ token: 'abc123', newPassword: 'NewPass456' }).subscribe();
+
+    const req = httpMock.expectOne(`${baseUrl}/reset-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ token: 'abc123', newPassword: 'NewPass456' });
+    req.flush({ message: 'ok' });
+  });
 });

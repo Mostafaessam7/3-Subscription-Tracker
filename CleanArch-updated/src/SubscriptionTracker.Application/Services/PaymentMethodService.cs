@@ -1,8 +1,8 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Mapping;
 using SubscriptionTracker.Domain.Entities;
 
 namespace SubscriptionTracker.Application.Services
@@ -10,12 +10,10 @@ namespace SubscriptionTracker.Application.Services
     public class PaymentMethodService : IPaymentMethodService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public PaymentMethodService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PaymentMethodService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<List<PaymentMethodDto>> GetAllAsync()
@@ -24,13 +22,13 @@ namespace SubscriptionTracker.Application.Services
                 .OrderBy(p => p.Name)
                 .ToListAsync();
 
-            return _mapper.Map<List<PaymentMethodDto>>(methods);
+            return methods.ToDtoList();
         }
 
         public async Task<PaymentMethodDto?> GetByIdAsync(int id)
         {
             var method = await _unitOfWork.PaymentMethods.GetByIdAsync(id);
-            return method is null ? null : _mapper.Map<PaymentMethodDto>(method);
+            return method?.ToDto();
         }
 
         public async Task<PaymentMethodDto> CreateAsync(CreatePaymentMethodDto dto)
@@ -40,7 +38,7 @@ namespace SubscriptionTracker.Application.Services
             await _unitOfWork.PaymentMethods.AddAsync(method);
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<PaymentMethodDto>(method);
+            return method.ToDto();
         }
 
         public async Task<bool> UpdateAsync(int id, UpdatePaymentMethodDto dto)

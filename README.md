@@ -76,6 +76,7 @@ Angular (localhost:4200)  →  HTTP + JWT Token  →  ASP.NET Core API (localhos
 - `Jwt:Key` (32 حرف على الأقل)
 - `Email:Username` / `Email:Password` (App Password لو Gmail)
 - `Admin:BootstrapKey`
+- `Frontend:BaseUrl` (بيتستخدم في بناء لينك إعادة تعيين كلمة السر جوه الإيميل)
 
 > ⚠️ لو عبّيت أسرار حقيقية (مش Placeholders)، ضيف `appsettings.json` و `appsettings.Development.json` لملف `CleanArch-updated/.gitignore` عشان متترفعش على Git بالغلط. حاليًا الملفين في الريبو فيهم Placeholders بس.
 
@@ -104,8 +105,9 @@ docker compose up --build
 
 | المشروع | الأمر | التفاصيل |
 |---|---|---|
-| Backend | `dotnet test src/SubscriptionTracker.Tests` (من `CleanArch-updated`) | xUnit — راجع [قسم Testing في README الباك اند](CleanArch-updated/README.md#testing) |
-| Frontend | `npm test` (من `subscription-tracker-app`) | Karma + Jasmine — راجع [قسم Testing في README الفرونت اند](subscription-tracker-app/README.md#testing) |
+| Backend | `dotnet test src/SubscriptionTracker.Tests` (من `CleanArch-updated`) | xUnit (Unit + Integration لكل الـ Controllers) — راجع [قسم Testing في README الباك اند](CleanArch-updated/README.md#testing) |
+| Frontend | `npm test` (من `subscription-tracker-app`) | Karma + Jasmine (كل الـ Components والـ Services) — راجع [قسم Testing في README الفرونت اند](subscription-tracker-app/README.md#testing) |
+| Frontend (E2E) | `npm run e2e` (من `subscription-tracker-app`) | Playwright — النظام كامل حقيقي (Frontend + Backend). راجع [e2e/README.md](subscription-tracker-app/e2e/README.md) |
 
 ## CI (GitHub Actions)
 
@@ -142,12 +144,12 @@ docker compose up --build
 
 ## حاجات ناقصة/معروفة (Known Gaps)
 
-- **Integration Tests** موجودة بس لـ `AuthController` (راجع قسم Testing فوق) — باقي الـ Controllers (Subscriptions, Categories, Admin...) لسه محتاجة تغطية.
-- **Component Tests في الفرونت اند** موجودة للـ Services والـ Toast و`DashboardComponent` — باقي الـ Components المتوسطة (`subscription-form`, `subscription-list`...) لسه محتاجة تغطية، ومفيش E2E Tests (Cypress/Playwright).
 - **CD على Azure غير مُختبر فعليًا** (راجع تحذير قسم CD فوق) — الكود مكتوب حسب أفضل الممارسات المعروفة لكن محتاج تجربة على بيئة حقيقية.
 - **مفيش Provisioning تلقائي** لموارد Azure (App Services, SQL Database) — لازم تتعمل يدوي مرة واحدة قبل أول Deploy.
 - **مفيش CODEOWNERS ولا Issue/PR Templates** — اختياري، مش ضروري لمشروع شخصي.
-- **مفيش Forgot Password / Password Reset** — لا في الباك اند ولا الفرونت اند، رغم وجود `EmailService` جاهز بالفعل (بيستخدم بس للتذكير بالتجديد).
-- **تحذيرات NuGet لسه موجودة** (`AutoMapper 13.0.1`, `System.Security.Cryptography.Xml 9.0.0` عن طريق `JwtBearer`) — بتظهر في كل `dotnet build`/`restore`. الثغرات الأمنية في الفرونت اند (`jspdf`/`dompurify`) اتصلحت، لكن دي لسه محتاجة قرار (ترقية AutoMapper محتاجة مراجعة الـ License الجديد بتاعه بعد v13).
+- **تحذير NuGet واحد لسه موجود**: `System.Security.Cryptography.Xml 9.0.0` (Transitive عن طريق `JwtBearer`) — بيظهر في كل `dotnet build`/`restore`. مفيش قرار مطلوب منك بخصوصه (مش استخدام مباشر في الكود، والترقية محتاجة تحديث حزمة `JwtBearer` نفسها من مايكروسوفت).
+- **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`) — محتاج دومين إنتاج حقيقي قبل أي Deploy فعلي.
+
+> ✅ **اتصلح**: Forgot Password/Reset Password (Backend + Frontend)، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
 
 راجع الـ README الخاص بكل مشروع للتفاصيل الكاملة (الـ Architecture، الفيتشرز، الـ Bugs اللي اتصلحت، والقرارات التصميمية).

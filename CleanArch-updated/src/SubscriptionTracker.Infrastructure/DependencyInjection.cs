@@ -26,6 +26,7 @@ namespace SubscriptionTracker.Infrastructure
             services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
             services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
             services.Configure<AdminSettings>(configuration.GetSection(AdminSettings.SectionName));
+            services.Configure<FrontendSettings>(configuration.GetSection(FrontendSettings.SectionName));
 
             // الـ Repositories والـ Unit of Work
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();

@@ -15,5 +15,10 @@ namespace SubscriptionTracker.Infrastructure.Persistence.Repositories
         {
             return await DbSet.FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        public async Task<User?> GetByPasswordResetTokenHashAsync(string tokenHash)
+        {
+            return await DbSet.FirstOrDefaultAsync(u => u.PasswordResetTokenHash == tokenHash);
+        }
     }
 }

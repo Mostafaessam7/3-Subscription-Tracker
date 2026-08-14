@@ -1,7 +1,10 @@
+using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Settings;
 using SubscriptionTracker.Domain.Entities;
 
 namespace SubscriptionTracker.Application.Services
@@ -11,15 +14,26 @@ namespace SubscriptionTracker.Application.Services
     // (اختيار خوارزمية التشفير، تفاصيل توليد التوكن) موجود في طبقة Infrastructure
     public class AuthService : IAuthService
     {
+        private static readonly TimeSpan ResetTokenLifetime = TimeSpan.FromHours(1);
+
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
+        private readonly FrontendSettings _frontendSettings;
 
-        public AuthService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenService tokenService)
+        public AuthService(
+            IUnitOfWork unitOfWork,
+            IPasswordHasher passwordHasher,
+            ITokenService tokenService,
+            IEmailService emailService,
+            IOptions<FrontendSettings> frontendSettings)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _emailService = emailService;
+            _frontendSettings = frontendSettings.Value;
         }
 
         public async Task<AuthResponseDto?> RegisterAsync(RegisterDto dto)
@@ -50,6 +64,65 @@ namespace SubscriptionTracker.Application.Services
             if (!validPassword) return null;
 
             return GenerateAuthResponse(user);
+        }
+
+        public async Task ForgotPasswordAsync(ForgotPasswordDto dto)
+        {
+            var user = await _unitOfWork.Users.GetByEmailAsync(dto.Email);
+            // بنرجع من غير خطأ حتى لو الإيميل مش موجود - عشان محدش يقدر يستخدم الـ Endpoint ده
+            // عشان يكتشف إيه الإيميلات المسجلة في النظام (User Enumeration)
+            if (user is null) return;
+
+            var rawToken = GenerateSecureToken();
+            user.PasswordResetTokenHash = HashToken(rawToken);
+            user.PasswordResetTokenExpiresAt = DateTime.UtcNow.Add(ResetTokenLifetime);
+
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            var resetLink = $"{_frontendSettings.BaseUrl.TrimEnd('/')}/reset-password?token={Uri.EscapeDataString(rawToken)}";
+
+            // من غير await هنا عن قصد: لو استنينا إرسال الإيميل فعليًا (اتصال SMTP ممكن ياخد
+            // ثواني لغاية ما يفشل)، وقت رد الـ Endpoint هيبقى مختلف بشكل واضح بين إيميل موجود
+            // (بينتظر الإرسال) وإيميل مش موجود (بيرجع فورًا) - ده Timing Side-Channel بيسرّب بالظبط
+            // المعلومة اللي إحنا بنحاول نمنعها (إن الإيميل ده مسجل). EmailService بيمسك أي Exception
+            // جواه ويسجّلها، فمفيش داعي نستنى نتيجته هنا.
+            _ = _emailService.SendPasswordResetEmailAsync(user.Email, user.Name, resetLink);
+        }
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            var tokenHash = HashToken(dto.Token);
+            var user = await _unitOfWork.Users.GetByPasswordResetTokenHashAsync(tokenHash);
+
+            if (user is null || user.PasswordResetTokenExpiresAt is null || user.PasswordResetTokenExpiresAt < DateTime.UtcNow)
+                return false;
+
+            user.PasswordHash = _passwordHasher.Hash(dto.NewPassword);
+            // بنمسح التوكن فورًا بعد الاستخدام - عشان ميتعملش استخدام تاني بيه (One-Time Use)
+            user.PasswordResetTokenHash = null;
+            user.PasswordResetTokenExpiresAt = null;
+
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+
+        private static string GenerateSecureToken()
+        {
+            // 32 بايت عشوائية Cryptographically Secure، بصيغة URL-Safe عشان تتحط في Query String من غير مشاكل
+            var bytes = RandomNumberGenerator.GetBytes(32);
+            return Convert.ToBase64String(bytes)
+                .Replace('+', '-')
+                .Replace('/', '_')
+                .TrimEnd('=');
+        }
+
+        private static string HashToken(string rawToken)
+        {
+            var bytes = SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(rawToken));
+            return Convert.ToHexString(bytes);
         }
 
         private AuthResponseDto GenerateAuthResponse(User user)

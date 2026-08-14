@@ -11,6 +11,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
 // شكل الرد بعد نجاح الدخول أو التسجيل (بيطابق AuthResponseDto في C#)
 export interface AuthResponse {
   userId: number;

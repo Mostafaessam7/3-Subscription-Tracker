@@ -97,6 +97,16 @@ button[type="submit"]:hover {
   margin: 4px 0 0;
 }
 
+.forgot-link {
+  margin: -6px 0 0;
+}
+
+.forgot-link a {
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  text-decoration: none;
+}
+
 .switch a {
   color: var(--cyan);
   font-weight: 600;

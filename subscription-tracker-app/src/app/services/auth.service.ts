@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { AuthResponse, ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest } from '../models/auth.model';
 
 const TOKEN_KEY = 'subscription_tracker_token';
 const USER_KEY = 'subscription_tracker_user';
@@ -29,6 +29,15 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, dto).pipe(
       tap((response) => this.storeSession(response))
     );
+  }
+
+  // بيرجع 200 دايمًا من الباك اند (حتى لو الإيميل مش مسجل) - عشان محدش يقدر يكتشف الإيميلات المسجلة
+  forgotPassword(dto: ForgotPasswordRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/forgot-password`, dto);
+  }
+
+  resetPassword(dto: ResetPasswordRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, dto);
   }
 
   logout(): void {

@@ -1,8 +1,8 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Mapping;
 using SubscriptionTracker.Domain.Entities;
 
 namespace SubscriptionTracker.Application.Services
@@ -10,12 +10,10 @@ namespace SubscriptionTracker.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<List<CategoryDto>> GetAllAsync()
@@ -24,13 +22,13 @@ namespace SubscriptionTracker.Application.Services
                 .OrderBy(c => c.Name)
                 .ToListAsync();
 
-            return _mapper.Map<List<CategoryDto>>(categories);
+            return categories.ToDtoList();
         }
 
         public async Task<CategoryDto?> GetByIdAsync(int id)
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(id);
-            return category is null ? null : _mapper.Map<CategoryDto>(category);
+            return category?.ToDto();
         }
 
         public async Task<CategoryDto> CreateAsync(CreateCategoryDto dto)
@@ -45,7 +43,7 @@ namespace SubscriptionTracker.Application.Services
             await _unitOfWork.Categories.AddAsync(category);
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<CategoryDto>(category);
+            return category.ToDto();
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateCategoryDto dto)

@@ -1,8 +1,8 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Mapping;
 using SubscriptionTracker.Domain.Entities;
 
 namespace SubscriptionTracker.Application.Services
@@ -10,12 +10,10 @@ namespace SubscriptionTracker.Application.Services
     public class TagService : ITagService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public TagService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TagService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<List<TagDto>> GetAllAsync()
@@ -24,7 +22,7 @@ namespace SubscriptionTracker.Application.Services
                 .OrderBy(t => t.Name)
                 .ToListAsync();
 
-            return _mapper.Map<List<TagDto>>(tags);
+            return tags.ToDtoList();
         }
 
         public async Task<TagDto> CreateAsync(CreateTagDto dto)
@@ -34,7 +32,7 @@ namespace SubscriptionTracker.Application.Services
             await _unitOfWork.Tags.AddAsync(tag);
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<TagDto>(tag);
+            return tag.ToDto();
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateTagDto dto)

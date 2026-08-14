@@ -21,6 +21,10 @@
 
     <button type="submit" [disabled]="form.invalid">{{ 'auth.loginBtn' | translate }}</button>
 
+    <p class="switch forgot-link">
+      <a routerLink="/forgot-password">{{ 'auth.forgotPasswordLink' | translate }}</a>
+    </p>
+
     <p class="switch">
       {{ 'auth.noAccount' | translate }} <a routerLink="/register">{{ 'auth.signUpNow' | translate }}</a>
     </p>

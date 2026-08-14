@@ -29,11 +29,31 @@ namespace SubscriptionTracker.Infrastructure.Services
                     <p>لو حابب تلغي الاشتراك قبل التجديد، ده الوقت المناسب.</p>
                 </div>";
 
+            await SendAsync(toEmail, subject, body, $"تنبيه تجديد لـ {toEmail} عن اشتراك {subscriptionName}");
+        }
+
+        public async Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetLink)
+        {
+            var subject = "طلب إعادة تعيين كلمة السر";
+            var body = $@"
+                <div style='font-family: Segoe UI, Tahoma, sans-serif; direction: rtl;'>
+                    <p>أهلاً {userName}،</p>
+                    <p>وصلنا طلب لإعادة تعيين كلمة السر بتاعة حسابك. اضغط على اللينك ده عشان تعمل كلمة سر جديدة
+                    (اللينك صالح لمدة ساعة واحدة بس):</p>
+                    <p><a href='{resetLink}'>{resetLink}</a></p>
+                    <p>لو انت مطلبتش الحاجة دي، تجاهل الإيميل ده وكلمة السر هتفضل زي ما هي.</p>
+                </div>";
+
+            await SendAsync(toEmail, subject, body, $"إيميل إعادة تعيين كلمة السر لـ {toEmail}");
+        }
+
+        private async Task SendAsync(string toEmail, string subject, string htmlBody, string successLogContext)
+        {
             using var message = new MailMessage
             {
                 From = new MailAddress(_emailSettings.FromAddress, _emailSettings.FromName),
                 Subject = subject,
-                Body = body,
+                Body = htmlBody,
                 IsBodyHtml = true
             };
             message.To.Add(toEmail);
@@ -47,12 +67,12 @@ namespace SubscriptionTracker.Infrastructure.Services
             try
             {
                 await client.SendMailAsync(message);
-                _logger.LogInformation("تم إرسال تنبيه تجديد لـ {Email} عن اشتراك {Subscription}", toEmail, subscriptionName);
+                _logger.LogInformation("تم إرسال {Context}", successLogContext);
             }
             catch (Exception ex)
             {
                 // ما بنوقفش العملية كلها لو إيميل واحد فشل، بس بنسجل الخطأ
-                _logger.LogError(ex, "فشل إرسال تنبيه لـ {Email}", toEmail);
+                _logger.LogError(ex, "فشل إرسال إيميل لـ {Email}", toEmail);
             }
         }
     }

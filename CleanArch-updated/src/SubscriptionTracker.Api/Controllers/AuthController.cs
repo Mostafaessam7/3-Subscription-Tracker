@@ -32,5 +32,23 @@ namespace SubscriptionTracker.Api.Controllers
             if (result is null) return Unauthorized(new { message = "الإيميل أو كلمة السر غلط" });
             return Ok(result);
         }
+
+        // POST: api/auth/forgot-password
+        // بيرجع 200 دايمًا (حتى لو الإيميل مش موجود) عشان محدش يقدر يكتشف الإيميلات المسجلة في النظام
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        {
+            await _authService.ForgotPasswordAsync(dto);
+            return Ok(new { message = "لو الإيميل ده مسجل عندنا، هيوصلك لينك إعادة تعيين كلمة السر" });
+        }
+
+        // POST: api/auth/reset-password
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+        {
+            var success = await _authService.ResetPasswordAsync(dto);
+            if (!success) return BadRequest(new { message = "لينك إعادة التعيين غلط أو منتهي الصلاحية" });
+            return Ok(new { message = "تم تغيير كلمة السر بنجاح" });
+        }
     }
 }

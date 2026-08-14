@@ -93,7 +93,21 @@
     "loginNow": "سجّل دخولك",
     "loginError": "الإيميل أو كلمة السر غلط",
     "emailTaken": "الإيميل ده مستخدم بالفعل",
-    "genericError": "حصل خطأ، حاول تاني"
+    "genericError": "حصل خطأ، حاول تاني",
+    "forgotPasswordLink": "نسيت كلمة السر؟",
+    "forgotPasswordTitle": "استرجاع كلمة السر",
+    "forgotPasswordInstructions": "اكتب الإيميل بتاعك، وهنبعتلك لينك تقدر تعمل بيه كلمة سر جديدة",
+    "forgotPasswordBtn": "ابعت لينك الاسترجاع",
+    "forgotPasswordSuccess": "لو الإيميل ده مسجل عندنا، هيوصلك لينك إعادة تعيين كلمة السر خلال دقايق",
+    "backToLogin": "← رجوع لتسجيل الدخول",
+    "resetPasswordTitle": "كلمة سر جديدة",
+    "newPassword": "كلمة السر الجديدة",
+    "confirmPassword": "تأكيد كلمة السر",
+    "passwordMismatch": "كلمتا السر مش متطابقتين",
+    "resetPasswordBtn": "احفظ كلمة السر الجديدة",
+    "resetPasswordSuccess": "اتغيّرت كلمة السر بنجاح - تقدر تسجّل دخولك دلوقتي",
+    "resetPasswordInvalidToken": "لينك إعادة التعيين غلط أو منتهي الصلاحية - اطلب لينك جديد",
+    "missingResetToken": "اللينك ده ناقص - جرّب تطلب لينك إعادة تعيين جديد"
   },
   "detail": {
     "back": "← رجوع للداشبورد",

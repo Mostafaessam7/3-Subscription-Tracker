@@ -28,6 +28,13 @@ namespace SubscriptionTracker.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        // بيتخزن فيهم Hash (SHA-256) لتوكن إعادة تعيين كلمة السر - مش التوكن الخام نفسه،
+        // عشان لو حصل تسريب لقاعدة البيانات محدش يقدر يستخدمهم مباشرة (زي ما بنعمل مع الباسورد)
+        [MaxLength(64)]
+        public string? PasswordResetTokenHash { get; set; }
+
+        public DateTime? PasswordResetTokenExpiresAt { get; set; }
+
         public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     }
 }

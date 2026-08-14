@@ -35,6 +35,7 @@ services:
       Jwt__Issuer: "SubscriptionTracker.Api"
       Jwt__Audience: "SubscriptionTracker.App"
       Admin__BootstrapKey: "${ADMIN_BOOTSTRAP_KEY}"
+      Frontend__BaseUrl: "http://localhost:4200"
 
   frontend:
     build:

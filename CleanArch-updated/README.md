@@ -36,7 +36,7 @@ CleanArch/
     │   │   ├── Repositories/                (IGenericRepository, IUnitOfWork, ISubscriptionRepository...)
     │   │   └── Services/                    (ISubscriptionService, IAuthService, IPasswordHasher...)
     │   ├── Services/                        (التنفيذ الفعلي لمنطق العمل - بيستخدم IUnitOfWork بس)
-    │   ├── Mapping/                         (AutoMapper Profile)
+    │   ├── Mapping/                         (Extension Methods - MappingExtensions.cs)
     │   ├── Validators/                      (FluentValidation)
     │   └── Settings/                        (JwtSettings, EmailSettings - Options Pattern)
     │
@@ -76,8 +76,10 @@ Api  →  Application  →  Domain
 - Repository متخصص لكل Entity (`ISubscriptionRepository` فيه كمان `QueryWithDetails()` للـ Eager Loading)
 - `IUnitOfWork`: بيجمع كل الـ Repositories، وبيضمن إن كل التعديلات في نفس العملية بتتحفظ مع بعض دفعة واحدة
 
-### 2. AutoMapper بدل الـ Mapping اليدوي
-كل دالة `MapToDto` يدوية اتشالت، ومكانها `MappingProfile.cs` واحد بيوصف العلاقة بين كل Entity والـ DTO بتاعه.
+### 2. Mapping مركزي (Extension Methods)
+كل دالة `MapToDto` يدوية اتشالت، ومكانها `MappingExtensions.cs` واحد فيه Extension Method (`ToDto()`) لكل Entity.
+
+> 🐛 **كان AutoMapper في الأول، اتشال وبقى Mapping يدوي بسيط**: AutoMapper 13.0.1 فيه ثغرة أمنية معروفة (`GHSA-rvv3-g6hj-g44x` - Denial of Service عن طريق Recursion) من غير Patch مجاني متاح — النسخة اللي فيها التصليح (15.1.1+) بقت مرخّصة تجاريًا بعد ما المكتبة اتباعت في يوليو 2025 ([التفاصيل](https://luckypennysoftware.com/faq)). بما إن الـ Mapping هنا بسيط (5 DTOs مسطّحة، مفيش تعقيد حقيقي يستاهل Reflection وقت التشغيل)، الحل الأنضف كان نستبدله بـ Extension Methods عادية بدل ما نمشي في قرار ترخيص تجاري لحاجة صغيرة أصلًا.
 
 ### 3. FluentValidation بدل بعض الـ Data Annotations
 الـ Validators بقت في كلاسات منفصلة (`Validators/`)، وبتتفعّل تلقائيًا عن طريق `AddFluentValidationAutoValidation()` — لو الطلب مش صالح، بيرجع 400 تلقائيًا زي ما كان بيحصل قبل كده.
@@ -221,19 +223,40 @@ POST /api/admin/bootstrap
 
 > ✅ الـ Migration بتاعة `Role` (`AddUserRoles`) متضافة ومتبعة في الريبو بالفعل (كانت لفترة ناقصة من الـ Migrations المتتبعة رغم إن الكود بيفترض وجودها — ده كان هيسبب `dotnet ef database update` يفشل بـ `PendingModelChangesWarning` لأي حد يعمل Clone جديد؛ اتصلح دلوقتي). مش محتاج تعمل حاجة إضافية غير خطوات "Migration جديدة بالكامل" في الأول.
 
+## نسيان / إعادة تعيين كلمة السر (Forgot / Reset Password)
+
+| Method | Endpoint | الوصف |
+|---|---|---|
+| POST | `/api/auth/forgot-password` | بيرجع `200` **دايمًا** (حتى لو الإيميل مش مسجل) عشان محدش يقدر يكتشف الإيميلات المسجلة في النظام (User Enumeration). لو الإيميل مسجل فعلًا، بيتولّد توكن عشوائي (32 بايت، Cryptographically Secure) ويتخزن Hash بتاعه بس (SHA-256) في `Users.PasswordResetTokenHash` مع تاريخ انتهاء ساعة واحدة، وبيتبعت إيميل فيه لينك لـ `{Frontend:BaseUrl}/reset-password?token=...` |
+| POST | `/api/auth/reset-password` | بياخد `token` + `newPassword`، بيرجع `400` لو التوكن غلط/منتهي/اتستخدم قبل كده. لو صح، بيغيّر الباسورد ويمسح التوكن فورًا (One-Time Use) |
+
+- **إرسال الإيميل مش بيوقف الرد**: `AuthService.ForgotPasswordAsync` عمدًا مابيستناش (`await`) نتيجة إرسال الإيميل قبل ما يرجّع الرد — لو استنى، وقت الرد كان هيبقى مختلف بشكل واضح بين إيميل موجود (بينتظر اتصال SMTP) وإيميل مش موجود (بيرجع فورًا)، وده Timing Side-Channel كان هيسرّب بالظبط المعلومة اللي إحنا بنحاول نمنعها.
+- **إعداد جديد مطلوب**: `Frontend:BaseUrl` في `appsettings.json` (افتراضيًا `http://localhost:4200`) — بيتحدد بيه دومين اللينك جوه إيميل إعادة التعيين.
+- Migration: `AddPasswordResetToken` (عمودين جداد Nullable في `Users`: `PasswordResetTokenHash`, `PasswordResetTokenExpiresAt`).
+
 ## Testing
 
 مشروع `SubscriptionTracker.Tests` (xUnit) بيغطي المنطق اللي مالوش علاقة بقاعدة البيانات مباشرة:
 - **`BillingCycleHelperTests`**: كل حالات تحويل دورة الدفع (أسبوعي/شهري/ربع سنوي/سنوي) لمكافئ شهري وسنوي.
 - **`BCryptPasswordHasherTests`**: الـ Hash بيطلع مختلف عن الباسورد الأصلي، وبيطلع Salt مختلف كل مرة، والـ Verify بيرجع صح/غلط صح.
 - **`RegisterDtoValidatorTests` / `CreateSubscriptionDtoValidatorTests`**: قواعد الـ FluentValidation (طول الباسورد، شكل الإيميل، مدى السعر، شكل رابط الموقع).
-- **`AuthControllerTests` (Integration)**: بتشغّل التطبيق كامل (`WebApplicationFactory<Program>`) على قاعدة بيانات **EF Core InMemory** بدل SQL Server، وبتغطي `POST /api/auth/register` و `POST /api/auth/login` فعليًا Controller → Service → Repository → DbContext من غير أي Mocking للطبقات الداخلية.
+- **Integration Tests (`WebApplicationFactory<Program>` + EF Core InMemory)**: بتشغّل التطبيق كامل Controller → Service → Repository → DbContext من غير أي Mocking للطبقات الداخلية، وبتغطي دلوقتي كل الـ Controllers:
+  - **`AuthControllerTests`**: تسجيل/دخول، ونسيان/إعادة تعيين كلمة السر (تحقق من إيميل غير موجود بيرجع نفس الرد، توكن غلط/منتهي/One-Time Use)
+  - **`SubscriptionsControllerTests`**: CRUD + Duplicate + فحص الملكية (403 لو حاولت توصل لاشتراك مستخدم تاني)
+  - **`CategoriesControllerTests`**, **`TagsControllerTests`**, **`PaymentMethodsControllerTests`**: CRUD كامل
+  - **`AdminControllerTests`**: Bootstrap (بمفتاح غلط / لما يكون فيه Admin بالفعل)، وصول مستخدم عادي (403)، إحصائيات، ترقية دور
+  - **`UsersControllerTests`**: بروفايل، تغيير كلمة السر، الميزانية، وفحص الملكية
+  - **`AnalyticsControllerTests`**: تحليلات الإنفاق والـ Insights + فحص الملكية
+  - `IntegrationTestHelpers.cs` فيه Extension Methods مشتركة (`RegisterUserAsync`, `BootstrapOrLoginAdminAsync`, `AuthenticateAs`) بدل ما نكررها في كل ملف
+  - `FakeEmailService` بديل `IEmailService` الحقيقي في كل الـ Tests دي - عشان محدش يحاول يتصل بـ SMTP فعلي وقت التستات (هيفشل دايمًا بإعدادات appsettings.json الافتراضية)، وبيسجّل آخر إيميل اتبعت عشان تستخدمه الـ Tests (زي استخراج توكن إعادة التعيين)
+
+> ⚠️ الـ Integration Tests بتشتغل بالتوازي افتراضيًا (xUnit) - كل Test Class بيشغّل Host كامل لوحده، وده كان بيسبب Timeouts وهمية على أجهزة أضعف. `xunit.runner.json` بيقفل الـ Parallelization (`parallelizeAssembly`/`parallelizeTestCollections: false`) عشان الاستقرار، على حساب وقت تشغيل أطول شوية.
+
+- **`BillingCycleHelperTests`**, **`BCryptPasswordHasherTests`**, **`RegisterDtoValidatorTests`**, **`CreateSubscriptionDtoValidatorTests`**: Unit Tests للمنطق اللي مالوش علاقة بقاعدة البيانات مباشرة.
 
 ```bash
 dotnet test src/SubscriptionTracker.Tests
 ```
-
-**لسه ناقص عمدًا**: Integration Tests لباقي الـ Controllers (Subscriptions, Categories, Admin...) — البنية (`CustomWebApplicationFactory` في `Integration/`) جاهزة وتقدر تستخدمها لأي Controller تاني بنفس الطريقة.
 
 ## CORS
 
@@ -259,7 +282,7 @@ dotnet test src/SubscriptionTracker.Tests
 كنت صريح قبل كده إن الدوكيومنت الأصلي طالب حاجات إضافية زي Roles/Permissions، AI Features، وUnit Tests. الجولة دي ركّزت بس على:
 - ✅ Clean Architecture (4 طبقات + قاعدة الاعتماد الصحيحة)
 - ✅ Repository Pattern + Unit of Work
-- ✅ AutoMapper
+- ✅ Mapping مركزي (Extension Methods بدل AutoMapper - راجع الملحوظة في قسم "أهم التغييرات التقنية")
 - ✅ FluentValidation
 - ✅ Global Exception Handling
 - ✅ Configuration Management (Options Pattern)

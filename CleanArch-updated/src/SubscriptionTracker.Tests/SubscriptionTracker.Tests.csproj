@@ -25,6 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- بدون التصدير ده، xunit.runner.json مش هينسخ لمجلد الـ Output ومش هيتاخد في الاعتبار وقت الـ Test -->
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SubscriptionTracker.Domain\SubscriptionTracker.Domain.csproj" />
     <ProjectReference Include="..\SubscriptionTracker.Application\SubscriptionTracker.Application.csproj" />
     <ProjectReference Include="..\SubscriptionTracker.Infrastructure\SubscriptionTracker.Infrastructure.csproj" />

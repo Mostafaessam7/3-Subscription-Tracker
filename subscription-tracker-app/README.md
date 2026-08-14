@@ -9,13 +9,13 @@
 ```
 src/
 ├── app/
-│   ├── components/          ← 17 Component (Standalone): dashboard, admin, reports, profile,
+│   ├── components/          ← 20 Component (Standalone): dashboard, admin, reports, profile,
 │   │                            calendar-view, subscription-list/form/detail, login/register,
-│   │                            category-manager, tag-manager, payment-method-manager,
-│   │                            category-spending-chart, toast, confirm-dialog,
-│   │                            theme-switch, language-switch
+│   │                            forgot-password/reset-password, category-manager, tag-manager,
+│   │                            payment-method-manager, category-spending-chart, toast,
+│   │                            confirm-dialog, theme-switch, language-switch
 │   ├── models/               ← subscription.model.ts, auth.model.ts, admin.model.ts
-│   ├── services/             ← 16 Service: subscription, auth, admin, budget, category, tag,
+│   ├── services/             ← 15 Service: subscription, auth, admin, budget, category, tag,
 │   │                            payment-method, profile, analytics, export, toast,
 │   │                            confirm-dialog, celebration, theme, language
 │   ├── guards/                ← auth.guard.ts (تسجيل دخول)، admin.guard.ts (دور Admin)
@@ -122,6 +122,15 @@ src/
 - **`adminGuard`** (`guards/admin.guard.ts`) — بيمنع فتح `/admin` لغير الـ Admin (بيرجّع لـ `/login` لو مش مسجّل دخول، أو لـ `/` لو مسجّل بس مش Admin)
 - **صفحة `/admin`** (`components/admin/`): إحصائيات عامة (عدد المستخدمين، الاشتراكات النشطة، المصروف الشهري الكلي، مستخدمين جدد آخر 30 يوم) + جدول كل المستخدمين مع زرار ترقية/تخفيض دور لكل واحد (بتأكيد قبل التنفيذ، ومحدّش يقدر يغيّر دور نفسه)
 - لينك **🛠 لوحة الأدمن** بيظهر في الداشبورد بس للمستخدمين اللي دورهم Admin
+
+## نسيان / إعادة تعيين كلمة السر (`/forgot-password`, `/reset-password`)
+
+الباك اند كان فيه `EmailService` جاهز (بيستخدم بس لتذكير التجديد) بس مفيش Flow كامل لنسيان كلمة السر — لا في الباك اند ولا الفرونت اند. اتضاف دلوقتي على الجانبين:
+
+- **صفحة `/forgot-password`** (`components/forgot-password/`): فورم إيميل بس، بيعرض نفس رسالة النجاح دايمًا (مطابقة لسلوك الباك اند اللي مابيفرقش بين إيميل موجود/مش موجود)
+- **صفحة `/reset-password?token=...`** (`components/reset-password/`): فورم كلمة سر جديدة + تأكيدها (Validator بيتأكد إنهم متطابقين)، بيقرا الـ `token` من الـ Query String. لو اللينك من غير token، الفورم بيتقفل فورًا برسالة واضحة بدل ما يسيب المستخدم يحاول يبعت طلب هيفشل أكيد
+- **`AuthService.forgotPassword()` / `resetPassword()`** جديدين بيكلموا `POST /api/auth/forgot-password` و `POST /api/auth/reset-password`
+- لينك **"نسيت كلمة السر؟"** في صفحة `/login` تحت زرار الدخول
 
 ## P3 — Favorites, Tags, Duplicate, Calendar, Logo تلقائي, Dark/Light Toggle
 
@@ -239,7 +248,21 @@ npm test
 | `guards/admin.guard.spec.ts` | الحماية الثلاثية: مش مسجّل دخول → `/login`، مسجّل بس مش Admin → `/`، Admin فعلًا → مسموح |
 | `components/dashboard/dashboard.component.spec.ts` | منطق الداشبورد: حساب `activeCount`/`expiredCount`/`renewingSoonCount`، Budget Warning (بيتبعت مرة واحدة بس)، الفلاتر، `onLogout` — من غير Render كامل للـ Template (تجنّب الاعتماد على الـ Child Components المتداخلة) |
 
-**لسه ناقص عمدًا**: E2E Tests حقيقية (Cypress/Playwright)، وTests لباقي الـ Components المتوسطة (`subscription-form`, `subscription-list`...).
+**دلوقتي كل الـ 22 Component عندهم `.spec.ts`** — من `theme-switch`/`language-switch` البسيطة، للفورمات (`subscription-form`, `forgot-password`, `reset-password`)، لمديري البيانات المرجعية (`category-manager`, `tag-manager`, `payment-method-manager`)، لصفحات كاملة (`reports`, `calendar-view`, `admin`, `profile`, `subscription-detail`). إجمالي **153 Test** بتشتغل في ثوانٍ لأنها كلها Mocked (HTTP + Router + الـ Services الجانبية زي `ConfirmDialogService`).
+
+> ⚠️ ملحوظة تقنية لو بتضيف Test لـ Component فيه `ConfirmDialogService.confirm()` جوه Method بترجع HTTP Request بعد التأكيد: استخدم `fakeAsync`/`tick()` مش `async/await` عادي — لأن `confirm()` بيرجع Promise حقيقي، وفحص `HttpTestingController` فورًا بعد ما تنادي الـ Method من غير `tick()` بيسبق تنفيذ الكود اللي جوه الـ Promise (Race Condition). ولو الـ Method بتنادي `ToastService.show()` الحقيقي (من غير Mock)، لازم `tick(3000)` في الآخر عشان تصرّف الـ `setTimeout` بتاع الإخفاء التلقائي، وإلا `fakeAsync` هيرفض ينهي الـ Test (`"1 timer(s) still in the queue"`).
+
+### E2E Tests (Playwright)
+
+بخلاف `npm test` (اللي بيموك كل HTTP Request)، فيه دلوقتي **E2E Tests حقيقية** بتشغّل Angular + ASP.NET Core Backend حقيقيين مع بعض (تسجيل مستخدمين فعليين، إضافة/تعديل/حذف اشتراكات حقيقية، Admin Bootstrap فعلي). راجع [`e2e/README.md`](e2e/README.md) للتفاصيل والتشغيل، لكن باختصار:
+
+```bash
+# الباك اند لازم يكون شغال على http://localhost:5000 الأول
+npx playwright install chromium   # مرة واحدة بس
+npm run e2e
+```
+
+13 Test بتغطي: تسجيل/دخول/خروج، نسيان/إعادة تعيين كلمة السر، إضافة/تعديل/حذف اشتراك، ومنع مستخدم عادي من `/admin` مقابل دخول Admin حقيقي.
 
 ## النشر (Deployment)
 

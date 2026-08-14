@@ -1,27 +1,25 @@
-using AutoMapper;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Mapping;
 
 namespace SubscriptionTracker.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher passwordHasher)
+        public UserService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _passwordHasher = passwordHasher;
         }
 
         public async Task<ProfileDto?> GetByIdAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
-            return user is null ? null : _mapper.Map<ProfileDto>(user);
+            return user?.ToDto();
         }
 
         public async Task<ProfileDto?> UpdateProfileAsync(int id, UpdateProfileDto dto)
@@ -32,7 +30,7 @@ namespace SubscriptionTracker.Application.Services
             user.Name = dto.Name;
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<ProfileDto>(user);
+            return user.ToDto();
         }
 
         public async Task<(bool Success, string? ErrorMessage)> ChangePasswordAsync(int id, ChangePasswordDto dto)

@@ -1,8 +1,8 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Repositories;
 using SubscriptionTracker.Application.Interfaces.Services;
+using SubscriptionTracker.Application.Mapping;
 using SubscriptionTracker.Domain.Common;
 using SubscriptionTracker.Domain.Entities;
 using SubscriptionTracker.Domain.Enums;
@@ -12,12 +12,10 @@ namespace SubscriptionTracker.Application.Services
     public class SubscriptionService : ISubscriptionService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public SubscriptionService(IUnitOfWork unitOfWork, IMapper mapper)
+        public SubscriptionService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<List<SubscriptionDto>> GetAllForUserAsync(int userId, SubscriptionQueryOptions options)
@@ -66,13 +64,13 @@ namespace SubscriptionTracker.Application.Services
             };
 
             var subscriptions = await query.ToListAsync();
-            return _mapper.Map<List<SubscriptionDto>>(subscriptions);
+            return subscriptions.ToDtoList();
         }
 
         public async Task<SubscriptionDto?> GetByIdAsync(int id)
         {
             var subscription = await _unitOfWork.Subscriptions.GetByIdWithDetailsAsync(id);
-            return subscription is null ? null : _mapper.Map<SubscriptionDto>(subscription);
+            return subscription?.ToDto();
         }
 
         public async Task<SubscriptionDto> CreateAsync(CreateSubscriptionDto dto)
@@ -109,8 +107,9 @@ namespace SubscriptionTracker.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             // بعد الحفظ، بنجيب النسخة كاملة مع كل العلاقات عشان الـ DTO يرجع متكامل
+            // (! آمن هنا: لسه فاكرين الـ Id من subscription.Id اللي اتحفظ فوق - مستحيل يرجع null)
             var created = await _unitOfWork.Subscriptions.GetByIdWithDetailsAsync(subscription.Id);
-            return _mapper.Map<SubscriptionDto>(created);
+            return created!.ToDto();
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateSubscriptionDto dto)
@@ -188,7 +187,7 @@ namespace SubscriptionTracker.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             var created = await _unitOfWork.Subscriptions.GetByIdWithDetailsAsync(copy.Id);
-            return _mapper.Map<SubscriptionDto>(created);
+            return created!.ToDto();
         }
 
         public async Task<decimal> GetMonthlyTotalAsync(int userId)
