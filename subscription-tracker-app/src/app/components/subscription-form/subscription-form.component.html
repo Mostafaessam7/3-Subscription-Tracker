@@ -65,7 +65,7 @@
         {{ 'form.category' | translate }}
         <select formControlName="categoryId">
           <option [ngValue]="null">{{ 'form.noCategory' | translate }}</option>
-          <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.icon }} {{ c.name }}</option>
+          <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.icon }} {{ c.name | categoryName }}</option>
         </select>
       </label>
 

@@ -11,13 +11,14 @@ import { LanguageSwitchComponent } from '../language-switch/language-switch.comp
 import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { AnalyticsInsights, Subscription, SubscriptionStatus } from '../../models/subscription.model';
 import { billingCycleKey } from '../../utils/billing-cycle.util';
+import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 type ReportPreset = 'all' | 'active' | 'expired' | 'upcoming';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css'
 })

@@ -8,11 +8,12 @@ import { getLogoUrl } from '../../utils/logo.util';
 import { CategoryService } from '../../services/category.service';
 import { PaymentMethodService } from '../../services/payment-method.service';
 import { TagService } from '../../services/tag.service';
+import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
   selector: 'app-subscription-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, CategoryNamePipe],
   templateUrl: './subscription-form.component.html',
   styleUrl: './subscription-form.component.css'
 })

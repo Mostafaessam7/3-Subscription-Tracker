@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CategorySpending } from '../../models/subscription.model';
+import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 interface ChartSlice extends CategorySpending {
   percentage: number;
@@ -13,7 +14,7 @@ interface ChartSlice extends CategorySpending {
 @Component({
   selector: 'app-category-spending-chart',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, CategoryNamePipe],
   templateUrl: './category-spending-chart.component.html',
   styleUrl: './category-spending-chart.component.css'
 })

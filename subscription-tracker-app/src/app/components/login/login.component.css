@@ -112,3 +112,21 @@ button[type="submit"]:hover {
   font-weight: 600;
   text-decoration: none;
 }
+
+.brand-credit {
+  /* absolute بدل ما تبقى Sibling للـ auth-card جوه الـ flex row - وإلا هتقعد جنبه أفقيًا
+     بدل ما تبقى تحته. كده بتفضل ثابتة تحت الصفحة بغض النظر عن ارتفاع الكارت */
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}

@@ -27,7 +27,7 @@
     <div class="legend">
       <div class="legend-item" *ngFor="let slice of slices">
         <span class="legend-dot" [style.background]="slice.color"></span>
-        <span class="legend-name">{{ slice.icon }} {{ slice.categoryName }}</span>
+        <span class="legend-name">{{ slice.icon }} {{ slice.categoryName | categoryName }}</span>
         <span class="legend-value mono">{{ slice.monthlyTotal | number:'1.0-0' }} · {{ slice.percentage | number:'1.0-0' }}%</span>
       </div>
     </div>

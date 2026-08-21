@@ -12,11 +12,12 @@ import { SubscriptionFormComponent } from '../subscription-form/subscription-for
 import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
 import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
+import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
   selector: 'app-subscription-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+  imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
   templateUrl: './subscription-detail.component.html',
   styleUrl: './subscription-detail.component.css'
 })

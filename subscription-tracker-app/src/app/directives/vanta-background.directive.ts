@@ -33,6 +33,11 @@ export class VantaBackgroundDirective implements AfterViewInit, OnDestroy, OnCha
   private vantaEffect: any;
   private viewInitialized = false;
 
+  // Vanta بيقيس ارتفاع العنصر مرة واحدة بس وقت الإنشاء - لو المحتوى جوه العنصر كبر بعد كده
+  // (زي قائمة الاشتراكات اللي بتوصل من الـ API بعد التحميل الأول) الـ Canvas بيفضل بالحجم
+  // القديم الأصغر ومبيغطيش آخر الصفحة. الـ ResizeObserver ده بيراقب التغيير ده وبينده resize()
+  private resizeObserver?: ResizeObserver;
+
   // النوع الافتراضي net لو محددتش حاجة (أو لو الخاصية استُخدمت من غير قيمة أصلاً)
   @Input('vantaBackground') effectType: VantaEffectType = 'net';
 
@@ -49,6 +54,13 @@ export class VantaBackgroundDirective implements AfterViewInit, OnDestroy, OnCha
   ngAfterViewInit(): void {
     this.viewInitialized = true;
     this.rebuildEffect();
+
+    this.resizeObserver = new ResizeObserver(() => {
+      // resize() بتاعة Vanta بتعيد قياس الحاوية وتكبّر/تصغّر الـ Canvas على أساسها، من غير
+      // ما تعمل Destroy/Rebuild كامل للتأثير (أرخص وأنعم بصريًا)
+      this.vantaEffect?.resize?.();
+    });
+    this.resizeObserver.observe(this.el.nativeElement);
   }
 
   ngOnChanges(): void {
@@ -106,6 +118,8 @@ export class VantaBackgroundDirective implements AfterViewInit, OnDestroy, OnCha
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+
     // مهم جدًا - Vanta بيشغّل WebGL loop مستمر، لازم يتعمله destroy لما الكومبوننت يتشال
     if (this.vantaEffect) {
       this.vantaEffect.destroy();

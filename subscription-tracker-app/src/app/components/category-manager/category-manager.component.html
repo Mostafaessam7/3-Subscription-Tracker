@@ -10,7 +10,7 @@
         <div class="category-row" *ngFor="let c of categories">
           <span class="swatch" [style.background]="c.color"></span>
           <span class="cat-icon">{{ c.icon }}</span>
-          <span class="cat-name">{{ c.name }}</span>
+          <span class="cat-name">{{ c.name | categoryName }}</span>
           <div class="row-actions">
             <button class="icon-btn" (click)="startEdit(c)" title="{{ 'detail.edit' | translate }}">✎</button>
             <button class="icon-btn icon-btn-danger" (click)="delete(c)" title="{{ 'detail.delete' | translate }}">✕</button>

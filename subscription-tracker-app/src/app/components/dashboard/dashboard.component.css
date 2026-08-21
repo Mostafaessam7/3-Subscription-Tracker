@@ -76,20 +76,23 @@
   padding: 36px 24px 48px;
 }
 
-/* طبقة تعتيم فوق الـ Vanta canvas اللي بقت تغطي عرض الشاشة كله دلوقتي -
-   بتخف تدريجيًا كل ما تنزل تحت عشان الجزء العلوي (اللي فيه Vanta واضحة) يفضل مميز
-   والباقي (قائمة الاشتراكات) يفضل واضح ومريح للقراءة */
+/* طبقة تعتيم فوق الـ Vanta canvas - بتزيد تدريجيًا لحد 300px (عشان الجزء العلوي يفضل مميز
+   وأوضح) وبعدين بتفضل ثابتة عند نفس الدرجة لآخر الصفحة (مش بتوصل لخلفية صلبة زي قبل كده) -
+   عشان الخلفية المتحركة تفضل ظاهرة مهما الصفحة طالت، مش بس أول 600px */
 .dashboard-vanta-wrap::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 17, 32, 0.4) 0%, rgba(11, 17, 32, 0.75) 300px, var(--bg) 600px);
+  background: linear-gradient(180deg, rgba(11, 17, 32, 0.4) 0%, rgba(11, 17, 32, 0.78) 300px, rgba(11, 17, 32, 0.78) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-body.light-theme .dashboard-vanta-wrap::before {
-  background: linear-gradient(180deg, rgba(244, 246, 251, 0.55) 0%, rgba(244, 246, 251, 0.85) 300px, var(--bg) 600px);
+/* body.light-theme .selector كان بيتحط جوه CSS الكومبوننت (View Encapsulation) بيضيف Attribute
+   Scoping لكل جزء في الـ Selector بما فيه "body" - وده مستحيل يتطابق (الـ body مش عنصر جوه
+   الكومبوننت نفسه). :host-context() هو البديل الرسمي بتاع Angular بالظبط للحالة دي */
+:host-context(body.light-theme) .dashboard-vanta-wrap::before {
+  background: linear-gradient(180deg, rgba(244, 246, 251, 0.55) 0%, rgba(244, 246, 251, 0.88) 300px, rgba(244, 246, 251, 0.88) 100%);
 }
 
 /* كل المحتوى الفعلي لازم يفضل فوق طبقة التعتيم (z-index: 1) */
@@ -140,8 +143,15 @@ app-subscription-list {
 
 .budget-label {
   font-size: 12.5px;
-  color: var(--text-secondary);
+  /* var(--text-secondary) الأصلي شبه مختفي فوق خلفية الـ Vanta المتحركة (نفس سبب .eyebrow فوق) */
+  color: var(--text-primary);
+  opacity: 0.85;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   font-family: var(--font-mono);
+}
+
+:host-context(body.light-theme) .budget-label {
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.65);
 }
 
 .budget-edit-link,
@@ -293,9 +303,17 @@ app-subscription-list {
 .eyebrow {
   margin: 0 0 8px;
   font-size: 12px;
-  color: var(--text-muted);
+  /* var(--text-muted) الأصلي شبه مختفي فوق خلفية الـ Vanta المتحركة - text-primary مع
+     Opacity أقل بيدّي نفس الإحساس البصري "الخافت" بس فاضل مقروء فوق أي جزء من الخلفية */
+  color: var(--text-primary);
+  opacity: 0.7;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+:host-context(body.light-theme) .eyebrow {
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.65);
 }
 
 .hero-value {

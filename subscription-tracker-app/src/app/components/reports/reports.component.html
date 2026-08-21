@@ -75,7 +75,7 @@
           <td>{{ s.name }}</td>
           <td class="mono">{{ s.price }}</td>
           <td>{{ billingCycleKey(s.billingCycle) | translate }}</td>
-          <td>{{ s.category ? (s.category.icon + ' ' + s.category.name) : ('form.noCategory' | translate) }}</td>
+          <td>{{ s.category ? (s.category.icon + ' ' + (s.category.name | categoryName)) : ('form.noCategory' | translate) }}</td>
           <td><span class="status-badge" [ngClass]="'status-' + s.status">{{ statusKey(s.status) | translate }}</span></td>
           <td class="mono">{{ s.nextRenewalDate | date:'yyyy-MM-dd' }}</td>
         </tr>

@@ -141,7 +141,7 @@
         [class.pill-active]="selectedCategoryId === c.id"
         [style.color]="selectedCategoryId === c.id ? c.color : null"
         (click)="selectedCategoryId = c.id; onFilterChange()">
-        {{ c.icon }} {{ c.name }}
+        {{ c.icon }} {{ c.name | categoryName }}
       </button>
       <button class="pill pill-manage" (click)="openCategoryManager()">⚙ {{ 'categories.manage' | translate }}</button>
       <button class="pill pill-manage" (click)="openPaymentMethodManager()">💳 {{ 'paymentMethods.manage' | translate }}</button>

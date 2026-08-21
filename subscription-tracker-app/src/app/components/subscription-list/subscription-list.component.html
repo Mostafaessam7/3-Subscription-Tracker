@@ -9,7 +9,7 @@
       <a [routerLink]="['/subscriptions', sub.id]" class="name">{{ sub.name }}</a>
       <p class="meta">
         <span *ngIf="sub.category" class="category-chip" [style.background]="sub.category.color + '22'" [style.color]="sub.category.color">
-          {{ sub.category.icon }} {{ sub.category.name }}
+          {{ sub.category.icon }} {{ sub.category.name | categoryName }}
         </span>
         <span *ngIf="!sub.category">{{ 'form.noCategory' | translate }}</span>
         · {{ billingCycleKey(sub.billingCycle) | translate }}

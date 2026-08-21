@@ -6,13 +6,14 @@ import { CategoryService } from '../../services/category.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { Category } from '../../models/subscription.model';
+import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '#FB7185', '#94A3B8'];
 
 @Component({
   selector: 'app-category-manager',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, CategoryNamePipe],
   templateUrl: './category-manager.component.html',
   styleUrl: './category-manager.component.css'
 })

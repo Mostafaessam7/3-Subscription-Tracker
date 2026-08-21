@@ -54,7 +54,7 @@
         <p class="label">{{ 'detail.category' | translate }}</p>
         <p class="value" *ngIf="subscription.category">
           <span class="cat-swatch" [style.background]="subscription.category.color"></span>
-          {{ subscription.category.icon }} {{ subscription.category.name }}
+          {{ subscription.category.icon }} {{ subscription.category.name | categoryName }}
         </p>
         <p class="value" *ngIf="!subscription.category">{{ 'form.noCategory' | translate }}</p>
       </div>

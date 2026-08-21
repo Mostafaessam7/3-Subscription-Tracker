@@ -107,7 +107,8 @@
     "resetPasswordBtn": "Save new password",
     "resetPasswordSuccess": "Password changed successfully - you can log in now",
     "resetPasswordInvalidToken": "This reset link is invalid or expired - request a new one",
-    "missingResetToken": "This link is incomplete - try requesting a new reset link"
+    "missingResetToken": "This link is incomplete - try requesting a new reset link",
+    "poweredBy": "Powered by Mecodex"
   },
   "detail": {
     "back": "← Back to dashboard",
@@ -140,6 +141,14 @@
   },
   "categories": {
     "manage": "Manage categories",
+    "defaults": {
+      "entertainment": "Entertainment",
+      "healthFitness": "Health & Fitness",
+      "workProductivity": "Work & Productivity",
+      "education": "Education",
+      "cloudServices": "Cloud Services",
+      "other": "Other"
+    },
     "addTitle": "Add new category",
     "editTitle": "Edit category",
     "add": "Add",

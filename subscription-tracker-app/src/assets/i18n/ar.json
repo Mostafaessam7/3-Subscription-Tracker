@@ -107,7 +107,8 @@
     "resetPasswordBtn": "احفظ كلمة السر الجديدة",
     "resetPasswordSuccess": "اتغيّرت كلمة السر بنجاح - تقدر تسجّل دخولك دلوقتي",
     "resetPasswordInvalidToken": "لينك إعادة التعيين غلط أو منتهي الصلاحية - اطلب لينك جديد",
-    "missingResetToken": "اللينك ده ناقص - جرّب تطلب لينك إعادة تعيين جديد"
+    "missingResetToken": "اللينك ده ناقص - جرّب تطلب لينك إعادة تعيين جديد",
+    "poweredBy": "بدعم من Mecodex"
   },
   "detail": {
     "back": "← رجوع للداشبورد",
@@ -140,6 +141,14 @@
   },
   "categories": {
     "manage": "إدارة التصنيفات",
+    "defaults": {
+      "entertainment": "ترفيه",
+      "healthFitness": "رياضة وصحة",
+      "workProductivity": "عمل وإنتاجية",
+      "education": "تعليم",
+      "cloudServices": "خدمات سحابية",
+      "other": "أخرى"
+    },
     "addTitle": "إضافة تصنيف جديد",
     "editTitle": "تعديل تصنيف",
     "add": "إضافة",
