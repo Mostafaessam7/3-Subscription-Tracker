@@ -126,6 +126,12 @@ label {
   font-weight: 500;
 }
 
+.field-hint {
+  margin: -8px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
 input {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
@@ -151,6 +157,42 @@ input:focus {
 .btn-primary:hover {
   background: #FFCB63;
   opacity: 1;
+}
+
+.danger-zone {
+  border-color: var(--danger-dim);
+}
+
+.danger-zone h3 {
+  color: var(--danger);
+}
+
+.danger-warning {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  align-self: flex-start;
+  padding: 9px 18px;
+}
+
+.btn-danger:hover {
+  background: var(--danger-dim);
+  opacity: 1;
+}
+
+.error {
+  background: var(--danger-dim);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin: 0;
 }
 
 .topbar-actions {

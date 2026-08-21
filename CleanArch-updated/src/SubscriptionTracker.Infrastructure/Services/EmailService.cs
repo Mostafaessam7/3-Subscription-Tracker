@@ -47,6 +47,20 @@ namespace SubscriptionTracker.Infrastructure.Services
             await SendAsync(toEmail, subject, body, $"إيميل إعادة تعيين كلمة السر لـ {toEmail}");
         }
 
+        public async Task SendEmailConfirmationAsync(string toEmail, string userName, string confirmLink)
+        {
+            var subject = "أكّد إيميلك";
+            var body = $@"
+                <div style='font-family: Segoe UI, Tahoma, sans-serif; direction: rtl;'>
+                    <p>أهلاً {userName}،</p>
+                    <p>شكرًا لتسجيلك في Subscription Tracker. اضغط على اللينك ده عشان تأكّد إن الإيميل ده بتاعك:</p>
+                    <p><a href='{confirmLink}'>{confirmLink}</a></p>
+                    <p>لو انت مسجّلتش حساب عندنا، تجاهل الإيميل ده.</p>
+                </div>";
+
+            await SendAsync(toEmail, subject, body, $"إيميل تأكيد لـ {toEmail}");
+        }
+
         private async Task SendAsync(string toEmail, string subject, string htmlBody, string successLogContext)
         {
             using var message = new MailMessage

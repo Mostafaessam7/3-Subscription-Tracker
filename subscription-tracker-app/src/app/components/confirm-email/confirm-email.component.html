@@ -1,0 +1,18 @@
+<div class="auth-page" vantaBackground="net">
+  <div class="lang-switch-wrap">
+    <app-theme-switch></app-theme-switch>
+    <app-language-switch></app-language-switch>
+  </div>
+
+  <div class="auth-card">
+    <h2>{{ 'auth.confirmEmailTitle' | translate }}</h2>
+
+    <p class="status-message" *ngIf="state === 'confirming'">{{ 'auth.confirmingEmail' | translate }}</p>
+    <p class="success" *ngIf="state === 'success'">{{ message }}</p>
+    <p class="error" *ngIf="state === 'error' || state === 'missingToken'">{{ message }}</p>
+
+    <p class="switch">
+      <a routerLink="/login">{{ 'auth.backToLogin' | translate }}</a>
+    </p>
+  </div>
+</div>

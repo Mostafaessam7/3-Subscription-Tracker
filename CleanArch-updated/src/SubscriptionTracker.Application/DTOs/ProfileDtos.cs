@@ -25,7 +25,15 @@ namespace SubscriptionTracker.Application.DTOs
         public string CurrentPassword { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        [MinLength(8)]
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    // بيتطلب كلمة السر الحالية عشان نتأكد إن صاحب الحساب فعلًا هو اللي بيمسحه - إجراء نهائي
+    // ومفيش رجوع فيه (كل الاشتراكات بتاعته بتتمسح معاه Cascade)
+    public class DeleteAccountDto
+    {
+        [Required]
+        public string Password { get; set; } = string.Empty;
     }
 }

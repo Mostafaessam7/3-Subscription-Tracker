@@ -51,7 +51,7 @@ describe('RegisterComponent', () => {
 
     const req = httpMock.expectOne(`${baseUrl}/register`);
     req.flush({
-      userId: 1, name: 'Test', email: 'test@example.com', role: 0,
+      userId: 1, name: 'Test', email: 'test@example.com', role: 0, emailConfirmed: true,
       token: 'fake-token', expiresAt: new Date(Date.now() + 3600000).toISOString()
     });
 

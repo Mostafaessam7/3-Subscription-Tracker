@@ -15,7 +15,7 @@ namespace SubscriptionTracker.Application.DTOs
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        [MinLength(8)]
         public string Password { get; set; } = string.Empty;
     }
 
@@ -42,8 +42,21 @@ namespace SubscriptionTracker.Application.DTOs
         public string Token { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        [MinLength(8)]
         public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class ConfirmEmailDto
+    {
+        [Required]
+        public string Token { get; set; } = string.Empty;
+    }
+
+    public class ResendConfirmationDto
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
     }
 
     // شكل الرد بعد نجاح التسجيل أو الدخول
@@ -53,6 +66,7 @@ namespace SubscriptionTracker.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; }
+        public bool EmailConfirmed { get; set; }
         public string Token { get; set; } = string.Empty;
         public DateTime ExpiresAt { get; set; }
     }

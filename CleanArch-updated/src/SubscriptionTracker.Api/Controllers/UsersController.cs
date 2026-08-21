@@ -57,6 +57,19 @@ namespace SubscriptionTracker.Api.Controllers
             return NoContent();
         }
 
+        // DELETE: api/users/2
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccount(int id, DeleteAccountDto dto)
+        {
+            // مقصودة إنها CurrentUserId بس هنا (زي ChangePassword) - حتى الأدمن مايقدرش يمسح
+            // حساب حد تاني من غير ما يعرف كلمة سره؛ ده إجراء نهائي بيخص صاحب الحساب هو بس
+            if (CurrentUserId != id) return Forbid();
+
+            var (success, error) = await _userService.DeleteAccountAsync(id, dto);
+            if (!success) return BadRequest(new { message = error });
+            return NoContent();
+        }
+
         // GET: api/users/2/budget
         [HttpGet("{id}/budget")]
         public async Task<ActionResult<BudgetDto>> GetBudget(int id)

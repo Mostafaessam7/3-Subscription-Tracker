@@ -189,6 +189,10 @@ export interface UpdateProfile {
   name: string;
 }
 
+export interface DeleteAccount {
+  password: string;
+}
+
 export interface ChangePassword {
   currentPassword: string;
   newPassword: string;

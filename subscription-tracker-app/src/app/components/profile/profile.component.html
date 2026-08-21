@@ -35,6 +35,18 @@
       {{ 'profile.newPassword' | translate }}
       <input type="password" formControlName="newPassword" />
     </label>
+    <p class="field-hint">{{ 'auth.passwordRequirements' | translate }}</p>
     <button type="submit" class="btn-primary" [disabled]="passwordForm.invalid">{{ 'profile.changePasswordBtn' | translate }}</button>
+  </form>
+
+  <form [formGroup]="deleteAccountForm" (ngSubmit)="deleteAccount()" class="section-card danger-zone">
+    <h3>{{ 'profile.deleteAccount' | translate }}</h3>
+    <p class="danger-warning">{{ 'profile.deleteAccountWarning' | translate }}</p>
+    <label>
+      {{ 'auth.password' | translate }}
+      <input type="password" formControlName="password" />
+    </label>
+    <p class="error" *ngIf="deleteError">{{ deleteError }}</p>
+    <button type="submit" class="btn-danger" [disabled]="deleteAccountForm.invalid">{{ 'profile.deleteAccountBtn' | translate }}</button>
   </form>
 </div>

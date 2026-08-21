@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProfileComponent } from './profile.component';
 import { ToastService } from '../../services/toast.service';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
+import { AuthService } from '../../services/auth.service';
 import { UserRole, Profile } from '../../models/subscription.model';
 import { environment } from '../../../environments/environment';
 
@@ -19,7 +21,7 @@ describe('ProfileComponent', () => {
 
   beforeEach(async () => {
     localStorage.setItem('subscription_tracker_user', JSON.stringify({
-      userId: 1, name: 'Mostafa', email: 'mostafa@example.com', role: UserRole.User,
+      userId: 1, name: 'Mostafa', email: 'mostafa@example.com', role: UserRole.User, emailConfirmed: true,
       token: 'fake-token', expiresAt: new Date(Date.now() + 3600000).toISOString()
     }));
     localStorage.setItem('subscription_tracker_token', 'fake-token');
@@ -101,5 +103,49 @@ describe('ProfileComponent', () => {
     req.flush({ message: 'wrong' }, { status: 400, statusText: 'Bad Request' });
 
     expect(toastSpy).toHaveBeenCalledWith('profile.currentPasswordWrong', 'error');
+  });
+
+  it('deleteAccount مايبعتش طلب لو الفورم Invalid', async () => {
+    component.deleteAccountForm.setValue({ password: '' });
+    await component.deleteAccount();
+
+    expect(component.deleteAccountForm.invalid).toBeTrue();
+    httpMock.expectNone((req) => req.method === 'DELETE');
+  });
+
+  it('deleteAccount مابيبعتش طلب لو المستخدم لغى نافذة التأكيد', async () => {
+    spyOn(TestBed.inject(ConfirmDialogService), 'confirm').and.resolveTo(false);
+    component.deleteAccountForm.setValue({ password: 'Password123' });
+
+    await component.deleteAccount();
+
+    httpMock.expectNone((req) => req.method === 'DELETE');
+  });
+
+  it('deleteAccount بينجح بعد التأكيد وبيعمل Logout', async () => {
+    spyOn(TestBed.inject(ConfirmDialogService), 'confirm').and.resolveTo(true);
+    const authService = TestBed.inject(AuthService);
+    const logoutSpy = spyOn(authService, 'logout');
+    component.deleteAccountForm.setValue({ password: 'Password123' });
+
+    await component.deleteAccount();
+
+    const req = httpMock.expectOne((r) => r.url === `${usersBaseUrl}/1` && r.method === 'DELETE');
+    expect(req.request.body).toEqual({ password: 'Password123' });
+    req.flush(null);
+
+    expect(logoutSpy).toHaveBeenCalled();
+  });
+
+  it('deleteAccount بيعرض رسالة كلمة سر غلط لو السيرفر رجّع 400', async () => {
+    spyOn(TestBed.inject(ConfirmDialogService), 'confirm').and.resolveTo(true);
+    component.deleteAccountForm.setValue({ password: 'WrongPass' });
+
+    await component.deleteAccount();
+
+    const req = httpMock.expectOne((r) => r.url === `${usersBaseUrl}/1` && r.method === 'DELETE');
+    req.flush({ message: 'wrong' }, { status: 400, statusText: 'Bad Request' });
+
+    expect(component.deleteError).toBeTruthy();
   });
 });

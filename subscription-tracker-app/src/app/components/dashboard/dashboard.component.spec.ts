@@ -20,6 +20,7 @@ describe('DashboardComponent', () => {
     name: 'Mostafa',
     email: 'mostafa@example.com',
     role: UserRole.User,
+    emailConfirmed: true,
     token: 'fake-token',
     expiresAt: new Date(Date.now() + 3600000).toISOString()
   };
@@ -139,5 +140,30 @@ describe('DashboardComponent', () => {
     component.onLogout();
 
     expect(component.authService.logout).toHaveBeenCalled();
+  });
+
+  it('isEmailUnconfirmed بيرجّع false لو المستخدم مؤكّد إيميله', () => {
+    initAndFlush();
+    expect(component.isEmailUnconfirmed).toBeFalse();
+  });
+
+  it('isEmailUnconfirmed بيرجّع true لو المستخدم مش مؤكّد إيميله', () => {
+    component.authService.currentUser.set({ ...fakeUser, emailConfirmed: false });
+    initAndFlush();
+
+    expect(component.isEmailUnconfirmed).toBeTrue();
+  });
+
+  it('resendConfirmationEmail بيبعت طلب Resend وبيصفّر isResendingConfirmation بعد النجاح', () => {
+    initAndFlush();
+
+    component.resendConfirmationEmail();
+    expect(component.isResendingConfirmation).toBeTrue();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/resend-confirmation`);
+    expect(req.request.body).toEqual({ email: 'mostafa@example.com' });
+    req.flush({ message: 'ok' });
+
+    expect(component.isResendingConfirmation).toBeFalse();
   });
 });

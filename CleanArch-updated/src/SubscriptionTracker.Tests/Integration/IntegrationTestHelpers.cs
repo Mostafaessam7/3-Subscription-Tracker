@@ -13,6 +13,14 @@ namespace SubscriptionTracker.Tests.Integration
 
         public static async Task<(int UserId, string Token)> RegisterUserAsync(this HttpClient client, string? name = null)
         {
+            var (userId, token, _) = await client.RegisterUserWithEmailAsync(name);
+            return (userId, token);
+        }
+
+        // زي RegisterUserAsync بالظبط، بس بترجّع الإيميل كمان - محتاجينه في الـ Tests اللي بتتأكد
+        // إن حساب معيّن (بالإيميل بتاعه) اتمسح فعليًا أو مبقاش موجود
+        public static async Task<(int UserId, string Token, string Email)> RegisterUserWithEmailAsync(this HttpClient client, string? name = null)
+        {
             var dto = new RegisterDto
             {
                 Name = name ?? "Test User",
@@ -24,7 +32,7 @@ namespace SubscriptionTracker.Tests.Integration
             response.EnsureSuccessStatusCode();
 
             var body = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-            return (body!.UserId, body.Token);
+            return (body!.UserId, body.Token, dto.Email);
         }
 
         // بيبوتستراب أول Admin في الـ DB بتاع الـ Factory دي، أو لو حصل قبل كده (Test تاني في نفس

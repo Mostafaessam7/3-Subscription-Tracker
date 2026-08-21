@@ -15,6 +15,7 @@ namespace SubscriptionTracker.Application.Services
     public class AuthService : IAuthService
     {
         private static readonly TimeSpan ResetTokenLifetime = TimeSpan.FromHours(1);
+        private static readonly TimeSpan EmailConfirmationTokenLifetime = TimeSpan.FromDays(3);
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
@@ -41,16 +42,26 @@ namespace SubscriptionTracker.Application.Services
             var emailExists = await _unitOfWork.Users.Query().AnyAsync(u => u.Email == dto.Email);
             if (emailExists) return null; // الإيميل مستخدم قبل كده
 
+            var rawConfirmationToken = GenerateSecureToken();
+
             var user = new User
             {
                 Name = dto.Name,
                 Email = dto.Email,
                 PasswordHash = _passwordHasher.Hash(dto.Password),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EmailConfirmed = false,
+                EmailConfirmationTokenHash = HashToken(rawConfirmationToken),
+                EmailConfirmationTokenExpiresAt = DateTime.UtcNow.Add(EmailConfirmationTokenLifetime)
             };
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
+
+            // Fire-and-forget عن قصد (زي ForgotPasswordAsync) - عشان مانستناش SMTP قبل ما نرجّع
+            // للـ Frontend بالتوكن، ومنعًا لأي Timing Side-Channel
+            var confirmLink = $"{_frontendSettings.BaseUrl.TrimEnd('/')}/confirm-email?token={Uri.EscapeDataString(rawConfirmationToken)}";
+            _ = _emailService.SendEmailConfirmationAsync(user.Email, user.Name, confirmLink);
 
             return GenerateAuthResponse(user);
         }
@@ -109,6 +120,42 @@ namespace SubscriptionTracker.Application.Services
             return true;
         }
 
+        public async Task<bool> ConfirmEmailAsync(ConfirmEmailDto dto)
+        {
+            var tokenHash = HashToken(dto.Token);
+            var user = await _unitOfWork.Users.GetByEmailConfirmationTokenHashAsync(tokenHash);
+
+            if (user is null || user.EmailConfirmationTokenExpiresAt is null || user.EmailConfirmationTokenExpiresAt < DateTime.UtcNow)
+                return false;
+
+            user.EmailConfirmed = true;
+            // بنمسح التوكن فورًا بعد الاستخدام - عشان ميتعملش استخدام تاني بيه (One-Time Use)
+            user.EmailConfirmationTokenHash = null;
+            user.EmailConfirmationTokenExpiresAt = null;
+
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task ResendConfirmationAsync(ResendConfirmationDto dto)
+        {
+            var user = await _unitOfWork.Users.GetByEmailAsync(dto.Email);
+            // بنرجع من غير خطأ حتى لو الإيميل مش موجود أو متأكد بالفعل - منعًا لتسريب معلومة
+            if (user is null || user.EmailConfirmed) return;
+
+            var rawToken = GenerateSecureToken();
+            user.EmailConfirmationTokenHash = HashToken(rawToken);
+            user.EmailConfirmationTokenExpiresAt = DateTime.UtcNow.Add(EmailConfirmationTokenLifetime);
+
+            _unitOfWork.Users.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            var confirmLink = $"{_frontendSettings.BaseUrl.TrimEnd('/')}/confirm-email?token={Uri.EscapeDataString(rawToken)}";
+            _ = _emailService.SendEmailConfirmationAsync(user.Email, user.Name, confirmLink);
+        }
+
         private static string GenerateSecureToken()
         {
             // 32 بايت عشوائية Cryptographically Secure، بصيغة URL-Safe عشان تتحط في Query String من غير مشاكل
@@ -135,6 +182,7 @@ namespace SubscriptionTracker.Application.Services
                 Name = user.Name,
                 Email = user.Email,
                 Role = user.Role,
+                EmailConfirmed = user.EmailConfirmed,
                 Token = token,
                 ExpiresAt = expiresAt
             };

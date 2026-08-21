@@ -12,7 +12,7 @@ namespace SubscriptionTracker.Tests.Validators
         [Fact]
         public void Valid_Dto_HasNoErrors()
         {
-            var dto = new RegisterDto { Name = "Mostafa", Email = "mostafa@example.com", Password = "123456" };
+            var dto = new RegisterDto { Name = "Mostafa", Email = "mostafa@example.com", Password = "Password123" };
 
             var result = _validator.TestValidate(dto);
 
@@ -42,9 +42,22 @@ namespace SubscriptionTracker.Tests.Validators
         }
 
         [Fact]
-        public void Password_ShorterThanSixChars_HasError()
+        public void Password_ShorterThanEightChars_HasError()
         {
-            var dto = new RegisterDto { Name = "Mostafa", Email = "mostafa@example.com", Password = "123" };
+            var dto = new RegisterDto { Name = "Mostafa", Email = "mostafa@example.com", Password = "Ab1" };
+
+            var result = _validator.TestValidate(dto);
+
+            result.ShouldHaveValidationErrorFor(x => x.Password);
+        }
+
+        [Theory]
+        [InlineData("alllowercase1")] // من غير حرف كبير
+        [InlineData("ALLUPPERCASE1")] // من غير حرف صغير
+        [InlineData("NoDigitsHere")]  // من غير رقم
+        public void Password_MissingRequiredCharacterType_HasError(string password)
+        {
+            var dto = new RegisterDto { Name = "Mostafa", Email = "mostafa@example.com", Password = password };
 
             var result = _validator.TestValidate(dto);
 

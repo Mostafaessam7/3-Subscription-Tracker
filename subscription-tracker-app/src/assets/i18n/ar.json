@@ -102,12 +102,21 @@
     "backToLogin": "← رجوع لتسجيل الدخول",
     "resetPasswordTitle": "كلمة سر جديدة",
     "newPassword": "كلمة السر الجديدة",
+    "passwordRequirements": "8 حروف على الأقل، وفيها حرف كبير وحرف صغير ورقم",
     "confirmPassword": "تأكيد كلمة السر",
     "passwordMismatch": "كلمتا السر مش متطابقتين",
     "resetPasswordBtn": "احفظ كلمة السر الجديدة",
     "resetPasswordSuccess": "اتغيّرت كلمة السر بنجاح - تقدر تسجّل دخولك دلوقتي",
     "resetPasswordInvalidToken": "لينك إعادة التعيين غلط أو منتهي الصلاحية - اطلب لينك جديد",
     "missingResetToken": "اللينك ده ناقص - جرّب تطلب لينك إعادة تعيين جديد",
+    "confirmEmailTitle": "تأكيد الإيميل",
+    "confirmingEmail": "بنأكّد الإيميل بتاعك...",
+    "confirmEmailSuccess": "تم تأكيد إيميلك بنجاح ✓",
+    "confirmEmailError": "لينك التأكيد غلط أو منتهي الصلاحية أو اتستخدم قبل كده",
+    "missingConfirmToken": "اللينك ده ناقص - جرّب تطلب لينك تأكيد جديد",
+    "emailNotConfirmedBanner": "لسه ما أكّدتش إيميلك - راجع بريدك الإلكتروني، أو",
+    "resendConfirmation": "ابعت لينك التأكيد تاني",
+    "resendConfirmationSuccess": "لو حسابك محتاج تأكيد، هيوصلك لينك جديد خلال دقايق",
     "poweredBy": "بدعم من Mecodex"
   },
   "detail": {
@@ -229,7 +238,12 @@
     "nameSaved": "تم تعديل الاسم بنجاح",
     "passwordChanged": "تم تغيير كلمة السر بنجاح",
     "currentPasswordWrong": "كلمة السر الحالية غلط",
-    "saveError": "حصل خطأ، حاول تاني"
+    "saveError": "حصل خطأ، حاول تاني",
+    "deleteAccount": "مسح الحساب",
+    "deleteAccountWarning": "ده إجراء نهائي ومفيش رجوع فيه - هيتمسح حسابك وكل الاشتراكات المسجلة عليه للأبد.",
+    "deleteAccountBtn": "امسح حسابي نهائيًا",
+    "deleteAccountConfirm": "متأكد إنك عايز تمسح حسابك؟ الخطوة دي نهائية ومش هترجع، وكل بياناتك هتتمسح معاها.",
+    "deleteAccountWrongPassword": "كلمة السر غلط"
   },
   "tags": {
     "manage": "إدارة الوسوم",

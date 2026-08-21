@@ -35,6 +35,17 @@ namespace SubscriptionTracker.Domain.Entities
 
         public DateTime? PasswordResetTokenExpiresAt { get; set; }
 
+        // بيتسجّل false افتراضيًا وقت التسجيل، وبيبقى true بعد ما يضغط على لينك التأكيد
+        // اللي بيوصله بالإيميل. مقصود إننا مبنمنعش تسجيل الدخول لحد ما يأكّد (عشان منقفلش
+        // على مستخدمين قدامى/تجريبيين مالهمش إيميل حقيقي) - بس الفرونت اند بيوضح الحالة دي
+        [Required]
+        public bool EmailConfirmed { get; set; }
+
+        [MaxLength(64)]
+        public string? EmailConfirmationTokenHash { get; set; }
+
+        public DateTime? EmailConfirmationTokenExpiresAt { get; set; }
+
         public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     }
 }

@@ -4,5 +4,6 @@ namespace SubscriptionTracker.Application.Interfaces.Services
     {
         Task SendRenewalReminderAsync(string toEmail, string userName, string subscriptionName, decimal price, DateTime renewalDate);
         Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetLink);
+        Task SendEmailConfirmationAsync(string toEmail, string userName, string confirmLink);
     }
 }

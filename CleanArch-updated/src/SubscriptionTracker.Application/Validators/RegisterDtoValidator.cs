@@ -9,7 +9,7 @@ namespace SubscriptionTracker.Application.Validators
         {
             RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
             RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(150);
-            RuleFor(x => x.Password).NotEmpty().MinimumLength(6);
+            RuleFor(x => x.Password).NotEmpty().MustBeStrongPassword();
         }
     }
 }

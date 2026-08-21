@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Services;
 
@@ -20,6 +21,7 @@ namespace SubscriptionTracker.Api.Controllers
         // ⚠️ الـ Endpoint الوحيد هنا اللي من غير [Authorize] - لأنه بيتستخدم عشان تعمل أول Admin
         // من الأساس (قبل ما يكون عندك أي حساب Admin تسجّل دخول بيه). بيرفض يشتغل لو فيه Admin بالفعل.
         [HttpPost("bootstrap")]
+        [EnableRateLimiting("AuthEndpoints")]
         public async Task<ActionResult<AuthResponseDto>> Bootstrap(BootstrapAdminDto dto)
         {
             var result = await _adminService.BootstrapFirstAdminAsync(dto);

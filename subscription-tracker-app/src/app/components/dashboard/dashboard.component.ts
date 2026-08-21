@@ -110,6 +110,29 @@ export class DashboardComponent implements OnInit {
     return this.authService.currentUser()?.role === UserRole.Admin;
   }
 
+  get isEmailUnconfirmed(): boolean {
+    return this.authService.currentUser()?.emailConfirmed === false;
+  }
+
+  isResendingConfirmation = false;
+
+  resendConfirmationEmail(): void {
+    const email = this.authService.currentUser()?.email;
+    if (!email || this.isResendingConfirmation) return;
+
+    this.isResendingConfirmation = true;
+    this.authService.resendConfirmation({ email }).subscribe({
+      next: () => {
+        this.isResendingConfirmation = false;
+        this.toastService.show('auth.resendConfirmationSuccess');
+      },
+      error: () => {
+        this.isResendingConfirmation = false;
+        this.toastService.show('toast.saveError', 'error');
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.loadCategories();
     this.loadTags();

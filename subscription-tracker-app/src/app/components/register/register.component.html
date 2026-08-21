@@ -21,6 +21,7 @@
       {{ 'auth.password' | translate }}
       <input type="password" formControlName="password" />
     </label>
+    <p class="field-hint">{{ 'auth.passwordRequirements' | translate }}</p>
 
     <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 

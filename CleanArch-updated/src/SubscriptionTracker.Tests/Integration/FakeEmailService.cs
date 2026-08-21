@@ -8,6 +8,8 @@ namespace SubscriptionTracker.Tests.Integration
     {
         public string? LastPasswordResetLink { get; private set; }
         public string? LastPasswordResetToEmail { get; private set; }
+        public string? LastEmailConfirmationLink { get; private set; }
+        public string? LastEmailConfirmationToEmail { get; private set; }
 
         public Task SendRenewalReminderAsync(string toEmail, string userName, string subscriptionName, decimal price, DateTime renewalDate)
         {
@@ -18,6 +20,13 @@ namespace SubscriptionTracker.Tests.Integration
         {
             LastPasswordResetToEmail = toEmail;
             LastPasswordResetLink = resetLink;
+            return Task.CompletedTask;
+        }
+
+        public Task SendEmailConfirmationAsync(string toEmail, string userName, string confirmLink)
+        {
+            LastEmailConfirmationToEmail = toEmail;
+            LastEmailConfirmationLink = confirmLink;
             return Task.CompletedTask;
         }
     }

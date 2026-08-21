@@ -102,12 +102,21 @@
     "backToLogin": "← Back to login",
     "resetPasswordTitle": "Set a new password",
     "newPassword": "New password",
+    "passwordRequirements": "At least 8 characters, with an uppercase letter, a lowercase letter, and a number",
     "confirmPassword": "Confirm password",
     "passwordMismatch": "Passwords don't match",
     "resetPasswordBtn": "Save new password",
     "resetPasswordSuccess": "Password changed successfully - you can log in now",
     "resetPasswordInvalidToken": "This reset link is invalid or expired - request a new one",
     "missingResetToken": "This link is incomplete - try requesting a new reset link",
+    "confirmEmailTitle": "Confirm your email",
+    "confirmingEmail": "Confirming your email...",
+    "confirmEmailSuccess": "Your email has been confirmed ✓",
+    "confirmEmailError": "This confirmation link is invalid, expired, or already used",
+    "missingConfirmToken": "This link is incomplete - try requesting a new confirmation link",
+    "emailNotConfirmedBanner": "You haven't confirmed your email yet - check your inbox, or",
+    "resendConfirmation": "resend the confirmation link",
+    "resendConfirmationSuccess": "If your account needs confirming, a new link is on its way",
     "poweredBy": "Powered by Mecodex"
   },
   "detail": {
@@ -229,7 +238,12 @@
     "nameSaved": "Name updated successfully",
     "passwordChanged": "Password changed successfully",
     "currentPasswordWrong": "Current password is incorrect",
-    "saveError": "Something went wrong, try again"
+    "saveError": "Something went wrong, try again",
+    "deleteAccount": "Delete account",
+    "deleteAccountWarning": "This is permanent and can't be undone - your account and every subscription on it will be deleted forever.",
+    "deleteAccountBtn": "Permanently delete my account",
+    "deleteAccountConfirm": "Are you sure you want to delete your account? This is permanent and can't be undone - all your data will be deleted with it.",
+    "deleteAccountWrongPassword": "Incorrect password"
   },
   "tags": {
     "manage": "Manage tags",

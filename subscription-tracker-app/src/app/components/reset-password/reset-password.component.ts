@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
 import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
+import { strongPasswordValidators } from '../../utils/password-validators';
 
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('newPassword')?.value;
@@ -36,7 +37,7 @@ export class ResetPasswordComponent implements OnInit {
   hasToken = true;
 
   form = this.fb.group({
-    newPassword: ['', [Validators.required, Validators.minLength(6)]],
+    newPassword: ['', strongPasswordValidators()],
     confirmPassword: ['', Validators.required]
   }, { validators: passwordsMatchValidator });
 

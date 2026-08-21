@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
 import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
+import { strongPasswordValidators } from '../../utils/password-validators';
 
 @Component({
   selector: 'app-register',
@@ -27,7 +28,7 @@ export class RegisterComponent {
   form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    password: ['', strongPasswordValidators()]
   });
 
   onSubmit(): void {

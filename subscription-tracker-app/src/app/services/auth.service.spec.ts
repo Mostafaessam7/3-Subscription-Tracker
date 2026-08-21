@@ -17,6 +17,7 @@ describe('AuthService', () => {
     name: 'Mostafa',
     email: 'mostafa@example.com',
     role: UserRole.User,
+    emailConfirmed: true,
     token: 'fake-jwt-token',
     expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString() // بعد ساعة من دلوقتي
   };
@@ -107,6 +108,24 @@ describe('AuthService', () => {
     const req = httpMock.expectOne(`${baseUrl}/reset-password`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ token: 'abc123', newPassword: 'NewPass456' });
+    req.flush({ message: 'ok' });
+  });
+
+  it('confirmEmail بيبعت POST بالتوكن لـ /confirm-email', () => {
+    service.confirmEmail({ token: 'abc123' }).subscribe();
+
+    const req = httpMock.expectOne(`${baseUrl}/confirm-email`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ token: 'abc123' });
+    req.flush({ message: 'ok' });
+  });
+
+  it('resendConfirmation بيبعت POST بالإيميل لـ /resend-confirmation', () => {
+    service.resendConfirmation({ email: 'mostafa@example.com' }).subscribe();
+
+    const req = httpMock.expectOne(`${baseUrl}/resend-confirmation`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'mostafa@example.com' });
     req.flush({ message: 'ok' });
   });
 });

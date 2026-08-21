@@ -15,6 +15,13 @@
   </div>
 </div>
 
+<div class="email-confirm-banner" *ngIf="isEmailUnconfirmed">
+  <span>⚠️ {{ 'auth.emailNotConfirmedBanner' | translate }}</span>
+  <button (click)="resendConfirmationEmail()" [disabled]="isResendingConfirmation">
+    {{ 'auth.resendConfirmation' | translate }}
+  </button>
+</div>
+
 <div class="dashboard-vanta-wrap" vantaBackground="fog">
 <div class="dashboard">
   <div class="hero-zone">

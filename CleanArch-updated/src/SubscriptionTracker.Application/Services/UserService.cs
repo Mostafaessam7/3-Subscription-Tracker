@@ -50,6 +50,25 @@ namespace SubscriptionTracker.Application.Services
             return (true, null);
         }
 
+        public async Task<(bool Success, string? ErrorMessage)> DeleteAccountAsync(int id, DeleteAccountDto dto)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(id);
+            if (user is null) return (false, "المستخدم مش موجود");
+
+            var isPasswordValid = _passwordHasher.Verify(dto.Password, user.PasswordHash);
+            if (!isPasswordValid)
+            {
+                return (false, "كلمة السر غلط");
+            }
+
+            // اشتراكات المستخدم بتتمسح معاه أوتوماتيك (Cascade Delete على مستوى الـ DB - راجع
+            // SubscriptionConfiguration.cs)، فمحتاجينش نمسحها يدوي هنا
+            _unitOfWork.Users.Remove(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return (true, null);
+        }
+
         public async Task<BudgetDto?> GetBudgetAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);

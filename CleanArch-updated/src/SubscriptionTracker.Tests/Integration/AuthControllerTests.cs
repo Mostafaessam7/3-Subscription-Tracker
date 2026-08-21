@@ -175,6 +175,90 @@ namespace SubscriptionTracker.Tests.Integration
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        [Fact]
+        public async Task Register_NewUser_HasEmailConfirmedFalseAndSendsConfirmationEmail()
+        {
+            var email = $"{Guid.NewGuid()}@example.com";
+            var registerDto = new RegisterDto { Name = "Test User", Email = email, Password = "Password123" };
+
+            var response = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+
+            var body = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            Assert.False(body!.EmailConfirmed);
+            Assert.Equal(email, _factory.FakeEmailService.LastEmailConfirmationToEmail);
+            Assert.False(string.IsNullOrWhiteSpace(_factory.FakeEmailService.LastEmailConfirmationLink));
+        }
+
+        [Fact]
+        public async Task ConfirmEmail_WithValidToken_MarksEmailConfirmed()
+        {
+            var email = $"{Guid.NewGuid()}@example.com";
+            var registerDto = new RegisterDto { Name = "Test User", Email = email, Password = "Password123" };
+            await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+
+            var token = ExtractTokenFromLink(_factory.FakeEmailService.LastEmailConfirmationLink!);
+            var confirmResponse = await _client.PostAsJsonAsync("/api/auth/confirm-email", new ConfirmEmailDto { Token = token });
+
+            Assert.Equal(HttpStatusCode.OK, confirmResponse.StatusCode);
+
+            var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginDto { Email = email, Password = "Password123" });
+            var loginBody = await loginResponse.Content.ReadFromJsonAsync<AuthResponseDto>();
+            Assert.True(loginBody!.EmailConfirmed);
+        }
+
+        [Fact]
+        public async Task ConfirmEmail_WithSameTokenTwice_SecondAttemptFails()
+        {
+            var email = $"{Guid.NewGuid()}@example.com";
+            var registerDto = new RegisterDto { Name = "Test User", Email = email, Password = "Password123" };
+            await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+
+            var token = ExtractTokenFromLink(_factory.FakeEmailService.LastEmailConfirmationLink!);
+            var confirmDto = new ConfirmEmailDto { Token = token };
+
+            var first = await _client.PostAsJsonAsync("/api/auth/confirm-email", confirmDto);
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+            var second = await _client.PostAsJsonAsync("/api/auth/confirm-email", confirmDto);
+            Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
+        }
+
+        [Fact]
+        public async Task ConfirmEmail_WithInvalidToken_ReturnsBadRequest()
+        {
+            var response = await _client.PostAsJsonAsync(
+                "/api/auth/confirm-email",
+                new ConfirmEmailDto { Token = "not-a-real-token" });
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ResendConfirmation_WithUnknownEmail_StillReturnsOk()
+        {
+            // منعًا لتسريب معلومة "الإيميل ده مسجل ولا لأ" (User Enumeration)
+            var response = await _client.PostAsJsonAsync(
+                "/api/auth/resend-confirmation",
+                new ResendConfirmationDto { Email = $"{Guid.NewGuid()}@example.com" });
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ResendConfirmation_ForUnconfirmedUser_SendsNewTokenThatWorks()
+        {
+            var email = $"{Guid.NewGuid()}@example.com";
+            var registerDto = new RegisterDto { Name = "Test User", Email = email, Password = "Password123" };
+            await _client.PostAsJsonAsync("/api/auth/register", registerDto);
+
+            var resendResponse = await _client.PostAsJsonAsync("/api/auth/resend-confirmation", new ResendConfirmationDto { Email = email });
+            Assert.Equal(HttpStatusCode.OK, resendResponse.StatusCode);
+
+            var token = ExtractTokenFromLink(_factory.FakeEmailService.LastEmailConfirmationLink!);
+            var confirmResponse = await _client.PostAsJsonAsync("/api/auth/confirm-email", new ConfirmEmailDto { Token = token });
+            Assert.Equal(HttpStatusCode.OK, confirmResponse.StatusCode);
+        }
+
         private static string ExtractTokenFromLink(string resetLink)
         {
             // اللينك شكله .../reset-password?token=XXXX - بنستخرج قيمة الـ query param يدوي

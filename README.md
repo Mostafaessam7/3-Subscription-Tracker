@@ -150,6 +150,6 @@ docker compose up --build
 - **تحذير NuGet واحد لسه موجود**: `System.Security.Cryptography.Xml 9.0.0` (Transitive عن طريق `JwtBearer`) — بيظهر في كل `dotnet build`/`restore`. مفيش قرار مطلوب منك بخصوصه (مش استخدام مباشر في الكود، والترقية محتاجة تحديث حزمة `JwtBearer` نفسها من مايكروسوفت).
 - **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`) — محتاج دومين إنتاج حقيقي قبل أي Deploy فعلي.
 
-> ✅ **اتصلح**: Forgot Password/Reset Password (Backend + Frontend)، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
+> ✅ **اتصلح**: Forgot Password/Reset Password، Email Verification (تأكيد الإيميل بعد التسجيل)، Rate Limiting على كل Endpoints الـ Auth (منع Brute-force)، قواعد كلمة سر أقوى (8 حروف + حرف كبير/صغير/رقم)، Delete Account، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
 
 راجع الـ README الخاص بكل مشروع للتفاصيل الكاملة (الـ Architecture، الفيتشرز، الـ Bugs اللي اتصلحت، والقرارات التصميمية).

@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### إضافات — Email Verification, Rate Limiting, Delete Account, كلمة سر أقوى (2026-08-22)
+- **Email Verification**: `User.EmailConfirmed` جديد + توكن تأكيد (نفس نمط Password Reset - Hash فقط، صلاحية 3 أيام). `POST /api/auth/confirm-email` و`POST /api/auth/resend-confirmation` (بيرجع 200 دايمًا منعًا لتسريب معلومة). التسجيل مبيبقاش ممنوع للمستخدمين غير المؤكدين (قرار متعمّد - عشان منقفلش على حسابات قديمة/تجريبية)، بس الداشبورد بيعرض تنبيه واضح لو الإيميل لسه مش متأكد مع زرار "ابعت اللينك تاني". صفحة `/confirm-email` جديدة في الفرونت اند.
+- **Rate Limiting**: كل Endpoints الـ Auth (`register`, `login`, `forgot-password`, `reset-password`, `confirm-email`, `resend-confirmation`, `admin/bootstrap`) بقى عليها سقف 10 طلبات/دقيقة لكل IP (`Microsoft.AspNetCore.RateLimiting` المدمجة، مفيش Package جديد) - كانت من غير أي حماية من Brute-force خالص قبل كده. السقف قابل للتعديل من `appsettings.json` (`RateLimiting:AuthEndpoints`).
+- **Delete Account**: `DELETE /api/users/{id}` بيتطلب كلمة السر الحالية للتأكيد (زي Change Password بالظبط)، والاشتراكات بتتمسح Cascade تلقائي. في الفرونت اند: قسم "Danger Zone" في صفحة البروفايل مع نافذة تأكيد إضافية.
+- **قواعد كلمة سر أقوى**: من `MinimumLength(6)` بس لـ 8 حروف + حرف كبير + حرف صغير + رقم (Backend عن طريق `PasswordRules.cs` مشتركة، Frontend عن طريق `password-validators.ts` مشتركة) - مطبّقة على التسجيل، إعادة التعيين، وتغيير كلمة السر كلهم.
+- Tests: 6 Integration Tests جداد لـ Email Verification، Test مخصوص لـ Rate Limiting (`RateLimitingTests.cs`) بفاكتوري خاصة بيه بسقف صغير عشان يتأكد من الـ 429 فعليًا، 3 Integration Tests لـ Delete Account. **89/89 Backend Tests** (كانت 75).
+- النتيجة على الفرونت اند: **169/169 Tests** (كانت 153).
+
 ### إصلاح — شيل AutoMapper نهائيًا (2026-08-14)
 - AutoMapper 13.0.1 فيه ثغرة أمنية معروفة (`GHSA-rvv3-g6hj-g44x` - Denial of Service عن طريق Recursion) من غير Patch مجاني متاح — النسخة اللي فيها التصليح (15.1.1+) بقت مرخّصة تجاريًا بعد ما المكتبة اتباعت في يوليو 2025.
 - بما إن الـ Mapping هنا كان بسيط أصلًا (5 DTOs مسطّحة)، الحل كان نشيل الـ Dependency بالكامل ونستبدلها بـ `MappingExtensions.cs` (Extension Methods عادية زي `ToDto()`) بدل ما نمشي في قرار ترخيص تجاري لحاجة صغيرة.

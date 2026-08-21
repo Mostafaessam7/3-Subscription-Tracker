@@ -23,7 +23,7 @@ describe('CalendarViewComponent', () => {
 
   beforeEach(async () => {
     localStorage.setItem('subscription_tracker_user', JSON.stringify({
-      userId: 1, name: 'Mostafa', email: 'mostafa@example.com', role: UserRole.User,
+      userId: 1, name: 'Mostafa', email: 'mostafa@example.com', role: UserRole.User, emailConfirmed: true,
       token: 'fake-token', expiresAt: new Date(Date.now() + 3600000).toISOString()
     }));
     localStorage.setItem('subscription_tracker_token', 'fake-token');

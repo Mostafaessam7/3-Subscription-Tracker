@@ -9,6 +9,7 @@ namespace SubscriptionTracker.Application.Interfaces.Services
         Task<ProfileDto?> GetByIdAsync(int id);
         Task<ProfileDto?> UpdateProfileAsync(int id, UpdateProfileDto dto);
         Task<(bool Success, string? ErrorMessage)> ChangePasswordAsync(int id, ChangePasswordDto dto);
+        Task<(bool Success, string? ErrorMessage)> DeleteAccountAsync(int id, DeleteAccountDto dto);
         Task<BudgetDto?> GetBudgetAsync(int id);
         Task<BudgetDto?> UpdateBudgetAsync(int id, UpdateBudgetDto dto);
     }

@@ -3,7 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthResponse, ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest } from '../models/auth.model';
+import {
+  AuthResponse,
+  ConfirmEmailRequest,
+  ForgotPasswordRequest,
+  LoginRequest,
+  RegisterRequest,
+  ResendConfirmationRequest,
+  ResetPasswordRequest
+} from '../models/auth.model';
 
 const TOKEN_KEY = 'subscription_tracker_token';
 const USER_KEY = 'subscription_tracker_user';
@@ -38,6 +46,15 @@ export class AuthService {
 
   resetPassword(dto: ResetPasswordRequest): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, dto);
+  }
+
+  confirmEmail(dto: ConfirmEmailRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/confirm-email`, dto);
+  }
+
+  // بيرجع 200 دايمًا من الباك اند (حتى لو الإيميل مش مسجل أو متأكد بالفعل)
+  resendConfirmation(dto: ResendConfirmationRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/resend-confirmation`, dto);
   }
 
   logout(): void {

@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Services;
 
 namespace SubscriptionTracker.Api.Controllers
 {
+    // Rate Limiting على الكلاس كله - أربع Endpoints هنا (Register/Login/Forgot/Reset) كلهم
+    // من غير [Authorize] وعرضة لمحاولات Brute-force أو إغراق (راجع تعريف "AuthEndpoints" في Program.cs)
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("AuthEndpoints")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -49,6 +53,25 @@ namespace SubscriptionTracker.Api.Controllers
             var success = await _authService.ResetPasswordAsync(dto);
             if (!success) return BadRequest(new { message = "لينك إعادة التعيين غلط أو منتهي الصلاحية" });
             return Ok(new { message = "تم تغيير كلمة السر بنجاح" });
+        }
+
+        // POST: api/auth/confirm-email
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto dto)
+        {
+            var success = await _authService.ConfirmEmailAsync(dto);
+            if (!success) return BadRequest(new { message = "لينك التأكيد غلط أو منتهي الصلاحية" });
+            return Ok(new { message = "تم تأكيد الإيميل بنجاح" });
+        }
+
+        // POST: api/auth/resend-confirmation
+        // بيرجع 200 دايمًا (حتى لو الإيميل مش موجود أو متأكد بالفعل) عشان محدش يقدر يكتشف
+        // الإيميلات المسجلة في النظام
+        [HttpPost("resend-confirmation")]
+        public async Task<IActionResult> ResendConfirmation(ResendConfirmationDto dto)
+        {
+            await _authService.ResendConfirmationAsync(dto);
+            return Ok(new { message = "لو الإيميل ده مسجل ومحتاج تأكيد، هيوصلك لينك تأكيد جديد" });
         }
     }
 }

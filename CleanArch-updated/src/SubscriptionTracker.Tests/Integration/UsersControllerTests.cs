@@ -108,5 +108,64 @@ namespace SubscriptionTracker.Tests.Integration
             var response = await _client.GetAsync($"/api/users/{otherUserId}/budget");
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
+
+        [Fact]
+        public async Task DeleteAccount_WithWrongPassword_ReturnsBadRequest()
+        {
+            var (userId, token) = await _client.RegisterUserAsync();
+            _client.AuthenticateAs(token);
+
+            var response = await SendDeleteAsync(userId, "WrongPassword");
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_ForAnotherUser_ReturnsForbidden()
+        {
+            var (otherUserId, _) = await _client.RegisterUserAsync();
+            var (_, token) = await _client.RegisterUserAsync();
+            _client.AuthenticateAs(token);
+
+            var response = await SendDeleteAsync(otherUserId, "Password123");
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_WithCorrectPassword_DeletesUserAndSubscriptions()
+        {
+            var (userId, token, email) = await _client.RegisterUserWithEmailAsync();
+            _client.AuthenticateAs(token);
+
+            var createSubResponse = await _client.PostAsJsonAsync("/api/subscriptions", new CreateSubscriptionDto
+            {
+                Name = "Netflix",
+                Price = 200,
+                BillingCycle = SubscriptionTracker.Domain.Enums.BillingCycle.Monthly,
+                NextRenewalDate = DateTime.UtcNow.AddMonths(1),
+                UserId = userId
+            });
+            Assert.Equal(HttpStatusCode.Created, createSubResponse.StatusCode);
+
+            var deleteResponse = await SendDeleteAsync(userId, "Password123");
+            Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+            // بعد المسح، محاولة Login بنفس الإيميل لازم تفشل - الحساب اتمسح فعليًا مش بس اتقفل
+            _client.ClearAuthentication();
+            var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginDto
+            {
+                Email = email,
+                Password = "Password123"
+            });
+            Assert.Equal(HttpStatusCode.Unauthorized, loginResponse.StatusCode);
+        }
+
+        private async Task<HttpResponseMessage> SendDeleteAsync(int userId, string password)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/users/{userId}")
+            {
+                Content = JsonContent.Create(new DeleteAccountDto { Password = password })
+            };
+            return await _client.SendAsync(request);
+        }
     }
 }

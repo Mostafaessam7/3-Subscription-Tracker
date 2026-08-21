@@ -2,14 +2,16 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../../services/profile.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
 import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
 import { Profile } from '../../models/subscription.model';
+import { strongPasswordValidators } from '../../utils/password-validators';
 
 @Component({
   selector: 'app-profile',
@@ -22,9 +24,12 @@ export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private confirmDialogService = inject(ConfirmDialogService);
+  private translate = inject(TranslateService);
   private fb = new FormBuilder();
 
   profile: Profile | null = null;
+  deleteError = '';
 
   nameForm = this.fb.group({
     name: ['', Validators.required]
@@ -32,7 +37,11 @@ export class ProfileComponent implements OnInit {
 
   passwordForm = this.fb.group({
     currentPassword: ['', Validators.required],
-    newPassword: ['', [Validators.required, Validators.minLength(6)]]
+    newPassword: ['', strongPasswordValidators()]
+  });
+
+  deleteAccountForm = this.fb.group({
+    password: ['', Validators.required]
   });
 
   private get userId(): number {
@@ -69,6 +78,23 @@ export class ProfileComponent implements OnInit {
       error: (err) => {
         const key = err.status === 400 ? 'profile.currentPasswordWrong' : 'profile.saveError';
         this.toastService.show(key, 'error');
+      }
+    });
+  }
+
+  async deleteAccount(): Promise<void> {
+    if (this.deleteAccountForm.invalid) return;
+    this.deleteError = '';
+
+    const confirmed = await this.confirmDialogService.confirm(this.translate.instant('profile.deleteAccountConfirm'));
+    if (!confirmed) return;
+
+    this.profileService.deleteAccount(this.userId, this.deleteAccountForm.getRawValue() as any).subscribe({
+      next: () => this.authService.logout(),
+      error: (err) => {
+        this.deleteError = err.status === 400
+          ? this.translate.instant('profile.deleteAccountWrongPassword')
+          : this.translate.instant('profile.saveError');
       }
     });
   }

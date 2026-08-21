@@ -1,7 +1,9 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using SubscriptionTracker.Api.Middleware;
@@ -138,6 +140,35 @@ try
     });
     builder.Services.AddAuthorization();
 
+    // ============================================================
+    // Rate Limiting - عشان Endpoints الـ Auth (Login/Register/Forgot-Password) متبقاش
+    // مفتوحة لمحاولات Brute-force غير محدودة. كل IP ليه سقف منفصل (Partitioned)، مش سقف
+    // واحد مشترك بين كل المستخدمين
+    // ============================================================
+    builder.Services.Configure<RateLimitSettings>(builder.Configuration.GetSection(RateLimitSettings.SectionName));
+
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+        options.AddPolicy("AuthEndpoints", httpContext =>
+        {
+            // بنقرا الإعدادات من IOptionsMonitor وقت كل طلب (مش قيمة متسجّلة مرة واحدة وقت
+            // الإقلاع) عشان بيئة الاختبار تقدر تغيّر السقف عن طريق services.Configure() العادي
+            var settings = httpContext.RequestServices
+                .GetRequiredService<Microsoft.Extensions.Options.IOptionsMonitor<RateLimitSettings>>().CurrentValue;
+
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                factory: _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = settings.PermitLimit,
+                    Window = TimeSpan.FromSeconds(settings.WindowSeconds),
+                    QueueLimit = 0
+                });
+        });
+    });
+
     var app = builder.Build();
 
     // بيسجّل كل Request بيوصل للسيرفر (المسار، الوقت اللي اتاخد، الـ Status Code) - سطر واحد بس
@@ -155,6 +186,8 @@ try
 
     app.UseHttpsRedirection();
     app.UseCors("AllowAngularApp");
+
+    app.UseRateLimiter();
 
     // الترتيب مهم: Authentication الأول وبعدها Authorization
     app.UseAuthentication();

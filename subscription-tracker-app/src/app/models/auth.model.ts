@@ -20,12 +20,21 @@ export interface ResetPasswordRequest {
   newPassword: string;
 }
 
+export interface ConfirmEmailRequest {
+  token: string;
+}
+
+export interface ResendConfirmationRequest {
+  email: string;
+}
+
 // شكل الرد بعد نجاح الدخول أو التسجيل (بيطابق AuthResponseDto في C#)
 export interface AuthResponse {
   userId: number;
   name: string;
   email: string;
   role: UserRole;
+  emailConfirmed: boolean;
   token: string;
   expiresAt: string;
 }

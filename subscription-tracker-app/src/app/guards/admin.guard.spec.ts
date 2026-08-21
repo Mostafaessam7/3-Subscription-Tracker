@@ -39,6 +39,7 @@ describe('adminGuard', () => {
       name: 'Test',
       email: 'test@example.com',
       role: UserRole.User,
+      emailConfirmed: true,
       token: 't',
       expiresAt: new Date(Date.now() + 3600000).toISOString()
     });
@@ -56,6 +57,7 @@ describe('adminGuard', () => {
       name: 'Admin',
       email: 'admin@example.com',
       role: UserRole.Admin,
+      emailConfirmed: true,
       token: 't',
       expiresAt: new Date(Date.now() + 3600000).toISOString()
     });

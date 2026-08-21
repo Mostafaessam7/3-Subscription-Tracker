@@ -12,5 +12,11 @@ namespace SubscriptionTracker.Application.Interfaces.Services
 
         // بيرجع false لو التوكن غلط/منتهي، عشان الـ Controller يرجّع 400 مناسب
         Task<bool> ResetPasswordAsync(ResetPasswordDto dto);
+
+        // بيرجع false لو التوكن غلط/منتهي
+        Task<bool> ConfirmEmailAsync(ConfirmEmailDto dto);
+
+        // زي ForgotPasswordAsync - بيرجع دايمًا من غير ما يوضح لو الإيميل موجود/متأكد بالفعل
+        Task ResendConfirmationAsync(ResendConfirmationDto dto);
     }
 }

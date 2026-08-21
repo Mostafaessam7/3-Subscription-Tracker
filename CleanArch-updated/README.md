@@ -234,6 +234,29 @@ POST /api/admin/bootstrap
 - **إعداد جديد مطلوب**: `Frontend:BaseUrl` في `appsettings.json` (افتراضيًا `http://localhost:4200`) — بيتحدد بيه دومين اللينك جوه إيميل إعادة التعيين.
 - Migration: `AddPasswordResetToken` (عمودين جداد Nullable في `Users`: `PasswordResetTokenHash`, `PasswordResetTokenExpiresAt`).
 
+## تأكيد الإيميل (Email Verification)
+
+نفس نمط Forgot/Reset Password بالظبط (توكن عشوائي، Hash بس بيتخزن، One-Time Use):
+
+| Method | Endpoint | الوصف |
+|---|---|---|
+| POST | `/api/auth/confirm-email` | بياخد `token`، بيرجع `400` لو غلط/منتهي/اتستخدم قبل كده. لو صح، بيحط `Users.EmailConfirmed = true` |
+| POST | `/api/auth/resend-confirmation` | بياخد `email`، بيرجع `200` **دايمًا** (زي forgot-password، منعًا لتسريب معلومة) |
+
+- **مفيش منع تسجيل دخول للمستخدمين غير المؤكدين** - قرار متعمّد عشان منقفلش على حسابات قديمة أو تجريبية معملتلهاش Migration. `AuthResponseDto.EmailConfirmed` بيوصل للفرونت اند عشان يعرض تنبيه بس، من غير ما يمنع الاستخدام.
+- التوكن صلاحيته 3 أيام (أطول من الساعة بتاعة Password Reset - عادي محتاج وقت أطول عشان تفتح الإيميل).
+- Migration: `AddEmailConfirmation` (`EmailConfirmed`, `EmailConfirmationTokenHash`, `EmailConfirmationTokenExpiresAt`).
+
+## Rate Limiting
+
+كل Endpoints الـ Auth (`AuthController` بالكامل + `AdminController.Bootstrap`) عليها `[EnableRateLimiting("AuthEndpoints")]` - سقف 10 طلبات/دقيقة لكل IP (Partitioned، مش سقف مشترك بين كل المستخدمين)، باستخدام `Microsoft.AspNetCore.RateLimiting` المدمجة في .NET (مفيش Package خارجي). أي طلب زيادة بيرجع `429 Too Many Requests`.
+
+- السقف مقروء من `appsettings.json` (`RateLimiting:AuthEndpoints:PermitLimit`/`WindowSeconds`) عن طريق `IOptionsMonitor<RateLimitSettings>` بيتقرا وقت كل طلب - عشان بيئة الاختبار تقدر ترفعه بـ `services.Configure<RateLimitSettings>()` من غير ما تلمس appsettings.json.
+
+## مسح الحساب (Delete Account)
+
+`DELETE /api/users/{id}` - بياخد كلمة السر الحالية للتأكيد (زي Change Password بالظبط، ومقصودة إنها `CurrentUserId` بس حتى الأدمن مايقدرش يمسح حساب حد تاني). الاشتراكات بتتمسح Cascade تلقائي على مستوى الـ DB (`OnDelete(DeleteBehavior.Cascade)` موجودة أصلًا في `SubscriptionConfiguration.cs`).
+
 ## Testing
 
 مشروع `SubscriptionTracker.Tests` (xUnit) بيغطي المنطق اللي مالوش علاقة بقاعدة البيانات مباشرة:

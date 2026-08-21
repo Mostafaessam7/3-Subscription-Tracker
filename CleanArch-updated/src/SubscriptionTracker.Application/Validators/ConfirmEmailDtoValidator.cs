@@ -3,12 +3,11 @@ using SubscriptionTracker.Application.DTOs;
 
 namespace SubscriptionTracker.Application.Validators
 {
-    public class ResetPasswordDtoValidator : AbstractValidator<ResetPasswordDto>
+    public class ConfirmEmailDtoValidator : AbstractValidator<ConfirmEmailDto>
     {
-        public ResetPasswordDtoValidator()
+        public ConfirmEmailDtoValidator()
         {
             RuleFor(x => x.Token).NotEmpty();
-            RuleFor(x => x.NewPassword).NotEmpty().MustBeStrongPassword();
         }
     }
 }
