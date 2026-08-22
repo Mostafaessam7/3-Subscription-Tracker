@@ -12,11 +12,10 @@ type ConfirmState = 'confirming' | 'success' | 'error' | 'missingToken';
 // صفحة اللينك اللي بيوصل في إيميل تأكيد الحساب - بتأكّد التوكن أوتوماتيك أول ما تفتح
 // (من غير أي فورم أو تدخّل من المستخدم، عكس Reset Password اللي محتاج كلمة سر جديدة)
 @Component({
-  selector: 'app-confirm-email',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
-  templateUrl: './confirm-email.component.html',
-  styleUrl: './confirm-email.component.css'
+    selector: 'app-confirm-email',
+    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+    templateUrl: './confirm-email.component.html',
+    styleUrl: './confirm-email.component.css'
 })
 export class ConfirmEmailComponent implements OnInit {
   private authService = inject(AuthService);

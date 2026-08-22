@@ -12,11 +12,10 @@ interface ChartSlice extends CategorySpending {
 }
 
 @Component({
-  selector: 'app-category-spending-chart',
-  standalone: true,
-  imports: [CommonModule, TranslateModule, CategoryNamePipe],
-  templateUrl: './category-spending-chart.component.html',
-  styleUrl: './category-spending-chart.component.css'
+    selector: 'app-category-spending-chart',
+    imports: [CommonModule, TranslateModule, CategoryNamePipe],
+    templateUrl: './category-spending-chart.component.html',
+    styleUrl: './category-spending-chart.component.css'
 })
 export class CategorySpendingChartComponent implements OnInit, OnChanges {
   private analyticsService = inject(AnalyticsService);

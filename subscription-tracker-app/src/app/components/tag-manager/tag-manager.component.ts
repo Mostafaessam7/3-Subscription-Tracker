@@ -11,11 +11,10 @@ import { Tag } from '../../models/subscription.model';
 const DEFAULT_COLORS = ['#818CF8', '#35D0C6', '#F5B841', '#4ADE80', '#FB7185', '#38BDF8'];
 
 @Component({
-  selector: 'app-tag-manager',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
-  templateUrl: './tag-manager.component.html',
-  styleUrl: './tag-manager.component.css'
+    selector: 'app-tag-manager',
+    imports: [CommonModule, FormsModule, TranslateModule],
+    templateUrl: './tag-manager.component.html',
+    styleUrl: './tag-manager.component.css'
 })
 export class TagManagerComponent implements OnChanges {
   private tagService = inject(TagService);

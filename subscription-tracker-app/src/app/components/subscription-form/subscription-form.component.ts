@@ -11,11 +11,10 @@ import { TagService } from '../../services/tag.service';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
-  selector: 'app-subscription-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, CategoryNamePipe],
-  templateUrl: './subscription-form.component.html',
-  styleUrl: './subscription-form.component.css'
+    selector: 'app-subscription-form',
+    imports: [CommonModule, ReactiveFormsModule, TranslateModule, CategoryNamePipe],
+    templateUrl: './subscription-form.component.html',
+    styleUrl: './subscription-form.component.css'
 })
 export class SubscriptionFormComponent implements OnInit, OnChanges {
   private categoryService = inject(CategoryService);

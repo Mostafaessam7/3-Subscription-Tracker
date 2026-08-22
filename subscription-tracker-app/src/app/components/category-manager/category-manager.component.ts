@@ -11,11 +11,10 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '#FB7185', '#94A3B8'];
 
 @Component({
-  selector: 'app-category-manager',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, CategoryNamePipe],
-  templateUrl: './category-manager.component.html',
-  styleUrl: './category-manager.component.css'
+    selector: 'app-category-manager',
+    imports: [CommonModule, FormsModule, TranslateModule, CategoryNamePipe],
+    templateUrl: './category-manager.component.html',
+    styleUrl: './category-manager.component.css'
 })
 export class CategoryManagerComponent implements OnChanges {
   private categoryService = inject(CategoryService);

@@ -37,27 +37,26 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 type SortOption = 'RenewalDate' | 'Cost' | 'Name';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    TranslateModule,
-    CountUpDirective,
-    SubscriptionListComponent,
-    SubscriptionFormComponent,
-    LanguageSwitchComponent,
-    ThemeSwitchComponent,
-    CategoryManagerComponent,
-    PaymentMethodManagerComponent,
-    TagManagerComponent,
-    CategorySpendingChartComponent,
-    VantaBackgroundDirective,
-    CategoryNamePipe
-  ],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+    selector: 'app-dashboard',
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterLink,
+        TranslateModule,
+        CountUpDirective,
+        SubscriptionListComponent,
+        SubscriptionFormComponent,
+        LanguageSwitchComponent,
+        ThemeSwitchComponent,
+        CategoryManagerComponent,
+        PaymentMethodManagerComponent,
+        TagManagerComponent,
+        CategorySpendingChartComponent,
+        VantaBackgroundDirective,
+        CategoryNamePipe
+    ],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);

@@ -15,11 +15,10 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
-  selector: 'app-subscription-detail',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
-  templateUrl: './subscription-detail.component.html',
-  styleUrl: './subscription-detail.component.css'
+    selector: 'app-subscription-detail',
+    imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
+    templateUrl: './subscription-detail.component.html',
+    styleUrl: './subscription-detail.component.css'
 })
 export class SubscriptionDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);

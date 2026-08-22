@@ -10,12 +10,11 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
 import { strongPasswordValidators } from '../../utils/password-validators';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-    ThemeSwitchComponent, VantaBackgroundDirective],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
+        ThemeSwitchComponent, VantaBackgroundDirective],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
 export class RegisterComponent {
   private fb = new FormBuilder();

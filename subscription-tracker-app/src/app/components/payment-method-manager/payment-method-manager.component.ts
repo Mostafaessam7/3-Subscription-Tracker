@@ -9,11 +9,10 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { PaymentMethod, PaymentMethodType } from '../../models/subscription.model';
 
 @Component({
-  selector: 'app-payment-method-manager',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
-  templateUrl: './payment-method-manager.component.html',
-  styleUrl: './payment-method-manager.component.css'
+    selector: 'app-payment-method-manager',
+    imports: [CommonModule, FormsModule, TranslateModule],
+    templateUrl: './payment-method-manager.component.html',
+    styleUrl: './payment-method-manager.component.css'
 })
 export class PaymentMethodManagerComponent implements OnChanges {
   private paymentMethodService = inject(PaymentMethodService);

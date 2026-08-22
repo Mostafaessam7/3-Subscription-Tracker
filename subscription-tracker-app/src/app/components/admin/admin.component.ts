@@ -12,11 +12,10 @@ import { AdminUser, SystemStats } from '../../models/admin.model';
 import { UserRole } from '../../models/subscription.model';
 
 @Component({
-  selector: 'app-admin',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
-  templateUrl: './admin.component.html',
-  styleUrl: './admin.component.css'
+    selector: 'app-admin',
+    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+    templateUrl: './admin.component.html',
+    styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
   private adminService = inject(AdminService);

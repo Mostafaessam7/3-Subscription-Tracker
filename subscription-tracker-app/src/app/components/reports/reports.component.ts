@@ -16,11 +16,10 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 type ReportPreset = 'all' | 'active' | 'expired' | 'upcoming';
 
 @Component({
-  selector: 'app-reports',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
-  templateUrl: './reports.component.html',
-  styleUrl: './reports.component.css'
+    selector: 'app-reports',
+    imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
+    templateUrl: './reports.component.html',
+    styleUrl: './reports.component.css'
 })
 export class ReportsComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);

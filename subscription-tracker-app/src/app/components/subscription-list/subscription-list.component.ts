@@ -11,11 +11,10 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
-  selector: 'app-subscription-list',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, CategoryNamePipe],
-  templateUrl: './subscription-list.component.html',
-  styleUrl: './subscription-list.component.css'
+    selector: 'app-subscription-list',
+    imports: [CommonModule, RouterLink, TranslateModule, CategoryNamePipe],
+    templateUrl: './subscription-list.component.html',
+    styleUrl: './subscription-list.component.css'
 })
 export class SubscriptionListComponent {
   private translate = inject(TranslateService);

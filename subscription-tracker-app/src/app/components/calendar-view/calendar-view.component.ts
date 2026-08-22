@@ -16,11 +16,10 @@ interface CalendarDay {
 }
 
 @Component({
-  selector: 'app-calendar-view',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
-  templateUrl: './calendar-view.component.html',
-  styleUrl: './calendar-view.component.css'
+    selector: 'app-calendar-view',
+    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+    templateUrl: './calendar-view.component.html',
+    styleUrl: './calendar-view.component.css'
 })
 export class CalendarViewComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);
