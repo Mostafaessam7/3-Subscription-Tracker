@@ -2,6 +2,24 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
+## فجوة 9: Email Verification, Rate Limiting, Delete Account, كلمة سر أقوى
+
+مراجعة شاملة تانية للمشروع كله بعد فجوة 5-8 كشفت 4 فجوات حقيقية باقية: مفيش تأكيد إيميل بعد التسجيل، مفيش أي Rate Limiting على Endpoints الـ Auth (Brute-force مفتوح)، مفيش Delete Account، وكلمة السر كانت من غير أي قاعدة تعقيد (6 حروف بس).
+
+1. [x] **Email Verification**: `User.EmailConfirmed`/`EmailConfirmationTokenHash`/`EmailConfirmationTokenExpiresAt` + Migration (`AddEmailConfirmation`) — نفس نمط Password Reset بالظبط (توكن Hash بس، One-Time Use، 3 أيام صلاحية)
+2. [x] `POST /api/auth/confirm-email` و `POST /api/auth/resend-confirmation` (بيرجع 200 دايمًا منعًا لتسريب معلومة)
+3. [x] **قرار متعمّد**: مفيش منع تسجيل دخول للمستخدمين غير المؤكدين — عشان منقفلش على حسابات قديمة/تجريبية. الفرونت اند بس بيعرض بانر + زرار Resend
+4. [x] **الفرونت اند**: صفحة `/confirm-email` (بتأكّد أوتوماتيك من غير فورم) + بانر في الداشبورد
+5. [x] **Rate Limiting**: `[EnableRateLimiting("AuthEndpoints")]` على `AuthController` بالكامل + `AdminController.Bootstrap` — سقف 10 طلبات/دقيقة لكل IP (Partitioned)، `Microsoft.AspNetCore.RateLimiting` المدمجة (مفيش Package جديد). السقف قابل للتعديل من `appsettings.json` ومقروء وقت كل طلب عن طريق `IOptionsMonitor<RateLimitSettings>` (عشان بيئة الاختبار تقدر ترفعه من غير ما تلمس appsettings.json)
+6. [x] **Delete Account**: `DELETE /api/users/{id}` بيتطلب كلمة السر الحالية (زي Change Password)، الاشتراكات بتتمسح Cascade. الفرونت اند: قسم "Danger Zone" في `/profile` مع نافذة تأكيد إضافية
+7. [x] **كلمة سر أقوى**: من `MinimumLength(6)` لـ 8 حروف + حرف كبير + حرف صغير + رقم — `PasswordRules.cs` (باك اند) و `password-validators.ts` (فرونت اند) مشتركين، مطبّقين على التسجيل/إعادة التعيين/تغيير كلمة السر كلهم
+8. [x] **Tests**: 6 Integration Tests جداد لـ Email Verification، `RateLimitingTests.cs` (فاكتوري خاصة بسقف صغير عشان يتأكد من الـ 429 فعليًا)، 3 Integration Tests لـ Delete Account، Component Tests لـ `ConfirmEmailComponent` وDelete Account في `profile.component.spec.ts`، Test لـ `CategoryNamePipe` اللي كان ناقص من فجوة سابقة
+
+### 🐛 باگ حقيقي اتكشف أثناء التنفيذ (مش جزء من الفجوات المطلوبة، لقيته بالصدفة)
+تعديلات سابقة (فجوة 5-8 وشغل تاني) كانت ضايفة قواعد `body.light-theme .selector` جوه CSS Components (زي `.eyebrow`, `.budget-label`, تدرّج خلفية الـ Vanta) عشان تظبط الألوان في الوضع الفاتح — بس القواعد دي **كانت ميتة تمامًا من غير ما يظهر أي خطأ**. السبب: Angular's View Encapsulation بيضيف Attribute Scoping لكل جزء في الـ Selector جوه CSS الكومبوننت، بما فيه `body` نفسه — والـ `body` الحقيقي في الصفحة معندوش الـ Attribute ده أبدًا، فالقاعدة مستحيل تتطابق. اتصلح بـ `:host-context(body.light-theme)` بدل `body.light-theme` — البديل الرسمي بتاع Angular بالظبط للحالة دي (فحص Class على عنصر أب برّه الكومبوننت). اتصلح في 4 ملفات (6 قواعد).
+
+النتيجة: **89/89 Backend Tests** (كانت 75)، **169/169 Frontend Tests** (كانت 153).
+
 ## فجوة 5: Forgot Password / Reset Password (Backend + Frontend)
 
 كانت أكبر فجوة فيتشر فعلية في المشروع كله — مفيش أي Flow لاسترجاع كلمة السر، رغم إن `EmailService` جاهز بالفعل (بيستخدم بس للتذكير بالتجديد).

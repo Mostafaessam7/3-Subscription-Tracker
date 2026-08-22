@@ -9,20 +9,22 @@
 ```
 src/
 ├── app/
-│   ├── components/          ← 20 Component (Standalone): dashboard, admin, reports, profile,
+│   ├── components/          ← 21 Component (Standalone): dashboard, admin, reports, profile,
 │   │                            calendar-view, subscription-list/form/detail, login/register,
-│   │                            forgot-password/reset-password, category-manager, tag-manager,
-│   │                            payment-method-manager, category-spending-chart, toast,
-│   │                            confirm-dialog, theme-switch, language-switch
+│   │                            forgot-password/reset-password/confirm-email, category-manager,
+│   │                            tag-manager, payment-method-manager, category-spending-chart,
+│   │                            toast, confirm-dialog, theme-switch, language-switch
 │   ├── models/               ← subscription.model.ts, auth.model.ts, admin.model.ts
 │   ├── services/             ← 15 Service: subscription, auth, admin, budget, category, tag,
 │   │                            payment-method, profile, analytics, export, toast,
 │   │                            confirm-dialog, celebration, theme, language
 │   ├── guards/                ← auth.guard.ts (تسجيل دخول)، admin.guard.ts (دور Admin)
 │   ├── directives/            ← count-up.directive.ts، vanta-background.directive.ts
+│   ├── pipes/                  ← category-name.pipe.ts (ترجمة أسماء التصنيفات الافتراضية)
 │   ├── interceptors/
 │   │   └── auth.interceptor.ts   ← بيضيف الـ Token تلقائيًا لكل طلب HTTP
-│   ├── utils/                 ← billing-cycle.util.ts، logo.util.ts، categories.const.ts
+│   ├── utils/                 ← billing-cycle.util.ts، logo.util.ts، categories.const.ts،
+│   │                            password-validators.ts
 │   ├── app.component.ts/html/css   ← الكومبوننت الجذر
 │   ├── app.routes.ts               ← تعريف كل الصفحات والـ Guards بتاعتها
 │   └── app.config.ts               ← تسجيل الـ Router والـ HttpClient والـ Interceptor
@@ -91,7 +93,7 @@ src/
 3. للنصوص اللي فيها متغير: `{{ 'section.key' | translate:{ name: someValue } }}` مع `{{name}}` جوه الملف
 
 ### ملحوظة عن التصنيفات
-قيم التصنيفات (`Category`) متخزنة في قاعدة البيانات **بالعربي دايمًا** (زي ما هي في الباك اند)، وفيه دالة `categoryTranslationKey()` في `models/categories.const.ts` بتحوّل القيمة المخزنة لمفتاح ترجمة يتغيّر شكله حسب اللغة، من غير ما تتغيّر البيانات المخزنة فعليًا.
+التصنيفات الستة الافتراضية (Seed Data في الباك اند) أسماؤها متخزنة **بالعربي دايمًا** ومفيش عمود يميّزها عن تصنيف مخصّص عمله المستخدم بنفسه. `CategoryNamePipe` (`pipes/category-name.pipe.ts`) بيطابق بالاسم نفسه مع خريطة في `utils/categories.const.ts` (`defaultCategoryNameKey()`): لو الاسم مطابق لواحد من الستة الافتراضيين بيترجمه لمفتاح ترجمة (`categories.defaults.*`)، غير كده (تصنيف مخصّص) بيسيبه زي ما هو لأنه أصلًا نص حر مفيش له ترجمة. استخدامه في الـ Template: `{{ category.name | categoryName }}`.
 
 ## P2 — دورات دفع إضافية، تحليلات، بروفايل، تقارير
 
@@ -131,6 +133,20 @@ src/
 - **صفحة `/reset-password?token=...`** (`components/reset-password/`): فورم كلمة سر جديدة + تأكيدها (Validator بيتأكد إنهم متطابقين)، بيقرا الـ `token` من الـ Query String. لو اللينك من غير token، الفورم بيتقفل فورًا برسالة واضحة بدل ما يسيب المستخدم يحاول يبعت طلب هيفشل أكيد
 - **`AuthService.forgotPassword()` / `resetPassword()`** جديدين بيكلموا `POST /api/auth/forgot-password` و `POST /api/auth/reset-password`
 - لينك **"نسيت كلمة السر؟"** في صفحة `/login` تحت زرار الدخول
+
+## تأكيد الإيميل، مسح الحساب، وكلمة سر أقوى
+
+### تأكيد الإيميل (`/confirm-email`)
+- صفحة `/confirm-email?token=...` (`components/confirm-email/`) بتأكّد التوكن **أوتوماتيك** أول ما تفتح (من غير أي فورم أو تدخّل من المستخدم، عكس Reset Password اللي محتاج كلمة سر جديدة) وبتعرض حالة النجاح/الفشل
+- **الداشبورد بيعرض بانر تحذيري** لو `authService.currentUser()?.emailConfirmed === false`، مع زرار "ابعت لينك التأكيد تاني" (`resendConfirmationEmail()` في `dashboard.component.ts`)
+- **تسجيل الدخول مش ممنوع** للمستخدمين غير المؤكدين - البانر بس بيوضح الحالة، من غير ما يمنع الاستخدام
+
+### مسح الحساب (Danger Zone في `/profile`)
+- قسم "مسح الحساب" في أسفل صفحة البروفايل - محتاج كلمة السر الحالية + تأكيد إضافي عن طريق `ConfirmDialogService` قبل التنفيذ
+- بعد المسح بينادي `authService.logout()` أوتوماتيك ويرجّع لصفحة `/login`
+
+### قواعد كلمة سر أقوى
+`utils/password-validators.ts` (`strongPasswordValidators()`) - 8 حروف على الأقل + حرف كبير + حرف صغير + رقم، نفس قواعد الباك اند بالظبط (`PasswordRules.cs`) بحيث لو الفرونت اند سمح بكلمة سر معينة، الباك اند مش هيرفضها بعدين. مطبّقة على التسجيل، إعادة تعيين كلمة السر، وتغيير كلمة السر كلهم، مع نص توضيحي (`auth.passwordRequirements`) تحت كل حقل.
 
 ## P3 — Favorites, Tags, Duplicate, Calendar, Logo تلقائي, Dark/Light Toggle
 
@@ -246,9 +262,12 @@ npm test
 | `components/toast/toast.component.spec.ts` | العرض الفعلي للـ Toasts في الـ DOM حسب حالة الـ Service |
 | `services/admin.service.spec.ts` | استدعاءات `/api/admin/*` (users, stats, role update) |
 | `guards/admin.guard.spec.ts` | الحماية الثلاثية: مش مسجّل دخول → `/login`، مسجّل بس مش Admin → `/`، Admin فعلًا → مسموح |
-| `components/dashboard/dashboard.component.spec.ts` | منطق الداشبورد: حساب `activeCount`/`expiredCount`/`renewingSoonCount`، Budget Warning (بيتبعت مرة واحدة بس)، الفلاتر، `onLogout` — من غير Render كامل للـ Template (تجنّب الاعتماد على الـ Child Components المتداخلة) |
+| `components/dashboard/dashboard.component.spec.ts` | منطق الداشبورد: حساب `activeCount`/`expiredCount`/`renewingSoonCount`، Budget Warning (بيتبعت مرة واحدة بس)، الفلاتر، `onLogout`، بانر تأكيد الإيميل وResend — من غير Render كامل للـ Template (تجنّب الاعتماد على الـ Child Components المتداخلة) |
+| `pipes/category-name.pipe.spec.ts` | ترجمة أسماء التصنيفات الافتراضية الستة، وترك أي تصنيف مخصّص زي ما هو |
+| `components/confirm-email/confirm-email.component.spec.ts` | تأكيد التوكن الأوتوماتيكي وقت `ngOnInit` - نجاح، فشل، ولينك من غير token |
+| `components/profile/profile.component.spec.ts` | تعديل الاسم، تغيير كلمة السر، ومسح الحساب (فورم Invalid، إلغاء نافذة التأكيد، نجاح مع Logout، كلمة سر غلط) |
 
-**دلوقتي كل الـ 22 Component عندهم `.spec.ts`** — من `theme-switch`/`language-switch` البسيطة، للفورمات (`subscription-form`, `forgot-password`, `reset-password`)، لمديري البيانات المرجعية (`category-manager`, `tag-manager`, `payment-method-manager`)، لصفحات كاملة (`reports`, `calendar-view`, `admin`, `profile`, `subscription-detail`). إجمالي **153 Test** بتشتغل في ثوانٍ لأنها كلها Mocked (HTTP + Router + الـ Services الجانبية زي `ConfirmDialogService`).
+**دلوقتي كل الـ 21 Component عندهم `.spec.ts`** — من `theme-switch`/`language-switch` البسيطة، للفورمات (`subscription-form`, `forgot-password`, `reset-password`, `confirm-email`)، لمديري البيانات المرجعية (`category-manager`, `tag-manager`, `payment-method-manager`)، لصفحات كاملة (`reports`, `calendar-view`, `admin`, `profile`, `subscription-detail`). إجمالي **169 Test** بتشتغل في ثوانٍ لأنها كلها Mocked (HTTP + Router + الـ Services الجانبية زي `ConfirmDialogService`).
 
 > ⚠️ ملحوظة تقنية لو بتضيف Test لـ Component فيه `ConfirmDialogService.confirm()` جوه Method بترجع HTTP Request بعد التأكيد: استخدم `fakeAsync`/`tick()` مش `async/await` عادي — لأن `confirm()` بيرجع Promise حقيقي، وفحص `HttpTestingController` فورًا بعد ما تنادي الـ Method من غير `tick()` بيسبق تنفيذ الكود اللي جوه الـ Promise (Race Condition). ولو الـ Method بتنادي `ToastService.show()` الحقيقي (من غير Mock)، لازم `tick(3000)` في الآخر عشان تصرّف الـ `setTimeout` بتاع الإخفاء التلقائي، وإلا `fakeAsync` هيرفض ينهي الـ Test (`"1 timer(s) still in the queue"`).
 
@@ -263,6 +282,8 @@ npm run e2e
 ```
 
 13 Test بتغطي: تسجيل/دخول/خروج، نسيان/إعادة تعيين كلمة السر، إضافة/تعديل/حذف اشتراك، ومنع مستخدم عادي من `/admin` مقابل دخول Admin حقيقي.
+
+> ⚠️ **مش متغطي لسه بـ E2E**: تأكيد الإيميل (`/confirm-email`)، مسح الحساب، وRate Limiting - مغطيين بالكامل بـ Integration Tests على الباك اند وComponent Tests على الفرونت اند، بس مفيش Smoke Test حقيقي بيشغّل النظامين مع بعض ليهم لسه.
 
 ## النشر (Deployment)
 

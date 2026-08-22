@@ -149,6 +149,8 @@ docker compose up --build
 - **مفيش CODEOWNERS ولا Issue/PR Templates** — اختياري، مش ضروري لمشروع شخصي.
 - **تحذير NuGet واحد لسه موجود**: `System.Security.Cryptography.Xml 9.0.0` (Transitive عن طريق `JwtBearer`) — بيظهر في كل `dotnet build`/`restore`. مفيش قرار مطلوب منك بخصوصه (مش استخدام مباشر في الكود، والترقية محتاجة تحديث حزمة `JwtBearer` نفسها من مايكروسوفت).
 - **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`) — محتاج دومين إنتاج حقيقي قبل أي Deploy فعلي.
+- **8 ثغرات أمنية عالية في `@angular/core` نفسه** (XSS متنوعة - راجع `npm audit` في `subscription-tracker-app`) — التصليح متاح بس محتاج ترقية Angular من v18 لـ v22 (**4 Majors دفعة واحدة**، Breaking Change حقيقي)، فمحتاج قرار وتجربة شاملة قبل ما نعملها، مش حاجة نعملها بـ `--force` من غير تفكير (زي قرار jspdf السابق بالظبط).
+- **مفيش E2E Tests** لتأكيد الإيميل، مسح الحساب، أو Rate Limiting — مغطيين بالكامل بـ Integration/Component Tests بس مفيش Smoke Test حقيقي بيشغّل النظامين مع بعض ليهم.
 
 > ✅ **اتصلح**: Forgot Password/Reset Password، Email Verification (تأكيد الإيميل بعد التسجيل)، Rate Limiting على كل Endpoints الـ Auth (منع Brute-force)، قواعد كلمة سر أقوى (8 حروف + حرف كبير/صغير/رقم)، Delete Account، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
 

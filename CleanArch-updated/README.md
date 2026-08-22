@@ -264,18 +264,19 @@ POST /api/admin/bootstrap
 - **`BCryptPasswordHasherTests`**: الـ Hash بيطلع مختلف عن الباسورد الأصلي، وبيطلع Salt مختلف كل مرة، والـ Verify بيرجع صح/غلط صح.
 - **`RegisterDtoValidatorTests` / `CreateSubscriptionDtoValidatorTests`**: قواعد الـ FluentValidation (طول الباسورد، شكل الإيميل، مدى السعر، شكل رابط الموقع).
 - **Integration Tests (`WebApplicationFactory<Program>` + EF Core InMemory)**: بتشغّل التطبيق كامل Controller → Service → Repository → DbContext من غير أي Mocking للطبقات الداخلية، وبتغطي دلوقتي كل الـ Controllers:
-  - **`AuthControllerTests`**: تسجيل/دخول، ونسيان/إعادة تعيين كلمة السر (تحقق من إيميل غير موجود بيرجع نفس الرد، توكن غلط/منتهي/One-Time Use)
+  - **`AuthControllerTests`**: تسجيل/دخول، نسيان/إعادة تعيين كلمة السر، وتأكيد الإيميل/إعادة إرسال لينك التأكيد (تحقق من إيميل غير موجود بيرجع نفس الرد، توكن غلط/منتهي/One-Time Use في الحالتين)
   - **`SubscriptionsControllerTests`**: CRUD + Duplicate + فحص الملكية (403 لو حاولت توصل لاشتراك مستخدم تاني)
   - **`CategoriesControllerTests`**, **`TagsControllerTests`**, **`PaymentMethodsControllerTests`**: CRUD كامل
   - **`AdminControllerTests`**: Bootstrap (بمفتاح غلط / لما يكون فيه Admin بالفعل)، وصول مستخدم عادي (403)، إحصائيات، ترقية دور
-  - **`UsersControllerTests`**: بروفايل، تغيير كلمة السر، الميزانية، وفحص الملكية
+  - **`UsersControllerTests`**: بروفايل، تغيير كلمة السر، الميزانية، مسح الحساب (كلمة سر غلط/صح، الاشتراكات بتتمسح معاه)، وفحص الملكية
   - **`AnalyticsControllerTests`**: تحليلات الإنفاق والـ Insights + فحص الملكية
+  - **`RateLimitingTests`**: Test مستقل بفاكتوري خاصة بيه (مش الـ `IClassFixture` المشترك) بسقف صغير (3 طلبات) عشان يتأكد فعليًا إن الطلب اللي بيتعدّى السقف بيرجّع `429`، وإن Endpoint برّه الـ Policy مش متأثر
   - `IntegrationTestHelpers.cs` فيه Extension Methods مشتركة (`RegisterUserAsync`, `BootstrapOrLoginAdminAsync`, `AuthenticateAs`) بدل ما نكررها في كل ملف
-  - `FakeEmailService` بديل `IEmailService` الحقيقي في كل الـ Tests دي - عشان محدش يحاول يتصل بـ SMTP فعلي وقت التستات (هيفشل دايمًا بإعدادات appsettings.json الافتراضية)، وبيسجّل آخر إيميل اتبعت عشان تستخدمه الـ Tests (زي استخراج توكن إعادة التعيين)
+  - `FakeEmailService` بديل `IEmailService` الحقيقي في كل الـ Tests دي - عشان محدش يحاول يتصل بـ SMTP فعلي وقت التستات (هيفشل دايمًا بإعدادات appsettings.json الافتراضية)، وبيسجّل آخر إيميل اتبعت عشان تستخدمه الـ Tests (زي استخراج توكن إعادة التعيين/تأكيد الإيميل)
 
 > ⚠️ الـ Integration Tests بتشتغل بالتوازي افتراضيًا (xUnit) - كل Test Class بيشغّل Host كامل لوحده، وده كان بيسبب Timeouts وهمية على أجهزة أضعف. `xunit.runner.json` بيقفل الـ Parallelization (`parallelizeAssembly`/`parallelizeTestCollections: false`) عشان الاستقرار، على حساب وقت تشغيل أطول شوية.
 
-- **`BillingCycleHelperTests`**, **`BCryptPasswordHasherTests`**, **`RegisterDtoValidatorTests`**, **`CreateSubscriptionDtoValidatorTests`**: Unit Tests للمنطق اللي مالوش علاقة بقاعدة البيانات مباشرة.
+النتيجة الحالية: **89/89 Test**.
 
 ```bash
 dotnet test src/SubscriptionTracker.Tests
@@ -302,14 +303,17 @@ dotnet test src/SubscriptionTracker.Tests
 
 ## إيه اللي **معمولش** لسه من متطلبات "Clean Architecture" الكاملة
 
-كنت صريح قبل كده إن الدوكيومنت الأصلي طالب حاجات إضافية زي Roles/Permissions، AI Features، وUnit Tests. الجولة دي ركّزت بس على:
+كنت صريح قبل كده إن الدوكيومنت الأصلي طالب حاجات إضافية زي Roles/Permissions، AI Features، وUnit Tests. دلوقتي عندنا:
 - ✅ Clean Architecture (4 طبقات + قاعدة الاعتماد الصحيحة)
 - ✅ Repository Pattern + Unit of Work
 - ✅ Mapping مركزي (Extension Methods بدل AutoMapper - راجع الملحوظة في قسم "أهم التغييرات التقنية")
-- ✅ FluentValidation
+- ✅ FluentValidation (بما فيها قواعد كلمة سر أقوى - راجع `PasswordRules.cs`)
 - ✅ Global Exception Handling
 - ✅ Configuration Management (Options Pattern)
 - ✅ Logging (Serilog كامل - Console + ملفات، مع Request Logging تلقائي)
 - ✅ Role-Based Authorization (Admin/User + فحص ملكية البيانات على كل Endpoint حساس)
+- ✅ Integration Tests حقيقية لكل الـ Controllers (راجع قسم "Testing" فوق - 89/89 Test)
+- ✅ Rate Limiting على Endpoints الـ Auth (راجع قسم "Rate Limiting" فوق)
+- ✅ Email Verification + Delete Account
 
-**لسه مش موجود**: Integration Tests حقيقية للـ Controllers/Repositories مع قاعدة بيانات (راجع قسم "Testing" فوق — Unit Tests الأساسية بقت موجودة دلوقتي في `SubscriptionTracker.Tests`)، الـ AI Features.
+**لسه مش موجود**: الـ AI Features (كانت مطلوبة في الدوكيومنت الأصلي، برّه Scope الجولات اللي اتعملت لحد دلوقتي).
