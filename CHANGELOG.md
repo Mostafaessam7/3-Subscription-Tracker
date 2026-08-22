@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### إضافات — E2E Tests لتأكيد الإيميل ومسح الحساب + إصلاح Flakiness (2026-08-22)
+- `e2e/account.spec.ts` جديد (7 Tests): بانر تأكيد الإيميل على مستخدم جديد، زرار إعادة الإرسال، صفحة `/confirm-email` بتوكن غلط/ناقص، ومسح الحساب (كلمة سر صح/غلط، إلغاء نافذة التأكيد). إجمالي E2E دلوقتي **20/20 Test**.
+- **Rate Limiting عمدًا مش متغطي بـ E2E**: تكرار اختبار الـ 429 هنا كان هيقفل باقي الـ Auth Endpoints لباقي الـ Suite (نفس الـ IP) - مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند لوحده.
+- 🐛 **إصلاحين استقرار حقيقيين اتكشفوا أثناء تشغيل الـ Suite الأكبر (20 Test بدل 13)**:
+  1. سقف الـ Rate Limiting الافتراضي (10 طلبات/دقيقة) كان بيتلامس فعليًا مع E2E Suite أكبر (كل الطلبات من نفس الـ IP محليًا) - `appsettings.Development.json` بقى فيه Override لـ 100 طلب/دقيقة، الإنتاج (`appsettings.json`) فاضل على 10 زي ما هو.
+  2. Timeout الافتراضي بتاع `expect()` في Playwright (5 ثواني) كان قليل لما كذا Test بيسجّلوا مستخدمين بالتوازي (BCrypt بطيء عمدًا تحت ضغط) - اترفع لـ 15 ثانية في `playwright.config.ts`.
+
 ### إضافات — Email Verification, Rate Limiting, Delete Account, كلمة سر أقوى (2026-08-22)
 - **Email Verification**: `User.EmailConfirmed` جديد + توكن تأكيد (نفس نمط Password Reset - Hash فقط، صلاحية 3 أيام). `POST /api/auth/confirm-email` و`POST /api/auth/resend-confirmation` (بيرجع 200 دايمًا منعًا لتسريب معلومة). التسجيل مبيبقاش ممنوع للمستخدمين غير المؤكدين (قرار متعمّد - عشان منقفلش على حسابات قديمة/تجريبية)، بس الداشبورد بيعرض تنبيه واضح لو الإيميل لسه مش متأكد مع زرار "ابعت اللينك تاني". صفحة `/confirm-email` جديدة في الفرونت اند.
 - **Rate Limiting**: كل Endpoints الـ Auth (`register`, `login`, `forgot-password`, `reset-password`, `confirm-email`, `resend-confirmation`, `admin/bootstrap`) بقى عليها سقف 10 طلبات/دقيقة لكل IP (`Microsoft.AspNetCore.RateLimiting` المدمجة، مفيش Package جديد) - كانت من غير أي حماية من Brute-force خالص قبل كده. السقف قابل للتعديل من `appsettings.json` (`RateLimiting:AuthEndpoints`).

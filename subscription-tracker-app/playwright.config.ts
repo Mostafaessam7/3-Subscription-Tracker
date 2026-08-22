@@ -12,6 +12,10 @@ export default defineConfig({
   // وبيسبب Timeouts وهمية مالهاش علاقة بصحة الـ Tests نفسها
   workers: 2,
   timeout: 45 * 1000,
+  // Default الـ expect() هو 5 ثواني بس - قليل لما كذا Test بيسجّلوا مستخدمين بالتوازي (BCrypt
+  // بطيء عمدًا)، فطلب register ممكن ياخد أكتر من 5 ثواني تحت ضغط من غير ما يبقى فيه مشكلة حقيقية.
+  // 15 ثانية بتدّي هامش كافي من غير ما تخلي Test حقيقي فاشل يستنى كتير قبل ما يفشل
+  expect: { timeout: 15 * 1000 },
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:4200',
