@@ -77,7 +77,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (s of subscriptions; track s) {
+        @for (s of subscriptions; track s.id) {
           <tr>
             <td>{{ s.name }}</td>
             <td class="mono">{{ s.price }}</td>

@@ -47,7 +47,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (user of users; track user) {
+          @for (user of users; track user.id) {
             <tr>
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>

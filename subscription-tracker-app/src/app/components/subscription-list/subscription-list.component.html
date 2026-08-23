@@ -1,5 +1,5 @@
 <div class="list">
-  @for (sub of subscriptions; track sub; let i = $index) {
+  @for (sub of subscriptions; track sub.id; let i = $index) {
     <div class="row" [style.animation-delay.ms]="i * 45">
       <span class="status-dot" [class.status-danger]="sub.daysUntilRenewal <= 3 && sub.status === SubscriptionStatus.Active"></span>
       @if (getLogoUrl(sub.websiteUrl)) {
@@ -20,7 +20,7 @@
             <span>{{ 'form.noCategory' | translate }}</span>
           }
           · {{ billingCycleKey(sub.billingCycle) | translate }}
-          @for (tag of sub.tags; track tag) {
+          @for (tag of sub.tags; track tag.id) {
             <span class="tag-chip" [style.color]="tag.color">#{{ tag.name }}</span>
           }
         </p>

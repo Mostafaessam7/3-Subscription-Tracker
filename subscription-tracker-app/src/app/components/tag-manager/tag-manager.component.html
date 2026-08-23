@@ -7,7 +7,7 @@
           <button type="button" class="close-btn" (click)="close()">✕</button>
         </div>
         <div class="tag-rows">
-          @for (t of tags; track t) {
+          @for (t of tags; track t.id) {
             <div class="tag-row">
               <span class="swatch" [style.background]="t.color"></span>
               <span class="tag-name">{{ t.name }}</span>

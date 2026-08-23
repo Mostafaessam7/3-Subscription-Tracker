@@ -7,7 +7,7 @@
           <button type="button" class="close-btn" (click)="close()">✕</button>
         </div>
         <div class="category-rows">
-          @for (c of categories; track c) {
+          @for (c of categories; track c.id) {
             <div class="category-row">
               <span class="swatch" [style.background]="c.color"></span>
               <span class="cat-icon">{{ c.icon }}</span>

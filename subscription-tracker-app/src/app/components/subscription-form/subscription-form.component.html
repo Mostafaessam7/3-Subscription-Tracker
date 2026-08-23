@@ -71,7 +71,7 @@
         {{ 'form.category' | translate }}
         <select formControlName="categoryId">
           <option [ngValue]="null">{{ 'form.noCategory' | translate }}</option>
-          @for (c of categories; track c) {
+          @for (c of categories; track c.id) {
             <option [ngValue]="c.id">{{ c.icon }} {{ c.name | categoryName }}</option>
           }
         </select>
@@ -107,7 +107,7 @@
             {{ 'form.paymentMethod' | translate }}
             <select formControlName="paymentMethodId">
               <option [ngValue]="null">{{ 'form.noPaymentMethod' | translate }}</option>
-              @for (p of paymentMethods; track p) {
+              @for (p of paymentMethods; track p.id) {
                 <option [ngValue]="p.id">{{ p.name }}</option>
               }
             </select>
@@ -137,7 +137,7 @@
         <div class="tags-field">
           <p class="tags-label">{{ 'form.tags' | translate }}</p>
           <div class="tags-chips">
-            @for (t of allTags; track t) {
+            @for (t of allTags; track t.id) {
               <button
                 type="button"
                 class="tag-chip"

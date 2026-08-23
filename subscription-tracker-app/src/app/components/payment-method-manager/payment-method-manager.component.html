@@ -7,7 +7,7 @@
           <button type="button" class="close-btn" (click)="close()">✕</button>
         </div>
         <div class="rows">
-          @for (m of methods; track m) {
+          @for (m of methods; track m.id) {
             <div class="row">
               <span class="type-tag">{{ typeKey(m.type) | translate }}</span>
               <span class="name">{{ m.name }}</span>

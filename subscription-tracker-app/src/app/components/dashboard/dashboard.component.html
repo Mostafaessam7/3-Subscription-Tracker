@@ -151,7 +151,7 @@
         <button class="pill" [class.pill-active]="selectedCategoryId === null" (click)="selectedCategoryId = null; onFilterChange()">
           {{ 'dashboard.allCategories' | translate }}
         </button>
-        @for (c of categories; track c) {
+        @for (c of categories; track c.id) {
           <button
             class="pill"
             [class.pill-active]="selectedCategoryId === c.id"
