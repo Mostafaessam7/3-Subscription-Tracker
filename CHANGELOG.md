@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### إضافات — CODEOWNERS و Issue/PR Templates (2026-08-23)
+- `.github/CODEOWNERS`، `.github/ISSUE_TEMPLATE/bug_report.md`، `.github/ISSUE_TEMPLATE/feature_request.md`، `.github/PULL_REQUEST_TEMPLATE.md` جداد.
+- 🐛 **محاولة `npm audit fix --force` للـ 7 ثغرات الجديدة في أدوات الـ Build اتوقفت عمدًا**: جرّبناها بـ `--dry-run` ولقينا إنها هتنزّل `@angular-devkit/build-angular` لإصدار `0.1002.1` (من عصر Webpack، قبل Angular 11 - Peer Dependency على `@angular/compiler-cli@^10.0.0`)، يعني هتكسر تولشين v22 اللي اتعمل بالكامل. مش حل حقيقي، فسايبناها كفجوة مفتوحة.
+
 ### ترقية — Angular 18 → 22 (على فرع `angular-upgrade`) (2026-08-23)
 - ترقية تدريجية بـ `ng update` لكل Major لوحده (18→19→20→21→22)، مع `ng build` + كامل الـ 169 Karma Test بعد كل خطوة قبل ما نكمل اللي بعدها (نفس المنهج المتبع مع باقي الترقيات في المشروع).
 - **v19**: `standalone: true` اتشالت من 20 Component (بقت القيمة الافتراضية)، `zone.js` 0.14.10 → 0.15.1.

@@ -2,6 +2,15 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
+## فجوة 12: CODEOWNERS + Issue/PR Templates
+
+1. [x] `.github/CODEOWNERS` — كل الريبو تحت مراجعة صاحبه
+2. [x] `.github/ISSUE_TEMPLATE/bug_report.md` و `feature_request.md`
+3. [x] `.github/PULL_REQUEST_TEMPLATE.md` — Checklist بسيط (نوع التغيير، الاختبارات، توثيق)
+
+### ⚠️ محاولة اتوقفت عمدًا: `npm audit fix --force` للـ 7 ثغرات الجديدة (بعد ترقية Angular)
+جرّبت `npm audit fix --force --dry-run` في نفس الجلسة، ولقيت إنه هيحاول ينزّل `@angular-devkit/build-angular` من `22.1.5` لـ `0.1002.1` — إصدار قديم جدًا من عصر Webpack (Peer Dependency على `@angular/compiler-cli@^10.0.0`!)، يعني هيكسر تولشين Angular 22 اللي اتعمل بالكامل في نفس الجلسة. مش حل حقيقي خالص، فاتلغى فورًا (Branch اتعمل وانحذف من غير Commit) وسابت الفجوة زي ما هي في `README.md` لحد ما `@angular-devkit/build-angular` يطلع إصدار جديد بيصلّحها فعليًا.
+
 ## فجوة 11: ترقية Angular 18 → 22 (8 ثغرات `@angular/core` عالية)
 
 الفجوة الأمنية الوحيدة الباقية بعد فجوة 10 — 8 ثغرات XSS عالية في `@angular/core` نفسه، والتصليح محتاج ترقية 4 Majors دفعة واحدة (18→19→20→21→22)، Breaking Change حقيقي محتاج تجربة شاملة.
