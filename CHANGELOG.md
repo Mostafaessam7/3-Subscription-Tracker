@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### ترقية — Angular 18 → 22 (على فرع `angular-upgrade`) (2026-08-23)
+- ترقية تدريجية بـ `ng update` لكل Major لوحده (18→19→20→21→22)، مع `ng build` + كامل الـ 169 Karma Test بعد كل خطوة قبل ما نكمل اللي بعدها (نفس المنهج المتبع مع باقي الترقيات في المشروع).
+- **v19**: `standalone: true` اتشالت من 20 Component (بقت القيمة الافتراضية)، `zone.js` 0.14.10 → 0.15.1.
+- **v20**: TypeScript 5.5.4 → 5.9.3، Migration بسيط لإعدادات `angular.json` الافتراضية.
+- **v21**: **كل الـ Templates اتحولت أوتوماتيك من `*ngIf`/`*ngFor`/`*ngSwitch` لصيغة الـ Block Control Flow الجديدة (`@if`/`@for`/`@switch`)** عبر كل الـ 20 Component - أكبر تغيير في الترقية كلها. `main.ts` bootstrap options اتنقلت لـ Providers، `tsconfig.json` `lib` اترفعت لـ `es2022+`.
+- **v22**: كل الـ Components بقت `ChangeDetectionStrategy.Eager` بشكل صريح (Migration تلقائي)، `withXhr()` اتضافت لـ `provideHttpClient()`، Optional Chaining في `dashboard.component.html` اتلفت بـ `$safeNavigationMigration()`، TypeScript 5.9.3 → 6.0.3.
+  - 🐛 **إصلاح صغير بعد الترقية**: الـ Production Bundle الابتدائي زاد ~3.6kb وتخطى سقف الـ Budget (`1mb`) في `angular.json` — اترفع لـ `1.05mb`.
+- **النتيجة**: `ng build` ناجح و**169/169 Karma Test** بعد كل خطوة من الأربعة، وأهم حاجة — **الـ 8 ثغرات الأمنية العالية في `@angular/core`** (XSS متنوعة، كانت مذكورة كـ Known Gap) **اتصلحت بالكامل** (`npm audit` مبقاش فيهم). ظهرت بدالهم 7 ثغرات جديدة (3 عالية، 4 متوسطة) لكن في أدوات الـ Build بس (`less`/`webpack-dev-server` Transitive عن طريق `@angular-devkit/build-angular`) — مش بتتشحن في الـ Production Bundle، والتصليح ليها محتاج `--force` (Breaking Change زيادة)، فسايبينها كـ Known Gap جديد بدل ما نعملها من غير تفكير.
+
 ### إضافات — E2E Tests لتأكيد الإيميل ومسح الحساب + إصلاح Flakiness (2026-08-22)
 - `e2e/account.spec.ts` جديد (7 Tests): بانر تأكيد الإيميل على مستخدم جديد، زرار إعادة الإرسال، صفحة `/confirm-email` بتوكن غلط/ناقص، ومسح الحساب (كلمة سر صح/غلط، إلغاء نافذة التأكيد). إجمالي E2E دلوقتي **20/20 Test**.
 - **Rate Limiting عمدًا مش متغطي بـ E2E**: تكرار اختبار الـ 429 هنا كان هيقفل باقي الـ Auth Endpoints لباقي الـ Suite (نفس الـ IP) - مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند لوحده.

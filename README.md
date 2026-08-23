@@ -18,8 +18,8 @@
 |---|---|---|
 | [.NET SDK](https://dotnet.microsoft.com/download) | `10.0.100` (محدد في `global.json`) | تشغيل الـ Backend |
 | SQL Server (أو LocalDB) | أي إصدار حديث | قاعدة البيانات |
-| [Node.js](https://nodejs.org/) | ‎18+‎ (متوافق مع Angular 18) | تشغيل الـ Frontend |
-| Angular CLI | `^18.2.0` (بيتثبت مع `npm install`) | أوامر `ng` |
+| [Node.js](https://nodejs.org/) | ‎20.19+‎ / 22.12+‎ (متوافق مع Angular 22) | تشغيل الـ Frontend |
+| Angular CLI | `^22.1.0` (بيتثبت مع `npm install`) | أوامر `ng` |
 
 ## تشغيل المشروع كامل (أول مرة)
 
@@ -149,9 +149,9 @@ docker compose up --build
 - **مفيش CODEOWNERS ولا Issue/PR Templates** — اختياري، مش ضروري لمشروع شخصي.
 - **تحذير NuGet واحد لسه موجود**: `System.Security.Cryptography.Xml 9.0.0` (Transitive عن طريق `JwtBearer`) — بيظهر في كل `dotnet build`/`restore`. مفيش قرار مطلوب منك بخصوصه (مش استخدام مباشر في الكود، والترقية محتاجة تحديث حزمة `JwtBearer` نفسها من مايكروسوفت).
 - **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`) — محتاج دومين إنتاج حقيقي قبل أي Deploy فعلي.
-- **8 ثغرات أمنية عالية في `@angular/core` نفسه** (XSS متنوعة - راجع `npm audit` في `subscription-tracker-app`) — التصليح متاح بس محتاج ترقية Angular من v18 لـ v22 (**4 Majors دفعة واحدة**، Breaking Change حقيقي)، فمحتاج قرار وتجربة شاملة قبل ما نعملها، مش حاجة نعملها بـ `--force` من غير تفكير (زي قرار jspdf السابق بالظبط).
 - **Rate Limiting لسه مش متغطي بـ E2E عمدًا** — مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند (فاكتوري معزولة بسقف صغير خاص بيها)، لكن تكرار نفس الاختبار في E2E هيقفل باقي الـ Auth Endpoints لباقي الـ Suite (نفس الـ IP). راجع [`e2e/README.md`](subscription-tracker-app/e2e/README.md) للتفاصيل.
+- **7 ثغرات أمنية جديدة (3 عالية، 4 متوسطة) في أدوات الـ Build فقط** (`less`/`webpack-dev-server`/`image-size`/`uuid` - Transitive عن طريق `@angular-devkit/build-angular`) — ظهرت بعد ترقية Angular لـ v22 (مش من كودنا، ومش بتتشحن في الـ Production Bundle، بس بتشتغل وقت الـ `ng serve`/`ng build`). التصليح متاح بس محتاج `npm audit fix --force` (Breaking Change في `@angular-devkit/build-angular`)، فمحتاج قرار وتجربة قبل ما نعملها، زي قرار Angular v18→v22 قبل كده بالظبط.
 
-> ✅ **اتصلح**: Forgot Password/Reset Password، Email Verification (تأكيد الإيميل بعد التسجيل)، Rate Limiting على كل Endpoints الـ Auth (منع Brute-force)، قواعد كلمة سر أقوى (8 حروف + حرف كبير/صغير/رقم)، Delete Account، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright - دلوقتي 20 Test شاملين تأكيد الإيميل ومسح الحساب)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
+> ✅ **اتصلح**: Forgot Password/Reset Password، Email Verification (تأكيد الإيميل بعد التسجيل)، Rate Limiting على كل Endpoints الـ Auth (منع Brute-force)، قواعد كلمة سر أقوى (8 حروف + حرف كبير/صغير/رقم)، Delete Account، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright - دلوقتي 20 Test شاملين تأكيد الإيميل ومسح الحساب)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). **وكمان ترقية Angular من v18 لـ v22 (4 Majors) على فرع `angular-upgrade`** — رقّعت الـ 8 ثغرات العالية في `@angular/core` نفسه بالكامل (Build + كل الـ 169 Test بينجحوا بعد كل خطوة ترقية). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
 
 راجع الـ README الخاص بكل مشروع للتفاصيل الكاملة (الـ Architecture، الفيتشرز، الـ Bugs اللي اتصلحت، والقرارات التصميمية).
