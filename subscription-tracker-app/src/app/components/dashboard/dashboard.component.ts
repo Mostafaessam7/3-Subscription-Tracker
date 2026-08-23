@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -39,22 +39,21 @@ type SortOption = 'RenewalDate' | 'Cost' | 'Name';
 @Component({
     selector: 'app-dashboard',
     imports: [
-        CommonModule,
-        FormsModule,
-        RouterLink,
-        TranslateModule,
-        CountUpDirective,
-        SubscriptionListComponent,
-        SubscriptionFormComponent,
-        LanguageSwitchComponent,
-        ThemeSwitchComponent,
-        CategoryManagerComponent,
-        PaymentMethodManagerComponent,
-        TagManagerComponent,
-        CategorySpendingChartComponent,
-        VantaBackgroundDirective,
-        CategoryNamePipe
-    ],
+    FormsModule,
+    RouterLink,
+    TranslateModule,
+    CountUpDirective,
+    SubscriptionListComponent,
+    SubscriptionFormComponent,
+    LanguageSwitchComponent,
+    ThemeSwitchComponent,
+    CategoryManagerComponent,
+    PaymentMethodManagerComponent,
+    TagManagerComponent,
+    CategorySpendingChartComponent,
+    VantaBackgroundDirective,
+    CategoryNamePipe
+],
     templateUrl: './dashboard.component.html',
     styleUrl: './dashboard.component.css'
 })

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CategoryService } from '../../services/category.service';
@@ -12,7 +12,7 @@ const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '
 
 @Component({
     selector: 'app-category-manager',
-    imports: [CommonModule, FormsModule, TranslateModule, CategoryNamePipe],
+    imports: [FormsModule, TranslateModule, CategoryNamePipe],
     templateUrl: './category-manager.component.html',
     styleUrl: './category-manager.component.css'
 })

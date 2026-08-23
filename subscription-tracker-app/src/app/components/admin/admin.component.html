@@ -10,68 +10,75 @@
   <h1 class="page-title">🛠 {{ 'admin.title' | translate }}</h1>
 
   <!-- إحصائيات عامة -->
-  <div class="stats-grid" *ngIf="stats">
-    <div class="stat-card">
-      <span class="stat-label">{{ 'admin.totalUsers' | translate }}</span>
-      <span class="stat-value mono">{{ stats.totalUsers }}</span>
+  @if (stats) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">{{ 'admin.totalUsers' | translate }}</span>
+        <span class="stat-value mono">{{ stats.totalUsers }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">{{ 'admin.totalActiveSubscriptions' | translate }}</span>
+        <span class="stat-value mono">{{ stats.totalActiveSubscriptions }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">{{ 'admin.totalMonthlySpend' | translate }}</span>
+        <span class="stat-value mono">{{ stats.totalMonthlySpendAcrossAllUsers | number:'1.0-0' }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">{{ 'admin.newUsers30d' | translate }}</span>
+        <span class="stat-value mono">{{ stats.newUsersLast30Days }}</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">{{ 'admin.totalActiveSubscriptions' | translate }}</span>
-      <span class="stat-value mono">{{ stats.totalActiveSubscriptions }}</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">{{ 'admin.totalMonthlySpend' | translate }}</span>
-      <span class="stat-value mono">{{ stats.totalMonthlySpendAcrossAllUsers | number:'1.0-0' }}</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">{{ 'admin.newUsers30d' | translate }}</span>
-      <span class="stat-value mono">{{ stats.newUsersLast30Days }}</span>
-    </div>
-  </div>
+  }
 
   <!-- جدول المستخدمين -->
   <div class="table-wrap">
-    <table class="admin-table" *ngIf="!loading; else loadingTpl">
-      <thead>
-        <tr>
-          <th>{{ 'admin.name' | translate }}</th>
-          <th>{{ 'admin.email' | translate }}</th>
-          <th>{{ 'admin.role' | translate }}</th>
-          <th>{{ 'admin.subscriptionsCount' | translate }}</th>
-          <th>{{ 'admin.monthlySpend' | translate }}</th>
-          <th>{{ 'admin.createdAt' | translate }}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <span class="role-badge" [class.role-admin]="user.role === UserRole.Admin">
-              {{ (user.role === UserRole.Admin ? 'admin.roleAdmin' : 'admin.roleUser') | translate }}
-            </span>
-          </td>
-          <td class="mono">{{ user.subscriptionsCount }}</td>
-          <td class="mono">{{ user.monthlySpend | number:'1.0-0' }}</td>
-          <td class="mono">{{ user.createdAt | date:'yyyy-MM-dd' }}</td>
-          <td>
-            <button
-              class="btn-role-toggle"
-              [disabled]="user.id === currentUserId"
-              [title]="user.id === currentUserId ? ('admin.cannotChangeSelf' | translate) : ''"
-              (click)="toggleRole(user)">
-              {{ (user.role === UserRole.Admin ? 'admin.demote' : 'admin.promote') | translate }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <ng-template #loadingTpl>
+    @if (!loading) {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.name' | translate }}</th>
+            <th>{{ 'admin.email' | translate }}</th>
+            <th>{{ 'admin.role' | translate }}</th>
+            <th>{{ 'admin.subscriptionsCount' | translate }}</th>
+            <th>{{ 'admin.monthlySpend' | translate }}</th>
+            <th>{{ 'admin.createdAt' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user) {
+            <tr>
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="role-badge" [class.role-admin]="user.role === UserRole.Admin">
+                  {{ (user.role === UserRole.Admin ? 'admin.roleAdmin' : 'admin.roleUser') | translate }}
+                </span>
+              </td>
+              <td class="mono">{{ user.subscriptionsCount }}</td>
+              <td class="mono">{{ user.monthlySpend | number:'1.0-0' }}</td>
+              <td class="mono">{{ user.createdAt | date:'yyyy-MM-dd' }}</td>
+              <td>
+                <button
+                  class="btn-role-toggle"
+                  [disabled]="user.id === currentUserId"
+                  [title]="user.id === currentUserId ? ('admin.cannotChangeSelf' | translate) : ''"
+                  (click)="toggleRole(user)">
+                  {{ (user.role === UserRole.Admin ? 'admin.demote' : 'admin.promote') | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
       <p class="loading-hint">{{ 'admin.loading' | translate }}</p>
-    </ng-template>
+    }
 
-    <p class="empty-hint" *ngIf="!loading && users.length === 0">{{ 'admin.noUsers' | translate }}</p>
+
+    @if (!loading && users.length === 0) {
+      <p class="empty-hint">{{ 'admin.noUsers' | translate }}</p>
+    }
   </div>
 </div>

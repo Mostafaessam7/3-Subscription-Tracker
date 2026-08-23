@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
@@ -13,7 +13,7 @@ type ConfirmState = 'confirming' | 'success' | 'error' | 'missingToken';
 // (من غير أي فورم أو تدخّل من المستخدم، عكس Reset Password اللي محتاج كلمة سر جديدة)
 @Component({
     selector: 'app-confirm-email',
-    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+    imports: [RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './confirm-email.component.html',
     styleUrl: './confirm-email.component.css'
 })

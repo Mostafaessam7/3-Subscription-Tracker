@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,8 +10,7 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-        ThemeSwitchComponent, VantaBackgroundDirective],
+    imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './forgot-password.component.html',
     styleUrl: './forgot-password.component.css'
 })

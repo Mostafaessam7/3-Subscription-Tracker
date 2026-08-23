@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -17,8 +17,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
 
 @Component({
     selector: 'app-reset-password',
-    imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-        ThemeSwitchComponent, VantaBackgroundDirective],
+    imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './reset-password.component.html',
     styleUrl: './reset-password.component.css'
 })

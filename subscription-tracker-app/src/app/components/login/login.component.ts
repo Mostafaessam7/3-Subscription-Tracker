@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,8 +10,7 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
 
 @Component({
     selector: 'app-login',
-    imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-        ThemeSwitchComponent, VantaBackgroundDirective],
+    imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })

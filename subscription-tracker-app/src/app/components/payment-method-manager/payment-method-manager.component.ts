@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentMethodService } from '../../services/payment-method.service';
@@ -10,7 +10,7 @@ import { PaymentMethod, PaymentMethodType } from '../../models/subscription.mode
 
 @Component({
     selector: 'app-payment-method-manager',
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [FormsModule, TranslateModule],
     templateUrl: './payment-method-manager.component.html',
     styleUrl: './payment-method-manager.component.css'
 })

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BillingCycle, Category, Currency, PaymentMethod, Subscription, SubscriptionStatus, Tag } from '../../models/subscription.model';
@@ -12,7 +12,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
     selector: 'app-subscription-form',
-    imports: [CommonModule, ReactiveFormsModule, TranslateModule, CategoryNamePipe],
+    imports: [ReactiveFormsModule, TranslateModule, CategoryNamePipe],
     templateUrl: './subscription-form.component.html',
     styleUrl: './subscription-form.component.css'
 })

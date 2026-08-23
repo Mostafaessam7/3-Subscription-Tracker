@@ -23,7 +23,9 @@
     </label>
     <p class="field-hint">{{ 'auth.passwordRequirements' | translate }}</p>
 
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
 
     <button type="submit" [disabled]="form.invalid">{{ 'auth.registerBtn' | translate }}</button>
 

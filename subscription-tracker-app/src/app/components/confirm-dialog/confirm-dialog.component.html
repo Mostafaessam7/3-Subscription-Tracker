@@ -1,9 +1,11 @@
-<div class="modal-overlay" *ngIf="dialogService.state() as state" (click)="dialogService.respond(false)">
-  <div class="confirm-card" (click)="$event.stopPropagation()">
-    <p class="message">{{ state.message }}</p>
-    <div class="actions">
-      <button class="btn-secondary" (click)="dialogService.respond(false)">{{ 'form.cancel' | translate }}</button>
-      <button class="btn-danger" (click)="dialogService.respond(true)">{{ 'detail.delete' | translate }}</button>
+@if (dialogService.state(); as state) {
+  <div class="modal-overlay" (click)="dialogService.respond(false)">
+    <div class="confirm-card" (click)="$event.stopPropagation()">
+      <p class="message">{{ state.message }}</p>
+      <div class="actions">
+        <button class="btn-secondary" (click)="dialogService.respond(false)">{{ 'form.cancel' | translate }}</button>
+        <button class="btn-danger" (click)="dialogService.respond(true)">{{ 'detail.delete' | translate }}</button>
+      </div>
     </div>
   </div>
-</div>
+}

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TagService } from '../../services/tag.service';
@@ -12,7 +12,7 @@ const DEFAULT_COLORS = ['#818CF8', '#35D0C6', '#F5B841', '#4ADE80', '#FB7185', '
 
 @Component({
     selector: 'app-tag-manager',
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [FormsModule, TranslateModule],
     templateUrl: './tag-manager.component.html',
     styleUrl: './tag-manager.component.css'
 })
