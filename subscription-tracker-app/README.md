@@ -41,9 +41,9 @@ src/
 
 | الأداة | الإصدار |
 |---|---|
-| [Node.js](https://nodejs.org/) | `18.x` أو أحدث (متوافق مع Angular 18) |
+| [Node.js](https://nodejs.org/) | `20.19+` / `22.12+` (متوافق مع Angular 22) |
 | npm | بييجي مع Node تلقائيًا |
-| Angular CLI | `^18.2.0` — بيتثبت أوتوماتيك مع `npm install` (مش لازم تثبيته Global) |
+| Angular CLI | `^22.1.0` — بيتثبت أوتوماتيك مع `npm install` (مش لازم تثبيته Global) |
 
 ## خطوات التشغيل
 
@@ -284,6 +284,18 @@ npm run e2e
 **20 Test** بتغطي: تسجيل/دخول/خروج، نسيان/إعادة تعيين كلمة السر، بانر تأكيد الإيميل وإعادة الإرسال، مسح الحساب، إضافة/تعديل/حذف اشتراك، ومنع مستخدم عادي من `/admin` مقابل دخول Admin حقيقي.
 
 > ⚠️ **مش متغطي عمدًا بـ E2E**: Rate Limiting - مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند (فاكتوري معزولة بسقف صغير خاص بيها)، لكن محاولة تكرار نفس الاختبار هنا هتقفل باقي الـ Auth Endpoints لباقي الـ E2E Suite (نفس الـ IP). راجع [`e2e/README.md`](e2e/README.md) للتفاصيل.
+
+## ترقية Angular (18 → 22)
+
+المشروع اتنقل من Angular 18 لـ Angular 22 (4 Majors) خطوة بخطوة (`ng update` لكل Major لوحده، مع Build + الـ 169 Karma Test بعد كل خطوة قبل ما نكمل اللي بعدها). أهم حاجة اتغيرت:
+
+- كل الـ Components بقت Standalone بشكل ضمني (`standalone: true` اتشالت — دي القيمة الافتراضية من v19).
+- كل الـ Templates اتحولت من `*ngIf`/`*ngFor`/`*ngSwitch` لصيغة الـ Block Control Flow الجديدة (`@if`/`@for`/`@switch`) — Migration تلقائي من v21.
+- كل الـ Components بقت `ChangeDetectionStrategy.Eager` بشكل صريح (Migration تلقائي من v22).
+- TypeScript اترقّى من `5.5.4` لـ `6.0.3`.
+- ده صلّح كل الـ **8 ثغرات الأمنية العالية في `@angular/core`** اللي كانت مذكورة في الـ Known Gaps قبل كده.
+
+راجع [CHANGELOG.md](../CHANGELOG.md) للتفاصيل الكاملة لكل خطوة ترقية.
 
 ## النشر (Deployment)
 

@@ -1,206 +1,220 @@
-<div class="ticker-wrap" *ngIf="tickerItems.length > 0">
-  <div class="ticker-track">
-    <span class="ticker-item" *ngFor="let item of tickerItems">
-      <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
-      {{ item.name }}
-      <span class="mono ticker-price">{{ item.price }} {{ 'dashboard.currency' | translate }}</span>
-      <span class="ticker-days">{{ 'dashboard.daysShort' | translate:{ days: item.daysUntilRenewal } }}</span>
-    </span>
-    <span class="ticker-item" *ngFor="let item of tickerItems">
-      <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
-      {{ item.name }}
-      <span class="mono ticker-price">{{ item.price }} {{ 'dashboard.currency' | translate }}</span>
-      <span class="ticker-days">{{ 'dashboard.daysShort' | translate:{ days: item.daysUntilRenewal } }}</span>
-    </span>
+@if (tickerItems.length > 0) {
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      @for (item of tickerItems; track item.id) {
+        <span class="ticker-item">
+          <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
+          {{ item.name }}
+          <span class="mono ticker-price">{{ item.price }} {{ 'dashboard.currency' | translate }}</span>
+          <span class="ticker-days">{{ 'dashboard.daysShort' | translate:{ days: item.daysUntilRenewal } }}</span>
+        </span>
+      }
+      @for (item of tickerItems; track item.id) {
+        <span class="ticker-item">
+          <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
+          {{ item.name }}
+          <span class="mono ticker-price">{{ item.price }} {{ 'dashboard.currency' | translate }}</span>
+          <span class="ticker-days">{{ 'dashboard.daysShort' | translate:{ days: item.daysUntilRenewal } }}</span>
+        </span>
+      }
+    </div>
   </div>
-</div>
+}
 
-<div class="email-confirm-banner" *ngIf="isEmailUnconfirmed">
-  <span>⚠️ {{ 'auth.emailNotConfirmedBanner' | translate }}</span>
-  <button (click)="resendConfirmationEmail()" [disabled]="isResendingConfirmation">
-    {{ 'auth.resendConfirmation' | translate }}
-  </button>
-</div>
+@if (isEmailUnconfirmed) {
+  <div class="email-confirm-banner">
+    <span>⚠️ {{ 'auth.emailNotConfirmedBanner' | translate }}</span>
+    <button (click)="resendConfirmationEmail()" [disabled]="isResendingConfirmation">
+      {{ 'auth.resendConfirmation' | translate }}
+    </button>
+  </div>
+}
 
 <div class="dashboard-vanta-wrap" vantaBackground="fog">
-<div class="dashboard">
-  <div class="hero-zone">
-    <div class="header">
-      <div>
-        <p class="eyebrow">{{ 'dashboard.eyebrow' | translate:{ name: authService.currentUser()?.name } }}</p>
-        <h1 class="hero-value mono"><span [countUp]="monthlyTotal"></span><span class="hero-unit">{{ 'dashboard.unit' | translate }}</span></h1>
-      </div>
-      <div class="header-actions">
-        <app-theme-switch></app-theme-switch>
-    <app-language-switch></app-language-switch>
-        <a routerLink="/calendar" class="btn-ghost link-btn">📅 {{ 'nav.calendar' | translate }}</a>
-        <a routerLink="/reports" class="btn-ghost link-btn">📊 {{ 'nav.reports' | translate }}</a>
-        <a routerLink="/profile" class="btn-ghost link-btn">👤 {{ 'nav.profile' | translate }}</a>
-        <a *ngIf="isAdmin" routerLink="/admin" class="btn-ghost link-btn">🛠 {{ 'nav.admin' | translate }}</a>
-        <button class="btn-ghost" (click)="onLogout()">{{ 'nav.logout' | translate }}</button>
-      </div>
-    </div>
-
-    <div class="budget-zone">
-      <ng-container *ngIf="monthlyBudget; else noBudget">
-        <div class="budget-row">
-          <span class="budget-label">
-            {{ 'budget.usedOf' | translate:{ percent: budgetPercentage, budget: monthlyBudget } }}
-          </span>
-          <button class="budget-edit-link" (click)="openBudgetForm()">{{ 'budget.edit' | translate }}</button>
+  <div class="dashboard">
+    <div class="hero-zone">
+      <div class="header">
+        <div>
+          <p class="eyebrow">{{ 'dashboard.eyebrow' | translate:{ name: $safeNavigationMigration(authService.currentUser()?.name) } }}</p>
+          <h1 class="hero-value mono"><span [countUp]="monthlyTotal"></span><span class="hero-unit">{{ 'dashboard.unit' | translate }}</span></h1>
         </div>
-        <div class="budget-track">
-          <div
-            class="budget-fill"
-            [class.over]="isOverBudget"
-            [style.width.%]="budgetPercentage! > 100 ? 100 : budgetPercentage!">
+        <div class="header-actions">
+          <app-theme-switch></app-theme-switch>
+          <app-language-switch></app-language-switch>
+          <a routerLink="/calendar" class="btn-ghost link-btn">📅 {{ 'nav.calendar' | translate }}</a>
+          <a routerLink="/reports" class="btn-ghost link-btn">📊 {{ 'nav.reports' | translate }}</a>
+          <a routerLink="/profile" class="btn-ghost link-btn">👤 {{ 'nav.profile' | translate }}</a>
+          @if (isAdmin) {
+            <a routerLink="/admin" class="btn-ghost link-btn">🛠 {{ 'nav.admin' | translate }}</a>
+          }
+          <button class="btn-ghost" (click)="onLogout()">{{ 'nav.logout' | translate }}</button>
+        </div>
+      </div>
+
+      <div class="budget-zone">
+        @if (monthlyBudget) {
+          <div class="budget-row">
+            <span class="budget-label">
+              {{ 'budget.usedOf' | translate:{ percent: budgetPercentage, budget: monthlyBudget } }}
+            </span>
+            <button class="budget-edit-link" (click)="openBudgetForm()">{{ 'budget.edit' | translate }}</button>
           </div>
+          <div class="budget-track">
+            <div
+              class="budget-fill"
+              [class.over]="isOverBudget"
+              [style.width.%]="budgetPercentage! > 100 ? 100 : budgetPercentage!">
+            </div>
+          </div>
+        } @else {
+          <button class="budget-set-link" (click)="openBudgetForm()">{{ 'budget.setLink' | translate }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="metric">
+        <p class="label">{{ 'dashboard.activeCount' | translate }}</p>
+        <p class="value mono"><span [countUp]="activeCount" [countUpDuration]="400"></span></p>
+      </div>
+      <div class="metric" [class.metric-danger]="renewingSoonCount > 0">
+        <p class="label">{{ 'dashboard.renewingSoon' | translate }}</p>
+        <p class="value mono"><span [countUp]="renewingSoonCount" [countUpDuration]="400"></span></p>
+      </div>
+      <div class="metric" [class.metric-muted]="expiredCount > 0">
+        <p class="label">{{ 'dashboard.expiredCount' | translate }}</p>
+        <p class="value mono"><span [countUp]="expiredCount" [countUpDuration]="400"></span></p>
+      </div>
+      <div class="metric">
+        <p class="label">{{ 'dashboard.yearlySpend' | translate }}</p>
+        <p class="value mono"><span [countUp]="yearlyTotal"></span></p>
+      </div>
+    </div>
+
+    <app-category-spending-chart
+      [userId]="authService.currentUser()!.userId"
+      [refreshTrigger]="chartRefreshTrigger"
+      class="chart-wrapper">
+    </app-category-spending-chart>
+
+    <!-- شريط البحث والترتيب -->
+    <div class="search-row">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="{{ 'dashboard.searchPlaceholder' | translate }}" />
+      </div>
+
+      <select [(ngModel)]="sortBy" (ngModelChange)="onFilterChange()" class="sort-select">
+        <option value="RenewalDate">{{ 'dashboard.sortRenewal' | translate }}</option>
+        <option value="Cost">{{ 'dashboard.sortCost' | translate }}</option>
+        <option value="Name">{{ 'dashboard.sortName' | translate }}</option>
+      </select>
+
+      <button class="sort-dir-btn" (click)="toggleSortDirection()" title="{{ 'dashboard.toggleSort' | translate }}">
+        {{ sortDescending ? '↓' : '↑' }}
+      </button>
+    </div>
+
+    <!-- فلاتر الحالة ودورة الدفع -->
+    <div class="filter-row">
+      <div class="pills">
+        <button class="pill" [class.pill-active]="selectedStatus === null" (click)="selectedStatus = null; onFilterChange()">
+          {{ 'dashboard.all' | translate }}
+        </button>
+        <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Active" (click)="selectedStatus = SubscriptionStatus.Active; onFilterChange()">
+          {{ 'status.active' | translate }}
+        </button>
+        <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Expired" (click)="selectedStatus = SubscriptionStatus.Expired; onFilterChange()">
+          {{ 'status.expired' | translate }}
+        </button>
+        <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Cancelled" (click)="selectedStatus = SubscriptionStatus.Cancelled; onFilterChange()">
+          {{ 'status.cancelled' | translate }}
+        </button>
+      </div>
+
+      <select [(ngModel)]="selectedBillingCycle" (ngModelChange)="onFilterChange()" class="cycle-select">
+        <option [ngValue]="null">{{ 'dashboard.allCycles' | translate }}</option>
+        <option [ngValue]="2">{{ 'list.weekly' | translate }}</option>
+        <option [ngValue]="0">{{ 'list.monthly' | translate }}</option>
+        <option [ngValue]="3">{{ 'list.quarterly' | translate }}</option>
+        <option [ngValue]="1">{{ 'list.yearly' | translate }}</option>
+      </select>
+    </div>
+
+    <!-- فلتر التصنيفات -->
+    <div class="toolbar">
+      <div class="pills">
+        <button class="pill" [class.pill-active]="selectedCategoryId === null" (click)="selectedCategoryId = null; onFilterChange()">
+          {{ 'dashboard.allCategories' | translate }}
+        </button>
+        @for (c of categories; track c.id) {
+          <button
+            class="pill"
+            [class.pill-active]="selectedCategoryId === c.id"
+            [style.color]="selectedCategoryId === c.id ? c.color : null"
+            (click)="selectedCategoryId = c.id; onFilterChange()">
+            {{ c.icon }} {{ c.name | categoryName }}
+          </button>
+        }
+        <button class="pill pill-manage" (click)="openCategoryManager()">⚙ {{ 'categories.manage' | translate }}</button>
+        <button class="pill pill-manage" (click)="openPaymentMethodManager()">💳 {{ 'paymentMethods.manage' | translate }}</button>
+        <button class="pill pill-manage" (click)="openTagManager()">🏷 {{ 'tags.manage' | translate }}</button>
+        @if (hasActiveFilters) {
+          <button class="pill pill-clear" (click)="clearFilters()">✕ {{ 'dashboard.clearFilters' | translate }}</button>
+        }
+      </div>
+
+      <button class="btn-primary" (click)="openAddForm()">
+        <span class="plus">+</span> {{ 'dashboard.addNew' | translate }}
+      </button>
+    </div>
+
+    <app-subscription-list
+      [subscriptions]="displayedSubscriptions"
+      (edit)="openEditForm($event)"
+      (delete)="onDelete($event)"
+      (changed)="reloadEverything()">
+    </app-subscription-list>
+  </div>
+</div>
+
+@if (showForm) {
+  <div class="modal-overlay" (click)="onCancel()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <app-subscription-form
+        [editingSubscription]="editingSubscription"
+        (save)="onSave($event)"
+        (cancel)="onCancel()">
+      </app-subscription-form>
+    </div>
+  </div>
+}
+
+@if (showBudgetForm) {
+  <div class="modal-overlay" (click)="cancelBudgetForm()">
+    <div class="modal-content budget-modal" (click)="$event.stopPropagation()">
+      <div class="budget-form-card">
+        <div class="form-header">
+          <h3>{{ 'budget.formTitle' | translate }}</h3>
+          <button type="button" class="close-btn" (click)="cancelBudgetForm()">✕</button>
         </div>
-      </ng-container>
-      <ng-template #noBudget>
-        <button class="budget-set-link" (click)="openBudgetForm()">{{ 'budget.setLink' | translate }}</button>
-      </ng-template>
-    </div>
-  </div>
-
-  <div class="summary">
-    <div class="metric">
-      <p class="label">{{ 'dashboard.activeCount' | translate }}</p>
-      <p class="value mono"><span [countUp]="activeCount" [countUpDuration]="400"></span></p>
-    </div>
-    <div class="metric" [class.metric-danger]="renewingSoonCount > 0">
-      <p class="label">{{ 'dashboard.renewingSoon' | translate }}</p>
-      <p class="value mono"><span [countUp]="renewingSoonCount" [countUpDuration]="400"></span></p>
-    </div>
-    <div class="metric" [class.metric-muted]="expiredCount > 0">
-      <p class="label">{{ 'dashboard.expiredCount' | translate }}</p>
-      <p class="value mono"><span [countUp]="expiredCount" [countUpDuration]="400"></span></p>
-    </div>
-    <div class="metric">
-      <p class="label">{{ 'dashboard.yearlySpend' | translate }}</p>
-      <p class="value mono"><span [countUp]="yearlyTotal"></span></p>
-    </div>
-  </div>
-
-  <app-category-spending-chart
-    [userId]="authService.currentUser()!.userId"
-    [refreshTrigger]="chartRefreshTrigger"
-    class="chart-wrapper">
-  </app-category-spending-chart>
-
-  <!-- شريط البحث والترتيب -->
-  <div class="search-row">
-    <div class="search-box">
-      <span class="search-icon">⌕</span>
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearchChange()"
-        placeholder="{{ 'dashboard.searchPlaceholder' | translate }}" />
-    </div>
-
-    <select [(ngModel)]="sortBy" (ngModelChange)="onFilterChange()" class="sort-select">
-      <option value="RenewalDate">{{ 'dashboard.sortRenewal' | translate }}</option>
-      <option value="Cost">{{ 'dashboard.sortCost' | translate }}</option>
-      <option value="Name">{{ 'dashboard.sortName' | translate }}</option>
-    </select>
-
-    <button class="sort-dir-btn" (click)="toggleSortDirection()" title="{{ 'dashboard.toggleSort' | translate }}">
-      {{ sortDescending ? '↓' : '↑' }}
-    </button>
-  </div>
-
-  <!-- فلاتر الحالة ودورة الدفع -->
-  <div class="filter-row">
-    <div class="pills">
-      <button class="pill" [class.pill-active]="selectedStatus === null" (click)="selectedStatus = null; onFilterChange()">
-        {{ 'dashboard.all' | translate }}
-      </button>
-      <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Active" (click)="selectedStatus = SubscriptionStatus.Active; onFilterChange()">
-        {{ 'status.active' | translate }}
-      </button>
-      <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Expired" (click)="selectedStatus = SubscriptionStatus.Expired; onFilterChange()">
-        {{ 'status.expired' | translate }}
-      </button>
-      <button class="pill" [class.pill-active]="selectedStatus === SubscriptionStatus.Cancelled" (click)="selectedStatus = SubscriptionStatus.Cancelled; onFilterChange()">
-        {{ 'status.cancelled' | translate }}
-      </button>
-    </div>
-
-    <select [(ngModel)]="selectedBillingCycle" (ngModelChange)="onFilterChange()" class="cycle-select">
-      <option [ngValue]="null">{{ 'dashboard.allCycles' | translate }}</option>
-      <option [ngValue]="2">{{ 'list.weekly' | translate }}</option>
-      <option [ngValue]="0">{{ 'list.monthly' | translate }}</option>
-      <option [ngValue]="3">{{ 'list.quarterly' | translate }}</option>
-      <option [ngValue]="1">{{ 'list.yearly' | translate }}</option>
-    </select>
-  </div>
-
-  <!-- فلتر التصنيفات -->
-  <div class="toolbar">
-    <div class="pills">
-      <button class="pill" [class.pill-active]="selectedCategoryId === null" (click)="selectedCategoryId = null; onFilterChange()">
-        {{ 'dashboard.allCategories' | translate }}
-      </button>
-      <button
-        class="pill"
-        *ngFor="let c of categories"
-        [class.pill-active]="selectedCategoryId === c.id"
-        [style.color]="selectedCategoryId === c.id ? c.color : null"
-        (click)="selectedCategoryId = c.id; onFilterChange()">
-        {{ c.icon }} {{ c.name | categoryName }}
-      </button>
-      <button class="pill pill-manage" (click)="openCategoryManager()">⚙ {{ 'categories.manage' | translate }}</button>
-      <button class="pill pill-manage" (click)="openPaymentMethodManager()">💳 {{ 'paymentMethods.manage' | translate }}</button>
-      <button class="pill pill-manage" (click)="openTagManager()">🏷 {{ 'tags.manage' | translate }}</button>
-      <button class="pill pill-clear" *ngIf="hasActiveFilters" (click)="clearFilters()">✕ {{ 'dashboard.clearFilters' | translate }}</button>
-    </div>
-
-    <button class="btn-primary" (click)="openAddForm()">
-      <span class="plus">+</span> {{ 'dashboard.addNew' | translate }}
-    </button>
-  </div>
-
-  <app-subscription-list
-    [subscriptions]="displayedSubscriptions"
-    (edit)="openEditForm($event)"
-    (delete)="onDelete($event)"
-    (changed)="reloadEverything()">
-  </app-subscription-list>
-</div>
-</div>
-
-<div class="modal-overlay" *ngIf="showForm" (click)="onCancel()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <app-subscription-form
-      [editingSubscription]="editingSubscription"
-      (save)="onSave($event)"
-      (cancel)="onCancel()">
-    </app-subscription-form>
-  </div>
-</div>
-
-<div class="modal-overlay" *ngIf="showBudgetForm" (click)="cancelBudgetForm()">
-  <div class="modal-content budget-modal" (click)="$event.stopPropagation()">
-    <div class="budget-form-card">
-      <div class="form-header">
-        <h3>{{ 'budget.formTitle' | translate }}</h3>
-        <button type="button" class="close-btn" (click)="cancelBudgetForm()">✕</button>
-      </div>
-
-      <label class="budget-input-label">
-        {{ 'budget.inputLabel' | translate }}
-        <input type="number" min="0" [(ngModel)]="budgetInputValue" />
-      </label>
-      <p class="budget-hint">{{ 'budget.hint' | translate }}</p>
-
-      <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="cancelBudgetForm()">{{ 'form.cancel' | translate }}</button>
-        <button type="button" class="btn-primary" (click)="saveBudget()">{{ 'form.save' | translate }}</button>
+        <label class="budget-input-label">
+          {{ 'budget.inputLabel' | translate }}
+          <input type="number" min="0" [(ngModel)]="budgetInputValue" />
+        </label>
+        <p class="budget-hint">{{ 'budget.hint' | translate }}</p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelBudgetForm()">{{ 'form.cancel' | translate }}</button>
+          <button type="button" class="btn-primary" (click)="saveBudget()">{{ 'form.save' | translate }}</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}
 
 <app-category-manager
   [open]="showCategoryManager"

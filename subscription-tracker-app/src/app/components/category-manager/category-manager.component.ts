@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CategoryService } from '../../services/category.service';
@@ -11,11 +11,11 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '#FB7185', '#94A3B8'];
 
 @Component({
-  selector: 'app-category-manager',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, CategoryNamePipe],
-  templateUrl: './category-manager.component.html',
-  styleUrl: './category-manager.component.css'
+    selector: 'app-category-manager',
+    imports: [FormsModule, TranslateModule, CategoryNamePipe],
+    templateUrl: './category-manager.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './category-manager.component.css'
 })
 export class CategoryManagerComponent implements OnChanges {
   private categoryService = inject(CategoryService);

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,11 +14,11 @@ import { Profile } from '../../models/subscription.model';
 import { strongPasswordValidators } from '../../utils/password-validators';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+    selector: 'app-profile',
+    imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+    templateUrl: './profile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);

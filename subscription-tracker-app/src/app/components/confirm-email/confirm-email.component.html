@@ -7,9 +7,15 @@
   <div class="auth-card">
     <h2>{{ 'auth.confirmEmailTitle' | translate }}</h2>
 
-    <p class="status-message" *ngIf="state === 'confirming'">{{ 'auth.confirmingEmail' | translate }}</p>
-    <p class="success" *ngIf="state === 'success'">{{ message }}</p>
-    <p class="error" *ngIf="state === 'error' || state === 'missingToken'">{{ message }}</p>
+    @if (state === 'confirming') {
+      <p class="status-message">{{ 'auth.confirmingEmail' | translate }}</p>
+    }
+    @if (state === 'success') {
+      <p class="success">{{ message }}</p>
+    }
+    @if (state === 'error' || state === 'missingToken') {
+      <p class="error">{{ message }}</p>
+    }
 
     <p class="switch">
       <a routerLink="/login">{{ 'auth.backToLogin' | translate }}</a>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,11 +16,11 @@ interface CalendarDay {
 }
 
 @Component({
-  selector: 'app-calendar-view',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
-  templateUrl: './calendar-view.component.html',
-  styleUrl: './calendar-view.component.css'
+    selector: 'app-calendar-view',
+    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+    templateUrl: './calendar-view.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './calendar-view.component.css'
 })
 export class CalendarViewComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);

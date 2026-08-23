@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,12 +10,11 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
 import { strongPasswordValidators } from '../../utils/password-validators';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-    ThemeSwitchComponent, VantaBackgroundDirective],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+    templateUrl: './register.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './register.component.css'
 })
 export class RegisterComponent {
   private fb = new FormBuilder();

@@ -17,7 +17,9 @@
       <input type="password" formControlName="password" />
     </label>
 
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
 
     <button type="submit" [disabled]="form.invalid">{{ 'auth.loginBtn' | translate }}</button>
 

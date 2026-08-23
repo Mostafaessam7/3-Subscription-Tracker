@@ -19,34 +19,46 @@
   <p class="month-total">{{ 'calendar.monthlyTotal' | translate:{ total: monthlyRenewalsTotal } }}</p>
 
   <div class="weekday-row">
-    <span *ngFor="let d of ['calendar.sun','calendar.mon','calendar.tue','calendar.wed','calendar.thu','calendar.fri','calendar.sat']">
-      {{ d | translate }}
-    </span>
+    @for (d of ['calendar.sun','calendar.mon','calendar.tue','calendar.wed','calendar.thu','calendar.fri','calendar.sat']; track d) {
+      <span>
+        {{ d | translate }}
+      </span>
+    }
   </div>
 
   <div class="calendar-grid">
-    <div
-      class="day-cell"
-      *ngFor="let day of days"
-      [class.other-month]="!day.inCurrentMonth"
-      [class.today]="day.isToday"
-      [class.has-renewals]="day.renewals.length > 0"
-      (click)="selectDay(day)">
-      <span class="day-number">{{ day.date.getDate() }}</span>
-
-      <div class="renewal-dots" *ngIf="day.renewals.length > 0">
-        <span class="renewal-dot" *ngFor="let r of day.renewals.slice(0, 3)"></span>
-        <span class="renewal-more" *ngIf="day.renewals.length > 3">+{{ day.renewals.length - 3 }}</span>
+    @for (day of days; track day) {
+      <div
+        class="day-cell"
+        [class.other-month]="!day.inCurrentMonth"
+        [class.today]="day.isToday"
+        [class.has-renewals]="day.renewals.length > 0"
+        (click)="selectDay(day)">
+        <span class="day-number">{{ day.date.getDate() }}</span>
+        @if (day.renewals.length > 0) {
+          <div class="renewal-dots">
+            @for (r of day.renewals.slice(0, 3); track r.id) {
+              <span class="renewal-dot"></span>
+            }
+            @if (day.renewals.length > 3) {
+              <span class="renewal-more">+{{ day.renewals.length - 3 }}</span>
+            }
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
 
   <!-- تفاصيل اليوم المختار -->
-  <div class="day-detail" *ngIf="selectedDay">
-    <h3>{{ selectedDay.date | date:'yyyy-MM-dd' }}</h3>
-    <div class="detail-row" *ngFor="let r of selectedDay.renewals">
-      <a [routerLink]="['/subscriptions', r.id]">{{ r.name }}</a>
-      <span class="mono">{{ r.price }}</span>
+  @if (selectedDay) {
+    <div class="day-detail">
+      <h3>{{ selectedDay.date | date:'yyyy-MM-dd' }}</h3>
+      @for (r of selectedDay.renewals; track r.id) {
+        <div class="detail-row">
+          <a [routerLink]="['/subscriptions', r.id]">{{ r.name }}</a>
+          <span class="mono">{{ r.price }}</span>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

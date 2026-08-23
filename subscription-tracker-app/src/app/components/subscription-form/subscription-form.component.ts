@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BillingCycle, Category, Currency, PaymentMethod, Subscription, SubscriptionStatus, Tag } from '../../models/subscription.model';
@@ -11,11 +11,11 @@ import { TagService } from '../../services/tag.service';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
-  selector: 'app-subscription-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, CategoryNamePipe],
-  templateUrl: './subscription-form.component.html',
-  styleUrl: './subscription-form.component.css'
+    selector: 'app-subscription-form',
+    imports: [ReactiveFormsModule, TranslateModule, CategoryNamePipe],
+    templateUrl: './subscription-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './subscription-form.component.css'
 })
 export class SubscriptionFormComponent implements OnInit, OnChanges {
   private categoryService = inject(CategoryService);

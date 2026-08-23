@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,11 +12,11 @@ import { AdminUser, SystemStats } from '../../models/admin.model';
 import { UserRole } from '../../models/subscription.model';
 
 @Component({
-  selector: 'app-admin',
-  standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
-  templateUrl: './admin.component.html',
-  styleUrl: './admin.component.css'
+    selector: 'app-admin',
+    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+    templateUrl: './admin.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
   private adminService = inject(AdminService);

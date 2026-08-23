@@ -15,7 +15,9 @@
           [class.field-invalid]="form.controls.name.invalid && form.controls.name.touched" />
       </label>
 
-      <img *ngIf="logoPreviewUrl" [src]="logoPreviewUrl" class="logo-preview" alt="logo" />
+      @if (logoPreviewUrl) {
+        <img [src]="logoPreviewUrl" class="logo-preview" alt="logo" />
+      }
 
       <button
         type="button"
@@ -40,14 +42,18 @@
       <label class="currency-field">
         {{ 'form.currency' | translate }}
         <select formControlName="currency">
-          <option *ngFor="let c of currencies" [value]="c.value">{{ c.label }}</option>
+          @for (c of currencies; track c) {
+            <option [value]="c.value">{{ c.label }}</option>
+          }
         </select>
       </label>
 
       <label>
         {{ 'form.billingCycle' | translate }}
         <select formControlName="billingCycle">
-          <option *ngFor="let c of billingCycles" [value]="c.value">{{ c.key | translate }}</option>
+          @for (c of billingCycles; track c) {
+            <option [value]="c.value">{{ c.key | translate }}</option>
+          }
         </select>
       </label>
     </div>
@@ -65,14 +71,18 @@
         {{ 'form.category' | translate }}
         <select formControlName="categoryId">
           <option [ngValue]="null">{{ 'form.noCategory' | translate }}</option>
-          <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.icon }} {{ c.name | categoryName }}</option>
+          @for (c of categories; track c.id) {
+            <option [ngValue]="c.id">{{ c.icon }} {{ c.name | categoryName }}</option>
+          }
         </select>
       </label>
 
       <label>
         {{ 'form.status' | translate }}
         <select formControlName="status">
-          <option *ngFor="let s of statuses" [value]="s.value">{{ s.key | translate }}</option>
+          @for (s of statuses; track s) {
+            <option [value]="s.value">{{ s.key | translate }}</option>
+          }
         </select>
       </label>
     </div>
@@ -82,71 +92,74 @@
       <span class="chevron" [class.open]="showMoreDetails">⌄</span>
     </button>
 
-    <div class="more-details" *ngIf="showMoreDetails">
-      <label>
-        {{ 'form.description' | translate }}
-        <textarea formControlName="description" rows="2" placeholder="{{ 'form.descriptionPlaceholder' | translate }}"></textarea>
-      </label>
-
-      <div class="field-row">
+    @if (showMoreDetails) {
+      <div class="more-details">
         <label>
-          {{ 'form.startDate' | translate }}
-          <input type="date" formControlName="startDate" />
+          {{ 'form.description' | translate }}
+          <textarea formControlName="description" rows="2" placeholder="{{ 'form.descriptionPlaceholder' | translate }}"></textarea>
         </label>
-
+        <div class="field-row">
+          <label>
+            {{ 'form.startDate' | translate }}
+            <input type="date" formControlName="startDate" />
+          </label>
+          <label>
+            {{ 'form.paymentMethod' | translate }}
+            <select formControlName="paymentMethodId">
+              <option [ngValue]="null">{{ 'form.noPaymentMethod' | translate }}</option>
+              @for (p of paymentMethods; track p.id) {
+                <option [ngValue]="p.id">{{ p.name }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="icon-input-field">
+            {{ 'form.icon' | translate }}
+            <input type="text" formControlName="icon" maxlength="4" placeholder="🎬" />
+          </label>
+          <label class="url-field">
+            {{ 'form.websiteUrl' | translate }}
+            <input type="url" formControlName="websiteUrl" placeholder="https://..." />
+          </label>
+        </div>
+        @if (logoPreviewUrl) {
+          <p class="icon-hint">{{ 'form.iconHint' | translate }}</p>
+        }
         <label>
-          {{ 'form.paymentMethod' | translate }}
-          <select formControlName="paymentMethodId">
-            <option [ngValue]="null">{{ 'form.noPaymentMethod' | translate }}</option>
-            <option *ngFor="let p of paymentMethods" [ngValue]="p.id">{{ p.name }}</option>
-          </select>
+          {{ 'form.notes' | translate }}
+          <textarea formControlName="notes" rows="2" placeholder="{{ 'form.notesPlaceholder' | translate }}"></textarea>
         </label>
-      </div>
-
-      <div class="field-row">
-        <label class="icon-input-field">
-          {{ 'form.icon' | translate }}
-          <input type="text" formControlName="icon" maxlength="4" placeholder="🎬" />
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="autoRenew" />
+          {{ 'form.autoRenew' | translate }}
         </label>
-
-        <label class="url-field">
-          {{ 'form.websiteUrl' | translate }}
-          <input type="url" formControlName="websiteUrl" placeholder="https://..." />
-        </label>
-      </div>
-
-      <p class="icon-hint" *ngIf="logoPreviewUrl">{{ 'form.iconHint' | translate }}</p>
-
-      <label>
-        {{ 'form.notes' | translate }}
-        <textarea formControlName="notes" rows="2" placeholder="{{ 'form.notesPlaceholder' | translate }}"></textarea>
-      </label>
-
-      <label class="checkbox-label">
-        <input type="checkbox" formControlName="autoRenew" />
-        {{ 'form.autoRenew' | translate }}
-      </label>
-
-      <div class="tags-field">
-        <p class="tags-label">{{ 'form.tags' | translate }}</p>
-        <div class="tags-chips">
-          <button
-            type="button"
-            *ngFor="let t of allTags"
-            class="tag-chip"
-            [class.selected]="isTagSelected(t.id)"
-            [style.border-color]="t.color"
-            [style.background]="isTagSelected(t.id) ? t.color + '22' : 'transparent'"
-            [style.color]="isTagSelected(t.id) ? t.color : null"
-            (click)="toggleTag(t.id)">
-            {{ t.name }}
-          </button>
-          <p class="empty-hint-small" *ngIf="allTags.length === 0">{{ 'form.noTagsYet' | translate }}</p>
+        <div class="tags-field">
+          <p class="tags-label">{{ 'form.tags' | translate }}</p>
+          <div class="tags-chips">
+            @for (t of allTags; track t.id) {
+              <button
+                type="button"
+                class="tag-chip"
+                [class.selected]="isTagSelected(t.id)"
+                [style.border-color]="t.color"
+                [style.background]="isTagSelected(t.id) ? t.color + '22' : 'transparent'"
+                [style.color]="isTagSelected(t.id) ? t.color : null"
+                (click)="toggleTag(t.id)">
+                {{ t.name }}
+              </button>
+            }
+            @if (allTags.length === 0) {
+              <p class="empty-hint-small">{{ 'form.noTagsYet' | translate }}</p>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
 
-    <p class="form-error" *ngIf="form.invalid && form.touched">{{ 'form.missingFields' | translate }}</p>
+    @if (form.invalid && form.touched) {
+      <p class="form-error">{{ 'form.missingFields' | translate }}</p>
+    }
   </div>
 
   <div class="form-actions">

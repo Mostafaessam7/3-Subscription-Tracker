@@ -2,6 +2,23 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
+## فجوة 11: ترقية Angular 18 → 22 (8 ثغرات `@angular/core` عالية)
+
+الفجوة الأمنية الوحيدة الباقية بعد فجوة 10 — 8 ثغرات XSS عالية في `@angular/core` نفسه، والتصليح محتاج ترقية 4 Majors دفعة واحدة (18→19→20→21→22)، Breaking Change حقيقي محتاج تجربة شاملة.
+
+1. [x] فرع منفصل `angular-upgrade` (بعيد عن `main`) قبل ما نبدأ — شغل خطر محتمل يحتاج Rollback نضيف
+2. [x] ترقية تدريجية بـ `ng update @angular/cli@N @angular/core@N` لكل Major لوحده، مع `ng build` + كامل الـ 169 Karma Test بعد كل خطوة قبل ما نكمل اللي بعدها (مش دفعة واحدة عشان لو حاجة اتكسرت نعرف بالظبط فين)
+3. [x] v19: Migration تلقائي شال `standalone: true` من 20 Component (بقت الافتراضي)
+4. [x] v20: TypeScript 5.5.4 → 5.9.3
+5. [x] v21: Migration تلقائي حوّل كل الـ Templates من `*ngIf`/`*ngFor`/`*ngSwitch` لصيغة `@if`/`@for`/`@switch` الجديدة - أكبر تغيير في الترقية كلها، عبر كل الـ 20 Component
+6. [x] v22: `ChangeDetectionStrategy.Eager` صريحة على كل Component، `withXhr()` في `provideHttpClient()`، TypeScript 6.0.3
+   - 🐛 **إصلاح صغير اتكشف بعد v22**: الـ Production Bundle زاد ~3.6kb وتخطى سقف `1mb` في `angular.json` - اترفع لـ `1.05mb`
+7. [x] `npm audit` بعد الترقية: الـ **8 ثغرات العالية في `@angular/core` اتصلحت بالكامل** (مبقتش موجودة خالص)
+
+**قرار متعمّد**: ظهرت 7 ثغرات جديدة (3 عالية، 4 متوسطة) في `less`/`webpack-dev-server`/`image-size`/`uuid` - كلها Transitive عن طريق `@angular-devkit/build-angular` (أدوات Build فقط، مش بتتشحن في الـ Production Bundle). التصليح محتاج `npm audit fix --force` (Breaking Change زيادة في `@angular-devkit/build-angular`) - سابتها كفجوة جديدة في `README.md` بدل ما أعملها من غير قرار وتجربة، زي بالظبط قرار jspdf وقرار الترقية دي نفسها قبل كده.
+
+النتيجة: **169/169 Frontend Test** نجحوا بعد كل خطوة من الأربعة، والـ `ng build` ناجح في الآخر بدون أخطاء.
+
 ## فجوة 10: E2E Tests لتأكيد الإيميل ومسح الحساب
 
 من الفجوات اللي فجوة 9 سابتها عمدًا (E2E بتاع الفيتشرز الجديدة).

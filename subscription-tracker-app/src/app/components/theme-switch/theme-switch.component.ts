@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
@@ -9,6 +9,7 @@ import { ThemeService } from '../../services/theme.service';
       {{ themeService.currentTheme() === 'dark' ? '☀️' : '🌙' }}
     </button>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .theme-btn {
       background: var(--surface);

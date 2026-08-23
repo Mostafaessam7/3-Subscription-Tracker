@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToastComponent } from './components/toast/toast.component';
@@ -7,11 +7,11 @@ import { LanguageService } from './services/language.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, TranslateModule, ToastComponent, ConfirmDialogComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    selector: 'app-root',
+    imports: [RouterOutlet, TranslateModule, ToastComponent, ConfirmDialogComponent],
+    templateUrl: './app.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   private languageService = inject(LanguageService);

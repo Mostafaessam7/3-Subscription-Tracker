@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,12 +9,11 @@ import { ThemeSwitchComponent } from '../theme-switch/theme-switch.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
 
 @Component({
-  selector: 'app-forgot-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent,
-    ThemeSwitchComponent, VantaBackgroundDirective],
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css'
+    selector: 'app-forgot-password',
+    imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
+    templateUrl: './forgot-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent {
   private fb = new FormBuilder();

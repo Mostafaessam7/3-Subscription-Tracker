@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,10 +37,8 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 type SortOption = 'RenewalDate' | 'Cost' | 'Name';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'app-dashboard',
+    imports: [
     FormsModule,
     RouterLink,
     TranslateModule,
@@ -55,9 +53,10 @@ type SortOption = 'RenewalDate' | 'Cost' | 'Name';
     CategorySpendingChartComponent,
     VantaBackgroundDirective,
     CategoryNamePipe
-  ],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+],
+    templateUrl: './dashboard.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);

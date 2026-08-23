@@ -7,14 +7,16 @@
     </div>
   </div>
 
-  <div class="profile-hero" vantaBackground="fog" *ngIf="profile">
-    <div class="profile-card">
-      <div class="avatar">{{ profile.name.charAt(0) }}</div>
-      <h2>{{ profile.name }}</h2>
-      <p class="email">{{ profile.email }}</p>
-      <p class="member-since">{{ 'profile.memberSince' | translate }} {{ profile.createdAt | date:'yyyy-MM-dd' }}</p>
+  @if (profile) {
+    <div class="profile-hero" vantaBackground="fog">
+      <div class="profile-card">
+        <div class="avatar">{{ profile.name.charAt(0) }}</div>
+        <h2>{{ profile.name }}</h2>
+        <p class="email">{{ profile.email }}</p>
+        <p class="member-since">{{ 'profile.memberSince' | translate }} {{ profile.createdAt | date:'yyyy-MM-dd' }}</p>
+      </div>
     </div>
-  </div>
+  }
 
   <form [formGroup]="nameForm" (ngSubmit)="saveName()" class="section-card">
     <h3>{{ 'profile.editName' | translate }}</h3>
@@ -46,7 +48,9 @@
       {{ 'auth.password' | translate }}
       <input type="password" formControlName="password" />
     </label>
-    <p class="error" *ngIf="deleteError">{{ deleteError }}</p>
+    @if (deleteError) {
+      <p class="error">{{ deleteError }}</p>
+    }
     <button type="submit" class="btn-danger" [disabled]="deleteAccountForm.invalid">{{ 'profile.deleteAccountBtn' | translate }}</button>
   </form>
 </div>
