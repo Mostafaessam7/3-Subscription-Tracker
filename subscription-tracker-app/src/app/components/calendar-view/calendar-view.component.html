@@ -37,7 +37,7 @@
         <span class="day-number">{{ day.date.getDate() }}</span>
         @if (day.renewals.length > 0) {
           <div class="renewal-dots">
-            @for (r of day.renewals.slice(0, 3); track r) {
+            @for (r of day.renewals.slice(0, 3); track r.id) {
               <span class="renewal-dot"></span>
             }
             @if (day.renewals.length > 3) {
@@ -53,7 +53,7 @@
   @if (selectedDay) {
     <div class="day-detail">
       <h3>{{ selectedDay.date | date:'yyyy-MM-dd' }}</h3>
-      @for (r of selectedDay.renewals; track r) {
+      @for (r of selectedDay.renewals; track r.id) {
         <div class="detail-row">
           <a [routerLink]="['/subscriptions', r.id]">{{ r.name }}</a>
           <span class="mono">{{ r.price }}</span>

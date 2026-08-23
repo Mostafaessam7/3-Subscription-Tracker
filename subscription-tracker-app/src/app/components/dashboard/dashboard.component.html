@@ -1,7 +1,7 @@
 @if (tickerItems.length > 0) {
   <div class="ticker-wrap">
     <div class="ticker-track">
-      @for (item of tickerItems; track item) {
+      @for (item of tickerItems; track item.id) {
         <span class="ticker-item">
           <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
           {{ item.name }}
@@ -9,7 +9,7 @@
           <span class="ticker-days">{{ 'dashboard.daysShort' | translate:{ days: item.daysUntilRenewal } }}</span>
         </span>
       }
-      @for (item of tickerItems; track item) {
+      @for (item of tickerItems; track item.id) {
         <span class="ticker-item">
           <span class="dot" [class.dot-danger]="item.daysUntilRenewal <= 3"></span>
           {{ item.name }}
