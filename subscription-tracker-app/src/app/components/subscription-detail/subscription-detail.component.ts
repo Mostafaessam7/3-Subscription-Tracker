@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
     selector: 'app-subscription-detail',
     imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
     templateUrl: './subscription-detail.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-detail.component.css'
 })
 export class SubscriptionDetailComponent implements OnInit {

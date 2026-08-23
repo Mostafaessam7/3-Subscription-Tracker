@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { LanguageService } from '../../services/language.service';
 
 @Component({
@@ -9,6 +9,7 @@ import { LanguageService } from '../../services/language.service';
       {{ languageService.currentLang() === 'ar' ? 'EN' : 'ع' }}
     </button>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .lang-btn {
       background: var(--surface);

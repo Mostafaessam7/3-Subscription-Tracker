@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { FormsModule } from '@angular/forms';
@@ -14,6 +14,7 @@ const DEFAULT_COLORS = ['#818CF8', '#35D0C6', '#F5B841', '#4ADE80', '#FB7185', '
     selector: 'app-tag-manager',
     imports: [FormsModule, TranslateModule],
     templateUrl: './tag-manager.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './tag-manager.component.css'
 })
 export class TagManagerComponent implements OnChanges {

@@ -35,7 +35,7 @@
     <div class="hero-zone">
       <div class="header">
         <div>
-          <p class="eyebrow">{{ 'dashboard.eyebrow' | translate:{ name: authService.currentUser()?.name } }}</p>
+          <p class="eyebrow">{{ 'dashboard.eyebrow' | translate:{ name: $safeNavigationMigration(authService.currentUser()?.name) } }}</p>
           <h1 class="hero-value mono"><span [countUp]="monthlyTotal"></span><span class="hero-unit">{{ 'dashboard.unit' | translate }}</span></h1>
         </div>
         <div class="header-actions">

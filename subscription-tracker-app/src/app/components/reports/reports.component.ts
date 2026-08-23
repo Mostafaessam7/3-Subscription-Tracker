@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ type ReportPreset = 'all' | 'active' | 'expired' | 'upcoming';
     selector: 'app-reports',
     imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
     templateUrl: './reports.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './reports.component.css'
 })
 export class ReportsComponent implements OnInit {

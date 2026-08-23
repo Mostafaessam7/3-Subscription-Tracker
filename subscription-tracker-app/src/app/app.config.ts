@@ -1,6 +1,6 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, HttpClient, withXhr } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
@@ -14,7 +14,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withViewTransitions()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     importProvidersFrom(
       TranslateModule.forRoot({
         defaultLanguage: 'ar',

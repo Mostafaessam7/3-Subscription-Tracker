@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -55,6 +55,7 @@ type SortOption = 'RenewalDate' | 'Cost' | 'Name';
     CategoryNamePipe
 ],
     templateUrl: './dashboard.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {

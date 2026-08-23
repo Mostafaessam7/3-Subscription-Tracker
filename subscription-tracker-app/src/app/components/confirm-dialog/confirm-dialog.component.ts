@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -7,6 +7,7 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
     selector: 'app-confirm-dialog',
     imports: [TranslateModule],
     templateUrl: './confirm-dialog.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './confirm-dialog.component.css'
 })
 export class ConfirmDialogComponent {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
     selector: 'app-subscription-list',
     imports: [CommonModule, RouterLink, TranslateModule, CategoryNamePipe],
     templateUrl: './subscription-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-list.component.css'
 })
 export class SubscriptionListComponent {

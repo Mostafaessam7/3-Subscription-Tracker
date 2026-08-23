@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ type ConfirmState = 'confirming' | 'success' | 'error' | 'missingToken';
     selector: 'app-confirm-email',
     imports: [RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './confirm-email.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './confirm-email.component.css'
 })
 export class ConfirmEmailComponent implements OnInit {

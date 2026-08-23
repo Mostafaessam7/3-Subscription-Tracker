@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,6 +17,7 @@ import { strongPasswordValidators } from '../../utils/password-validators';
     selector: 'app-profile',
     imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './profile.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {

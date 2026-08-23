@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { strongPasswordValidators } from '../../utils/password-validators';
     selector: 'app-register',
     imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './register.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './register.component.css'
 })
 export class RegisterComponent {

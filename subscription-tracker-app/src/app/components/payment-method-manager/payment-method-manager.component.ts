@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { PaymentMethod, PaymentMethodType } from '../../models/subscription.mode
     selector: 'app-payment-method-manager',
     imports: [FormsModule, TranslateModule],
     templateUrl: './payment-method-manager.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './payment-method-manager.component.css'
 })
 export class PaymentMethodManagerComponent implements OnChanges {

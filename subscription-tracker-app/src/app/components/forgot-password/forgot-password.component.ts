@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -12,6 +12,7 @@ import { VantaBackgroundDirective } from '../../directives/vanta-background.dire
     selector: 'app-forgot-password',
     imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './forgot-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './forgot-password.component.css'
 })
 export class ForgotPasswordComponent {

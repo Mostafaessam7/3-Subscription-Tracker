@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     selector: 'app-reset-password',
     imports: [ReactiveFormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective],
     templateUrl: './reset-password.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './reset-password.component.css'
 })
 export class ResetPasswordComponent implements OnInit {

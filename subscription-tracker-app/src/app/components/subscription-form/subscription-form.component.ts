@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
     selector: 'app-subscription-form',
     imports: [ReactiveFormsModule, TranslateModule, CategoryNamePipe],
     templateUrl: './subscription-form.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-form.component.css'
 })
 export class SubscriptionFormComponent implements OnInit, OnChanges {

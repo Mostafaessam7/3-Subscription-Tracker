@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AnalyticsService } from '../../services/analytics.service';
@@ -15,6 +15,7 @@ interface ChartSlice extends CategorySpending {
     selector: 'app-category-spending-chart',
     imports: [CommonModule, TranslateModule, CategoryNamePipe],
     templateUrl: './category-spending-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './category-spending-chart.component.css'
 })
 export class CategorySpendingChartComponent implements OnInit, OnChanges {
