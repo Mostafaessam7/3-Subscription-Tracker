@@ -4,7 +4,7 @@
       <div class="manager-card">
         <div class="manager-header">
           <h3>{{ 'tags.manage' | translate }}</h3>
-          <button type="button" class="close-btn" (click)="close()">✕</button>
+          <button type="button" class="close-btn" (click)="close()" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <div class="tag-rows">
           @for (t of tags; track t.id) {
@@ -12,8 +12,8 @@
               <span class="swatch" [style.background]="t.color"></span>
               <span class="tag-name">{{ t.name }}</span>
               <div class="row-actions">
-                <button class="icon-btn" (click)="startEdit(t)" title="{{ 'detail.edit' | translate }}">✎</button>
-                <button class="icon-btn icon-btn-danger" (click)="delete(t)" title="{{ 'detail.delete' | translate }}">✕</button>
+                <button class="icon-btn" (click)="startEdit(t)" title="{{ 'detail.edit' | translate }}" [attr.aria-label]="'detail.edit' | translate">✎</button>
+                <button class="icon-btn icon-btn-danger" (click)="delete(t)" title="{{ 'detail.delete' | translate }}" [attr.aria-label]="'detail.delete' | translate">✕</button>
               </div>
             </div>
           }

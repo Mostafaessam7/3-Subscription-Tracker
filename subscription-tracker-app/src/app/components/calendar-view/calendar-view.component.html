@@ -11,8 +11,8 @@
     <h1>{{ currentMonth | date:'MMMM yyyy' }}</h1>
     <div class="nav-buttons">
       <button (click)="goToToday()">{{ 'calendar.today' | translate }}</button>
-      <button (click)="previousMonth()">‹</button>
-      <button (click)="nextMonth()">›</button>
+      <button (click)="previousMonth()" [attr.aria-label]="'calendar.previousMonth' | translate">‹</button>
+      <button (click)="nextMonth()" [attr.aria-label]="'calendar.nextMonth' | translate">›</button>
     </div>
   </div>
 

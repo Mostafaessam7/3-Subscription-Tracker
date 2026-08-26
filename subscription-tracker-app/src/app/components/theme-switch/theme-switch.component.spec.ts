@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { ThemeSwitchComponent } from './theme-switch.component';
 import { ThemeService } from '../../services/theme.service';
 
@@ -9,7 +10,7 @@ describe('ThemeSwitchComponent', () => {
   beforeEach(async () => {
     localStorage.clear();
     await TestBed.configureTestingModule({
-      imports: [ThemeSwitchComponent]
+      imports: [ThemeSwitchComponent, TranslateModule.forRoot()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ThemeSwitchComponent);
