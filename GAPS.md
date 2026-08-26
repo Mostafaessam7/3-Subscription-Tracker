@@ -2,6 +2,16 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
+## فجوة 14: Security Headers (الباك اند)
+
+مراجعة إضافية لقيت إن الـ API مفيهوش أي Security Headers خالص - مفيش `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, ولا `HSTS`.
+
+1. [x] `SecurityHeadersMiddleware.cs` جديد - بيضيف `nosniff`, `DENY`, `strict-origin-when-cross-origin`, `Permissions-Policy` لكل رد
+2. [x] `app.UseHsts()` في غير الـ Development
+3. [x] اتسجّل بدري في الـ Pipeline (بعد Exception Handler، قبل الـ CORS)
+
+النتيجة: 89/89 Backend Test لسه بينجحوا (الـ Middleware ده بيضيف Headers بس، مفيش أي تغيير في السلوك الوظيفي).
+
 ## فجوة 13: Lazy Loading لكل الـ Routes (Bundle Size)
 
 بعد ترقية Angular، لاحظت إن `app.routes.ts` كان بيعمل Import مباشر لكل الـ Components كلهم - يعني صفحة Reports (اللي بتجيب `jspdf`/`canvg`) وAdmin وCalendar كانوا بيتحملوا كلهم في الـ Bundle الابتدائي حتى لو المستخدم مزارش الصفحات دي خالص. ده السبب الحقيقي وراء اضطرارنا نرفع الـ Budget لـ `1.05mb` وقت ترقية Angular.

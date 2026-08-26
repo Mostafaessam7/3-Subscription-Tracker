@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### إضافات — Security Headers (2026-08-26)
+- `SecurityHeadersMiddleware.cs` جديد (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`) - الـ API ماكانش عليه أي Headers أمنية خالص قبل كده.
+- `app.UseHsts()` اتفعّلت في غير الـ Development (بتتعارض مع `localhost` وقت التطوير).
+- Tests: **89/89 Backend Test** لسه بينجحوا.
+
 ### تحسين — Lazy Loading لكل الـ Routes (2026-08-26)
 - كل الـ Routes بقت `loadComponent` بدل Import مباشر ماعدا `DashboardComponent` (الصفحة الافتراضية بعد Login/Register - خليها Lazy كان بيضيف تأخير ملحوظ أول ما حد يسجّل، خصوصًا في Dev Server).
 - **النتيجة**: الـ Initial Bundle نزل من **~966 كيلوبايت لـ ~298 كيلوبايت** (main.js لوحده) بعد ما صفحات زي Reports (بتجيب `jspdf`/`canvg` التقيلين) و Admin و Calendar بقوا بيتحمّلوا بس وقت زيارتهم فعليًا. `angular.json` Budget رجع لـ `550kb`/`750kb` (كان اترفع مؤقتًا لـ `1.05mb` وقت ترقية Angular).

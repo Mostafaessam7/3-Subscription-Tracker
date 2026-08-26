@@ -184,6 +184,15 @@ try
     // الـ Exception Handler لازم يتسجّل بدري في الـ Pipeline عشان يقدر يمسك أي حاجة بعده
     app.UseExceptionHandler();
 
+    // HSTS بيجبر المتصفح يستخدم HTTPS بس لأي طلب جاي من دلوقتي، لكنه مش لازم في الـ Development
+    // (بيتعارض مع localhost اللي بيشتغل HTTP كتير وقت التطوير)
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseHsts();
+    }
+
+    app.UseMiddleware<SubscriptionTracker.Api.Middleware.SecurityHeadersMiddleware>();
+
     app.UseHttpsRedirection();
     app.UseCors("AllowAngularApp");
 
