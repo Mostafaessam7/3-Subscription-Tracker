@@ -2,6 +2,16 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
+## فجوة 13: Lazy Loading لكل الـ Routes (Bundle Size)
+
+بعد ترقية Angular، لاحظت إن `app.routes.ts` كان بيعمل Import مباشر لكل الـ Components كلهم - يعني صفحة Reports (اللي بتجيب `jspdf`/`canvg`) وAdmin وCalendar كانوا بيتحملوا كلهم في الـ Bundle الابتدائي حتى لو المستخدم مزارش الصفحات دي خالص. ده السبب الحقيقي وراء اضطرارنا نرفع الـ Budget لـ `1.05mb` وقت ترقية Angular.
+
+1. [x] كل الـ Routes بقت `loadComponent` (Lazy) ماعدا Dashboard
+2. [x] 🐛 **Dashboard اتجرّبت Lazy الأول وفشلت**: 4-6 E2E Test فشلوا بـ Timeout 15 ثانية - أول Compile لـ Chunk الـ Dashboard في Dev Server بعد التسجيل مباشرة كان بياخد وقت أطول من المهلة. رجّعتها Eager (Dashboard هي الصفحة الافتراضية لكل مستخدم مسجّل دخول، فمفيش فايدة حقيقية من تأجيلها أصلًا) وكل الـ 20 E2E Test نجحوا تاني نضيف
+3. [x] `angular.json` Budget اتظبط لـ `550kb`/`750kb` (واقعي بعد التحسين، بدل الـ `1.05mb` المؤقت)
+
+**النتيجة**: `main.js` نزل من ~966 كيلوبايت لـ ~298 كيلوبايت. `ng build` ناجح، 169/169 Karma Test، 20/20 E2E Test.
+
 ## فجوة 12: CODEOWNERS + Issue/PR Templates
 
 1. [x] `.github/CODEOWNERS` — كل الريبو تحت مراجعة صاحبه

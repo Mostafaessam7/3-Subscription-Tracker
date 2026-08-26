@@ -308,7 +308,7 @@ npm run build
 ### قبل النشر لازم تتأكد من:
 1. **`src/environments/environment.prod.ts`**: رابط الـ API لازم يشاور على دومين الباك اند الحقيقي (مش `localhost:5000`).
 2. **CORS في الباك اند**: الدومين اللي هيتنشر عليه الفرونت اند لازم يتضاف لـ Policy الـ CORS في `Program.cs` بتاع الـ API (راجع قسم CORS في [README الباك اند](../CleanArch-updated/README.md#cors)).
-3. **الـ Bundle Size**: `angular.json` مظبوط بحد أقصى `500kb` تحذير / `1mb` خطأ للـ Initial Bundle — لو تعديت الحد وقت الـ Build هتاخد Warning أو Error.
+3. **الـ Bundle Size**: `angular.json` مظبوط بحد أقصى `550kb` تحذير / `750kb` خطأ للـ Initial Bundle — لو تعديت الحد وقت الـ Build هتاخد Warning أو Error. كل الـ Routes (`app.routes.ts`) بقت Lazy-Loaded (`loadComponent`) ماعدا Dashboard، فصفحات زي Reports (`jspdf`/`canvg`) وAdmin وCalendar بيتحمّلوا بس وقت زيارتهم فعليًا.
 
 ### Nginx / Docker
 راجع [Dockerfile](../Dockerfile.frontend) و [docker-compose.yml](../docker-compose.yml) في جذر الريبو لتشغيل نسخة Production كاملة (Frontend + Backend + SQL Server) بأمر واحد.

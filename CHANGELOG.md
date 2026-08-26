@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### تحسين — Lazy Loading لكل الـ Routes (2026-08-26)
+- كل الـ Routes بقت `loadComponent` بدل Import مباشر ماعدا `DashboardComponent` (الصفحة الافتراضية بعد Login/Register - خليها Lazy كان بيضيف تأخير ملحوظ أول ما حد يسجّل، خصوصًا في Dev Server).
+- **النتيجة**: الـ Initial Bundle نزل من **~966 كيلوبايت لـ ~298 كيلوبايت** (main.js لوحده) بعد ما صفحات زي Reports (بتجيب `jspdf`/`canvg` التقيلين) و Admin و Calendar بقوا بيتحمّلوا بس وقت زيارتهم فعليًا. `angular.json` Budget رجع لـ `550kb`/`750kb` (كان اترفع مؤقتًا لـ `1.05mb` وقت ترقية Angular).
+  - 🐛 **محاولة أولى فشلت**: خليت `DashboardComponent` Lazy زي الباقي، وده سبب فشل 4-6 E2E Test بسبب Timeout (15 ثانية) في أول Compile للـ Chunk بتاعها في Dev Server بعد التسجيل/الدخول مباشرة. رجّعتها Eager وكل الـ 20 E2E Test نجحوا نضيف من غير Retries.
+- Tests: `ng build` ناجح، **169/169 Karma Test**، **20/20 E2E Test**.
+
 ### إضافات — CODEOWNERS و Issue/PR Templates (2026-08-23)
 - `.github/CODEOWNERS`، `.github/ISSUE_TEMPLATE/bug_report.md`، `.github/ISSUE_TEMPLATE/feature_request.md`، `.github/PULL_REQUEST_TEMPLATE.md` جداد.
 - 🐛 **محاولة `npm audit fix --force` للـ 7 ثغرات الجديدة في أدوات الـ Build اتوقفت عمدًا**: جرّبناها بـ `--dry-run` ولقينا إنها هتنزّل `@angular-devkit/build-angular` لإصدار `0.1002.1` (من عصر Webpack، قبل Angular 11 - Peer Dependency على `@angular/compiler-cli@^10.0.0`)، يعني هتكسر تولشين v22 اللي اتعمل بالكامل. مش حل حقيقي، فسايبناها كفجوة مفتوحة.
