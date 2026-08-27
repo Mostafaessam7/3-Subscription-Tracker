@@ -2,12 +2,39 @@
 
 الملف ده بيتبع تنفيذ الفجوات اللي اتلقت (الفرونت اند والباك اند سوا). كل بند بيتحدّث لـ ✅ أول ما يتعمل ويتفحص فعليًا.
 
-## فجوة 15: CI لسه بيستخدم Node 18 للفرونت اند (مش متوافق مع Angular 22) — مفتوحة
+## فجوة 15: CI Node 18، CORS مكتوب في الكود، وثغرة `Cryptography.Xml` — ✅ اتصلحت
 
-مراجعة توثيق (2026-08-27) لقت إن [`.github/workflows/ci.yml`](.github/workflows/ci.yml) - Job الـ `frontend` - لسه مضبوط على `node-version: "18"` (`actions/setup-node@v4`)، رغم إن المشروع اترقّى لـ Angular 22 في commit `7ebeb66` (فجوة 11 فوق). Angular CLI 22 بيتطلب رسميًا `^20.19.0 || ^22.12.0 || ^24.0.0` — Node 18 EOL أصلًا ومش من ضمن المدى المدعوم. يعني احتمال كبير إن الـ Job ده بيفشل أو بيدّي تحذيرات غير متوقعة على `npm ci`/`ng test`/`ng build` في الـ CI الفعلي، رغم إن كل حاجة شغالة محليًا (لأن مين ما شغّل المشروع محليًا غالبًا عنده Node أحدث فعليًا زي الموضح في الـ READMEs).
+اتفتحت في مراجعة التوثيق (2026-08-27) واتقفلت في جولة الإصلاح (2026-08-28).
 
-- [ ] رفع `node-version` في `ci.yml` لـ `"20.19"` أو `"22"` (يطابق المتطلبات المكتوبة في `README.md` و`subscription-tracker-app/README.md` أصلًا)
-- لسه معملتش الإصلاح ده هنا — موثّق كفجوة مفتوحة بس، مش اتصلح.
+### 1. [x] CI كان بيستخدم Node 18 (مش متوافق مع Angular 22)
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) - Job الـ `frontend` - كان مضبوط على `node-version: "18"`، رغم إن المشروع اترقّى لـ Angular 22 في commit `7ebeb66` (فجوة 11 تحت). Angular CLI 22 بيتطلب رسميًا `^20.19.0 || ^22.12.0 || ^24.0.0` — Node 18 EOL أصلًا ومش من ضمن المدى المدعوم، فالـ Job كان معرّض للفشل رغم إن كل حاجة شغالة محليًا (لأن أي حد شغّل المشروع محليًا عنده Node أحدث فعليًا).
+
+اترفع لـ `"22.12"` — أقل إصدار مدعوم في مدى Angular 22، ومطابق للمكتوب في `README.md` و`subscription-tracker-app/README.md` أصلًا.
+
+### 2. [x] CORS Origins كانت Hardcoded جوه `Program.cs`
+
+`policy.WithOrigins("http://localhost:4200")` كانت مكتوبة حرفيًا في الكود، يعني أي نشر لبيئة حقيقية كان محتاج تعديل كود وإعادة Build.
+
+- `CorsSettings.cs` جديدة في `Application/Settings` — نفس نمط `FrontendSettings`/`JwtSettings` الموجود
+- `Program.cs` بقى بيقراها من قسم `Cors:AllowedOrigins` (نفس نمط `jwtSettings` بالظبط: `GetSection(...).Get<T>()`)
+- Guard صريح بيرمي `InvalidOperationException` لو القسم فاضي — عشان خطأ الإعداد يبان وقت الـ Startup مش كـ CORS Failure غامض في المتصفح
+- القسم اتضاف لـ `appsettings.json` و `appsettings.example.json`
+
+**اتأكد فعليًا**: الـ 89 Integration/Unit Test بيشغّلوا `Program.cs` الحقيقي عن طريق `CustomWebApplicationFactory`، فنجاحهم بيثبت إن الـ Binding والـ Guard الجديدين اشتغلوا صح وقت الـ Startup.
+
+### 3. [x] ثغرة `System.Security.Cryptography.Xml` العالية
+
+كانت بتطلع **16 تحذير NU1903** في كل `dotnet build`. التوثيق القديم كان بيقول إنها Transitive عن طريق `JwtBearer` وإن الحل مستني مايكروسوفت — الفحص الفعلي بيقول إنها جاية عن طريق `Azure.Identity` ← `Microsoft.Data.SqlClient` ← `EntityFrameworkCore.SqlServer`، والحل كان في إيدينا طول الوقت (Transitive Pin عادي).
+
+- `10.0.0` اتجرّبت الأول ولسه مصابة بنفس الـ 4 Advisories
+- `10.0.11` (آخر إصدار مستقر) نضيفة — اتعملها Pin كـ `PackageReference` مباشر في `SubscriptionTracker.Infrastructure.csproj`
+
+**النتيجة**: `dotnet build` بقى **0 Warnings / 0 Errors** (كان 16 تحذير)، و **89/89 Test** لسه بينجحوا.
+
+### ⚠️ اتراجعت تاني واتأكد إنها لسه مش قابلة للحل: الـ 7 ثغرات بتاعة أدوات الـ Build
+
+اتفحصت تاني في نفس الجولة: `@angular-devkit/build-angular` طلع منه `22.1.6` (بدل `22.1.5` المثبت)، بس الإصدار الجديد لسه شايل `webpack-dev-server@5.2.6` و `less@4.6.7` — نفس الإصدارات المصابة بالظبط. يعني القرار الأصلي (تأجيلها لحد ما يطلع إصدار بيصلّحها فعليًا) لسه صح، والترقية لـ `22.1.6` مش هتفيد في حاجة هنا.
 
 ## فجوة 14: Security Headers (الباك اند)
 

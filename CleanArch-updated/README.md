@@ -284,7 +284,17 @@ dotnet test src/SubscriptionTracker.Tests
 
 ## CORS
 
-الـ Policy الحالي (`AllowAngularApp` في `Program.cs`) بيسمح **بس** بطلبات من `http://localhost:4200` (`AllowAnyHeader` + `AllowAnyMethod`، لكن الـ Origin مثبّت Hardcoded). لو الفرونت اند هيتنشر على دومين تاني (Production)، لازم تعدّل الـ Origin ده — الأفضل تحوّله لقيمة تتقرا من `appsettings.json` (`Cors:AllowedOrigins`) بدل ما يفضل مكتوب في الكود مباشرة.
+الـ Policy الحالي (`AllowAngularApp` في `Program.cs`) بيسمح بـ `AllowAnyHeader` + `AllowAnyMethod`، لكن الـ **Origins بتتقرا من `appsettings.json`** (قسم `Cors:AllowedOrigins`) — مش مكتوبة في الكود:
+
+```json
+"Cors": {
+  "AllowedOrigins": [ "http://localhost:4200" ]
+}
+```
+
+يعني النشر لأي بيئة تانية (Staging/Production) بيبقى تغيير إعداد بس، من غير ما تلمس الكود أو تعمل Build تاني. حط دومين الفرونت اند الحقيقي في `appsettings.Production.json` قبل أول Deploy.
+
+الـ Binding بيتعمل عن طريق `CorsSettings` (نفس نمط `JwtSettings`/`FrontendSettings`)، ولو القسم فاضي الـ API بيرمي `InvalidOperationException` وقت الـ Startup — عشان خطأ الإعداد يبان فورًا بدل ما يظهر كـ CORS Failure غامض في المتصفح بعدين.
 
 ## النشر (Deployment) / متغيرات بيئة الإنتاج
 

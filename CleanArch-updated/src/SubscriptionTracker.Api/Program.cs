@@ -101,12 +101,23 @@ try
 
     // ============================================================
     // CORS عشان Angular (شغال على بورت مختلف) يقدر يكلم الـ API
+    // الـ Origins بتيجي من appsettings (قسم Cors) عشان النشر لأي بيئة
+    // يبقى تغيير إعداد بس، من غير ما نلمس الكود
     // ============================================================
+    var corsSettings = builder.Configuration.GetSection(CorsSettings.SectionName).Get<CorsSettings>()
+        ?? new CorsSettings();
+
+    if (corsSettings.AllowedOrigins.Length == 0)
+    {
+        throw new InvalidOperationException(
+            "Cors:AllowedOrigins مالهوش أي قيمة - لازم يتحدد على الأقل Origin واحد للفرونت اند");
+    }
+
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAngularApp", policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.WithOrigins(corsSettings.AllowedOrigins)
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
