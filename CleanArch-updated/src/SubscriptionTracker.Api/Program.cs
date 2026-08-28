@@ -62,7 +62,35 @@ try
     // ============================================================
     // الـ Controllers
     // ============================================================
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options =>
+    {
+        // بيضيف api/v1/... جنب api/... الموجود - راجع VersionedRouteConvention
+        options.Conventions.Add(new VersionedRouteConvention());
+    });
+
+    // ============================================================
+    // API Versioning - بيتضاف دلوقتي وهو مجاني، قبل ما يبقى في أي عميل خارجي. بعد ما يبقى في
+    // عملاء، إضافته بتبقى تغيير كاسر محتاج فترة انتقال
+    // ============================================================
+    builder.Services
+        .AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+
+            // المسارات القديمة (api/... من غير إصدار) بتتعامل على إنها v1 - عشان الفرونت اند الحالي
+            // يفضل شغال من غير أي تعديل
+            options.AssumeDefaultVersionWhenUnspecified = true;
+
+            // بيرجع api-supported-versions في الـ Response Headers، فالعميل يقدر يكتشف الإصدارات
+            // المتاحة من غير توثيق خارجي
+            options.ReportApiVersions = true;
+        })
+        .AddMvc()
+        .AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
 
     // ============================================================
     // Global Exception Handling - أي خطأ مش متوقع بيتمسك مركزيًا هنا
