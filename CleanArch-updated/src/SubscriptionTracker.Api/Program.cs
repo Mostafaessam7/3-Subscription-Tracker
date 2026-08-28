@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using SubscriptionTracker.Api.Configuration;
+using SubscriptionTracker.Api.HealthChecks;
 using SubscriptionTracker.Api.Middleware;
 using SubscriptionTracker.Application;
 using SubscriptionTracker.Application.Settings;
@@ -157,6 +158,13 @@ try
     builder.Services.AddAuthorization();
 
     // ============================================================
+    // Health Checks - أي Orchestrator (Kubernetes، App Service، Docker) محتاج نقطة يسأل
+    // عليها قبل ما يوجّه Traffic للـ instance أو يعيد تشغيلها
+    // ============================================================
+    builder.Services.AddHealthChecks()
+        .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
+
+    // ============================================================
     // Rate Limiting - عشان Endpoints الـ Auth (Login/Register/Forgot-Password) متبقاش
     // مفتوحة لمحاولات Brute-force غير محدودة. كل IP ليه سقف منفصل (Partitioned)، مش سقف
     // واحد مشترك بين كل المستخدمين
@@ -219,6 +227,15 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    // /health/live: هل العملية نفسها شغالة؟ (Predicate = false يعني مفيش أي فحص تبعيات) — لو ده
+    // فشل يبقى إعادة التشغيل هي الحل الصح.
+    // /health/ready: هل التطبيق جاهز يستقبل Traffic؟ بيفحص قاعدة البيانات كمان — لو ده فشل يبقى
+    // الـ instance تتشال من الـ load balancer، مش تتقتل: إعادة تشغيل مش هتصلّح قاعدة بيانات واقعة.
+    // كلاهما بدون مصادقة عن قصد: الـ Orchestrator اللي بيسأل معندوش توكن.
+    app.MapHealthChecks("/health");
+    app.MapHealthChecks("/health/live", new() { Predicate = _ => false });
+    app.MapHealthChecks("/health/ready", new() { Predicate = check => check.Tags.Contains("ready") });
 
     app.Run();
 }
