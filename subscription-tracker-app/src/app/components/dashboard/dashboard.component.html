@@ -114,7 +114,7 @@
         <option value="Name">{{ 'dashboard.sortName' | translate }}</option>
       </select>
 
-      <button class="sort-dir-btn" (click)="toggleSortDirection()" title="{{ 'dashboard.toggleSort' | translate }}">
+      <button class="sort-dir-btn" (click)="toggleSortDirection()" title="{{ 'dashboard.toggleSort' | translate }}" [attr.aria-label]="'dashboard.toggleSort' | translate">
         {{ sortDescending ? '↓' : '↑' }}
       </button>
     </div>
@@ -200,7 +200,7 @@
       <div class="budget-form-card">
         <div class="form-header">
           <h3>{{ 'budget.formTitle' | translate }}</h3>
-          <button type="button" class="close-btn" (click)="cancelBudgetForm()">✕</button>
+          <button type="button" class="close-btn" (click)="cancelBudgetForm()" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <label class="budget-input-label">
           {{ 'budget.inputLabel' | translate }}

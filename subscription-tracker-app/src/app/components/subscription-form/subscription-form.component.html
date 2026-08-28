@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
   <div class="form-header">
     <h3>{{ (editingSubscription ? 'form.editTitle' : 'form.addTitle') | translate }}</h3>
-    <button type="button" class="close-btn" (click)="cancel.emit()">✕</button>
+    <button type="button" class="close-btn" (click)="cancel.emit()" [attr.aria-label]="'common.close' | translate">✕</button>
   </div>
 
   <div class="form-scroll">
@@ -24,7 +24,8 @@
         class="favorite-toggle"
         [class.active]="form.controls.isFavorite.value"
         (click)="form.controls.isFavorite.setValue(!form.controls.isFavorite.value)"
-        title="{{ 'form.favorite' | translate }}">
+        title="{{ 'form.favorite' | translate }}"
+        [attr.aria-label]="'form.favorite' | translate">
         {{ form.controls.isFavorite.value ? '★' : '☆' }}
       </button>
     </div>

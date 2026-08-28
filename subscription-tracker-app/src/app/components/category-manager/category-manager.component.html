@@ -4,7 +4,7 @@
       <div class="manager-card">
         <div class="manager-header">
           <h3>{{ 'categories.manage' | translate }}</h3>
-          <button type="button" class="close-btn" (click)="close()">✕</button>
+          <button type="button" class="close-btn" (click)="close()" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <div class="category-rows">
           @for (c of categories; track c.id) {
@@ -13,8 +13,8 @@
               <span class="cat-icon">{{ c.icon }}</span>
               <span class="cat-name">{{ c.name | categoryName }}</span>
               <div class="row-actions">
-                <button class="icon-btn" (click)="startEdit(c)" title="{{ 'detail.edit' | translate }}">✎</button>
-                <button class="icon-btn icon-btn-danger" (click)="delete(c)" title="{{ 'detail.delete' | translate }}">✕</button>
+                <button class="icon-btn" (click)="startEdit(c)" title="{{ 'detail.edit' | translate }}" [attr.aria-label]="'detail.edit' | translate">✎</button>
+                <button class="icon-btn icon-btn-danger" (click)="delete(c)" title="{{ 'detail.delete' | translate }}" [attr.aria-label]="'detail.delete' | translate">✕</button>
               </div>
             </div>
           }

@@ -1,4 +1,10 @@
 {
+  "common": {
+    "close": "Close"
+  },
+  "theme": {
+    "toggle": "Toggle theme"
+  },
   "nav": {
     "logout": "Log out",
     "reports": "Reports",
@@ -269,6 +275,8 @@
     "fri": "Fri",
     "sat": "Sat",
     "today": "Today",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
     "monthlyTotal": "This month's renewals total"
   },
   "admin": {

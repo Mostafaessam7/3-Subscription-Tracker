@@ -35,12 +35,13 @@
           class="icon-btn star-btn"
           [class.favorited]="sub.isFavorite"
           (click)="onToggleFavorite(sub, $event)"
-          [title]="'list.favorite' | translate">
+          [title]="'list.favorite' | translate"
+          [attr.aria-label]="'list.favorite' | translate">
           {{ sub.isFavorite ? '★' : '☆' }}
         </button>
-        <button class="icon-btn" (click)="onDuplicate(sub, $event)" title="{{ 'list.duplicate' | translate }}">⧉</button>
-        <button class="icon-btn" (click)="edit.emit(sub)" title="{{ 'detail.edit' | translate }}">✎</button>
-        <button class="icon-btn icon-btn-danger" (click)="onDelete(sub.id)" title="{{ 'detail.delete' | translate }}">✕</button>
+        <button class="icon-btn" (click)="onDuplicate(sub, $event)" title="{{ 'list.duplicate' | translate }}" [attr.aria-label]="'list.duplicate' | translate">⧉</button>
+        <button class="icon-btn" (click)="edit.emit(sub)" title="{{ 'detail.edit' | translate }}" [attr.aria-label]="'detail.edit' | translate">✎</button>
+        <button class="icon-btn icon-btn-danger" (click)="onDelete(sub.id)" title="{{ 'detail.delete' | translate }}" [attr.aria-label]="'detail.delete' | translate">✕</button>
       </div>
     </div>
   }

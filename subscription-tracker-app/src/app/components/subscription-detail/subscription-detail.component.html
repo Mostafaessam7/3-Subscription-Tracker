@@ -25,7 +25,7 @@
             <div class="logo-placeholder">{{ subscription.icon || subscription.name.charAt(0) }}</div>
           }
           <h2>{{ subscription.name }}</h2>
-          <button class="star-btn" [class.favorited]="subscription.isFavorite" (click)="onToggleFavorite()">
+          <button class="star-btn" [class.favorited]="subscription.isFavorite" (click)="onToggleFavorite()" [attr.aria-label]="'list.favorite' | translate">
             {{ subscription.isFavorite ? '★' : '☆' }}
           </button>
           <span class="badge" [ngClass]="'status-' + subscription.status">
