@@ -30,7 +30,9 @@
     "sortCost": "Sort: Cost",
     "sortName": "Sort: Name",
     "toggleSort": "Toggle sort direction",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "sortLabel": "Sort subscriptions by",
+    "cycleLabel": "Filter by billing cycle"
   },
   "status": {
     "active": "Active",

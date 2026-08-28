@@ -150,7 +150,15 @@ try
         {
             policy.WithOrigins(corsSettings.AllowedOrigins)
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  // مطلوبة عشان الكوكي اللي بتحمل التوكن أصلاً تشتغل: لما الفرونت اند
+                  // بيبعت withCredentials، المتصفح بيرفض الرد بالكامل لو الهيدر ده مش
+                  // موجود — والطلب بيفشل من غير أي رسالة خطأ من السيرفر، فالشكل بيبقى
+                  // إن تسجيل الدخول اتعطّل من غير سبب واضح.
+                  //
+                  // آمنة هنا لأن الـ Origins محددة صراحة من الإعدادات؛ الـ Credentials
+                  // ممنوعة أصلاً مع AllowAnyOrigin.
+                  .AllowCredentials();
         });
     });
 

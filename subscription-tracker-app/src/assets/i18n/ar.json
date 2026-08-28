@@ -30,7 +30,9 @@
     "sortCost": "ترتيب: السعر",
     "sortName": "ترتيب: الاسم",
     "toggleSort": "تبديل اتجاه الترتيب",
-    "clearFilters": "مسح الفلاتر"
+    "clearFilters": "مسح الفلاتر",
+    "sortLabel": "ترتيب الاشتراكات حسب",
+    "cycleLabel": "تصفية حسب دورة الدفع"
   },
   "status": {
     "active": "نشط",

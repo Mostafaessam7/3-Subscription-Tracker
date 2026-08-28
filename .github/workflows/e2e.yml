@@ -1,0 +1,93 @@
+name: E2E
+
+# Runs the Playwright suite against a real backend and a real database, including
+# the accessibility gate.
+#
+# The accessibility tests are the reason this workflow exists. The project review
+# found the main branch shipping with zero aria attributes -- the work that added
+# them had been finished and left on an unmerged branch. Accessibility was not
+# being measured, and what is not measured regresses. Two of the four a11y tests
+# need a signed-in dashboard, so they cannot run without the backend; that is why
+# this is a full E2E job rather than a static check.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e:
+    name: Playwright E2E + accessibility
+    runs-on: ubuntu-latest
+
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "E2E_Test_Pw_123!"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'E2E_Test_Pw_123!' -Q 'SELECT 1'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: CleanArch-updated/global.json
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
+          cache: "npm"
+          cache-dependency-path: subscription-tracker-app/package-lock.json
+
+      - name: Build API
+        working-directory: CleanArch-updated
+        run: dotnet build src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj -c Release
+
+      # Development on purpose: the checked-in placeholder secrets are rejected in
+      # any other environment by SecretsValidator, and the rate limiter's
+      # Development override (100/min instead of 10) is what lets a suite that
+      # registers a user per test run without tripping it.
+      - name: Start API
+        working-directory: CleanArch-updated/src/SubscriptionTracker.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ASPNETCORE_URLS: http://localhost:5000
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=SubscriptionTrackerE2E;User Id=sa;Password=E2E_Test_Pw_123!;TrustServerCertificate=True"
+        run: |
+          dotnet run --no-build -c Release &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5000/health/live && break
+            sleep 2
+          done
+
+      - name: Install frontend dependencies
+        working-directory: subscription-tracker-app
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: subscription-tracker-app
+        run: npx playwright install --with-deps chromium
+
+      # playwright.config.ts starts the Angular dev server itself via webServer.
+      - name: Run E2E (includes accessibility)
+        working-directory: subscription-tracker-app
+        run: npm run e2e
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: subscription-tracker-app/playwright-report/
+          retention-days: 7

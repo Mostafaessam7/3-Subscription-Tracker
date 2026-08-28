@@ -108,7 +108,11 @@
           placeholder="{{ 'dashboard.searchPlaceholder' | translate }}" />
       </div>
 
-      <select [(ngModel)]="sortBy" (ngModelChange)="onFilterChange()" class="sort-select">
+      <!-- بدون اسم مقروء، قارئ الشاشة بيقول "قائمة منسدلة" وبس — من غير ما يقول
+           بتتحكم في إيه. القيمة المعروضة (مثلاً "ترتيب: تاريخ التجديد") بتوصف
+           الاختيار الحالي، مش وظيفة القائمة نفسها. -->
+      <select [(ngModel)]="sortBy" (ngModelChange)="onFilterChange()" class="sort-select"
+              [attr.aria-label]="'dashboard.sortLabel' | translate">
         <option value="RenewalDate">{{ 'dashboard.sortRenewal' | translate }}</option>
         <option value="Cost">{{ 'dashboard.sortCost' | translate }}</option>
         <option value="Name">{{ 'dashboard.sortName' | translate }}</option>
@@ -136,7 +140,8 @@
         </button>
       </div>
 
-      <select [(ngModel)]="selectedBillingCycle" (ngModelChange)="onFilterChange()" class="cycle-select">
+      <select [(ngModel)]="selectedBillingCycle" (ngModelChange)="onFilterChange()" class="cycle-select"
+              [attr.aria-label]="'dashboard.cycleLabel' | translate">
         <option [ngValue]="null">{{ 'dashboard.allCycles' | translate }}</option>
         <option [ngValue]="2">{{ 'list.weekly' | translate }}</option>
         <option [ngValue]="0">{{ 'list.monthly' | translate }}</option>

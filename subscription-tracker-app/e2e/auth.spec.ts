@@ -40,8 +40,13 @@ test.describe('التسجيل والدخول', () => {
     await page.locator('button[type="submit"]').click();
     await expect(page).toHaveURL('/');
 
-    // نفس الحساب بعد الخروج لازم يقدر يدخل تاني بنفس البيانات
-    await page.evaluate(() => localStorage.removeItem('subscription_tracker_token'));
+    // نفس الحساب بعد الخروج لازم يقدر يدخل تاني بنفس البيانات.
+    //
+    // كان بيمسح 'subscription_tracker_token' — المفتاح ده مبقاش موجود أصلاً بعد ما
+    // التوكن اتنقل لكوكي HttpOnly، فمسحه بقى بلا أي أثر والاختبار كان بيتأكد من
+    // عقد اتغيّر. الجلسة دلوقتي بتتحدد من بيانات المستخدم المخزنة، وده اللي
+    // isLoggedIn() بيقراه.
+    await page.evaluate(() => localStorage.removeItem('subscription_tracker_user'));
     await page.goto('/');
     await expect(page).toHaveURL('/login');
 
