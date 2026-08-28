@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj" />
+    <Project Path="src/SubscriptionTracker.Application/SubscriptionTracker.Application.csproj" />
+    <Project Path="src/SubscriptionTracker.Domain/SubscriptionTracker.Domain.csproj" />
+    <Project Path="src/SubscriptionTracker.Infrastructure/SubscriptionTracker.Infrastructure.csproj" />
+    <Project Path="src/SubscriptionTracker.Tests/SubscriptionTracker.Tests.csproj" />
+  </Folder>
+</Solution>

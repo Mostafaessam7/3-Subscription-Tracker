@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using SubscriptionTracker.Api.Configuration;
 using SubscriptionTracker.Api.Middleware;
 using SubscriptionTracker.Application;
 using SubscriptionTracker.Application.Settings;
@@ -128,6 +129,10 @@ try
     // (تفعيل الـ Scheme نفسه لازم يفضل هنا في الـ Api Layer لأنه جزء من إعداد ASP.NET Core Middleware،
     //  لكن قيم الإعدادات (Key/Issuer/Audience) بتيجي من JwtSettings المسجّلة كـ Options في AddInfrastructure)
     // ============================================================
+    // بيتنفّذ قبل ما مفتاح الـ JWT يتستخدم في أي حاجة. خارج Development بيرفض أسرار الـ Placeholder
+    // المكتوبة في الريبو — الفحص اللي تحت بيتأكد إن القسم موجود بس، مش إن القيمة اتغيّرت فعلاً.
+    SecretsValidator.EnsureProductionSecretsAreConfigured(builder.Configuration, builder.Environment);
+
     var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
         ?? throw new InvalidOperationException("قسم Jwt ناقص من appsettings.json");
 
