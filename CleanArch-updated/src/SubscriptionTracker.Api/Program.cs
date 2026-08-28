@@ -258,6 +258,14 @@ try
     // الـ Exception Handler لازم يتسجّل بدري في الـ Pipeline عشان يقدر يمسك أي حاجة بعده
     app.UseExceptionHandler();
 
+    // بيدّي جسم ProblemDetails للردود اللي بترجع كود حالة من غير محتوى — 401 و403 و404 اللي
+    // الـ Framework نفسه بيولّدها. من غير السطر ده العميل بياخد كود حالة فاضي من غير أي جسم،
+    // فمش عارف يفرّق بين "التوكن منتهي" و"المسار مش موجود" غير من الرقم لوحده.
+    //
+    // أخطاء الـ Validation (400) أصلاً بترجع ProblemDetails كاملة من ASP.NET Core، والأخطاء غير
+    // المتوقعة بيعالجها GlobalExceptionHandler فوق — ده بيقفل الفجوة الباقية بينهم.
+    app.UseStatusCodePages();
+
     // HSTS بيجبر المتصفح يستخدم HTTPS بس لأي طلب جاي من دلوقتي، لكنه مش لازم في الـ Development
     // (بيتعارض مع localhost اللي بيشتغل HTTP كتير وقت التطوير)
     if (!app.Environment.IsDevelopment())
