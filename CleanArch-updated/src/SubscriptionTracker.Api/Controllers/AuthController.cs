@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using SubscriptionTracker.Api.Auth;
 using SubscriptionTracker.Application.DTOs;
 using SubscriptionTracker.Application.Interfaces.Services;
 
@@ -13,10 +14,50 @@ namespace SubscriptionTracker.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IWebHostEnvironment _environment;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IWebHostEnvironment environment)
         {
             _authService = authService;
+            _environment = environment;
+        }
+
+        /// <summary>
+        /// لو العميل طلب الـ Cookie Transport، بيحط التوكن في كوكي HttpOnly وبيشيله من الـ Body.
+        /// رجوعه في الاتنين كان هيلغي الفايدة كلها — التوكن هيفضل مقروء من أي سكريبت على الصفحة.
+        /// </summary>
+        private ActionResult<AuthResponseDto> RespondWithSession(AuthResponseDto result)
+        {
+            if (!WebAuthCookies.UsesCookieTransport(Request) || string.IsNullOrEmpty(result.Token))
+            {
+                return Ok(result);
+            }
+
+            WebAuthCookies.Issue(Response, result.Token, result.ExpiresAt, _environment.IsDevelopment());
+
+            // نسخة من نفس الـ DTO من غير التوكن. الباقي (الاسم، الدور، حالة تأكيد الإيميل) بيانات
+            // عرض مش بيانات اعتماد، والفرونت اند محتاجها يرسم بيها الواجهة.
+            return Ok(new AuthResponseDto
+            {
+                UserId = result.UserId,
+                Name = result.Name,
+                Email = result.Email,
+                Role = result.Role,
+                EmailConfirmed = result.EmailConfirmed,
+                Token = string.Empty,
+                ExpiresAt = result.ExpiresAt,
+            });
+        }
+
+        // POST: api/auth/logout
+        // موجود عشان الكوكي: قبل كده تسجيل الخروج كان بيحصل في الفرونت اند بس (مسح localStorage)،
+        // لكن كوكي HttpOnly مش ممكن الفرونت اند يمسحها - لازم السيرفر يعملها.
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            WebAuthCookies.Clear(Response, _environment.IsDevelopment());
+
+            return NoContent();
         }
 
         // POST: api/auth/register
@@ -25,7 +66,7 @@ namespace SubscriptionTracker.Api.Controllers
         {
             var result = await _authService.RegisterAsync(dto);
             if (result is null) return Conflict(new { message = "الإيميل ده مستخدم بالفعل" });
-            return Ok(result);
+            return RespondWithSession(result);
         }
 
         // POST: api/auth/login
@@ -34,7 +75,7 @@ namespace SubscriptionTracker.Api.Controllers
         {
             var result = await _authService.LoginAsync(dto);
             if (result is null) return Unauthorized(new { message = "الإيميل أو كلمة السر غلط" });
-            return Ok(result);
+            return RespondWithSession(result);
         }
 
         // POST: api/auth/forgot-password

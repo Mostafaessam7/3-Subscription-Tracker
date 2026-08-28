@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using SubscriptionTracker.Api.Auth;
 using SubscriptionTracker.Api.Configuration;
 using SubscriptionTracker.Api.HealthChecks;
 using SubscriptionTracker.Api.Middleware;
@@ -182,6 +183,27 @@ try
             ValidAudience = jwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // الـ Header بياخد الأولوية دايمًا: أي عميل مش متصفح (سكريبت، اختبار، أداة) بيفضل
+                // شغال زي ما هو من غير أي تعديل. الكوكي بتتقرا بس لما مفيش Header - وده حالة
+                // الفرونت اند بعد نقل التوكن من localStorage.
+                if (string.IsNullOrEmpty(context.Token))
+                {
+                    var cookieToken = context.Request.Cookies[WebAuthCookies.AccessTokenCookieName];
+
+                    if (!string.IsNullOrEmpty(cookieToken))
+                    {
+                        context.Token = cookieToken;
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
     builder.Services.AddAuthorization();
 
@@ -251,6 +273,10 @@ try
     app.UseRateLimiter();
 
     // الترتيب مهم: Authentication الأول وبعدها Authorization
+    // قبل المصادقة عن قصد: طلب CSRF مزوّر المفروض يترفض من غير ما نصرف مجهود على التحقق من
+    // التوكن أصلاً، والرفض بيبقى واضح إنه سببه الـ CSRF مش صلاحية منتهية.
+    app.UseMiddleware<SubscriptionTracker.Api.Middleware.CsrfProtectionMiddleware>();
+
     app.UseAuthentication();
     app.UseAuthorization();
 

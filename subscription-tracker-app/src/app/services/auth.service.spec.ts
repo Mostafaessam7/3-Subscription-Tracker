@@ -39,14 +39,22 @@ describe('AuthService', () => {
     localStorage.clear();
   });
 
-  it('register بيبعت POST وبيخزّن الـ Token والـ User في localStorage', () => {
+  it('register بيبعت POST وبيخزّن بيانات العرض بس - من غير التوكن', () => {
     service.register({ name: 'Mostafa', email: 'mostafa@example.com', password: '123456' }).subscribe();
 
     const req = httpMock.expectOne(`${baseUrl}/register`);
     expect(req.request.method).toBe('POST');
+
+    // لازم يطلب الـ Cookie Transport، وإلا السيرفر هيرجّع التوكن في الـ Body زي الأول
+    expect(req.request.headers.get('X-Auth-Transport')).toBe('cookie');
+    expect(req.request.withCredentials).toBeTrue();
+
     req.flush(fakeResponse);
 
-    expect(localStorage.getItem('subscription_tracker_token')).toBe('fake-jwt-token');
+    // ده جوهر التغيير: التوكن مش بيتخزن في المتصفح خالص. لو حد رجّع السطر ده تاني "عشان
+    // الجلسة تفضل بعد الـ Reload"، بيبقى رجّع الثغرة اللي التغيير ده اتعمل عشانها.
+    expect(localStorage.getItem('subscription_tracker_token')).toBeNull();
+
     expect(service.currentUser()?.email).toBe('mostafa@example.com');
   });
 
@@ -64,6 +72,13 @@ describe('AuthService', () => {
     httpMock.expectOne(`${baseUrl}/login`).flush(fakeResponse);
 
     service.logout();
+
+    // تسجيل الخروج بقى لازم ينده السيرفر: كوكي الـ HttpOnly مش ممكن الفرونت اند يمسحها، فمن غير
+    // النداء ده المستخدم هيبان إنه خرج بينما الكوكي لسه صالحة على السيرفر.
+    const logoutRequest = httpMock.expectOne(`${baseUrl}/logout`);
+    expect(logoutRequest.request.method).toBe('POST');
+    expect(logoutRequest.request.withCredentials).toBeTrue();
+    logoutRequest.flush(null, { status: 204, statusText: 'No Content' });
 
     expect(localStorage.getItem('subscription_tracker_token')).toBeNull();
     expect(service.currentUser()).toBeNull();
