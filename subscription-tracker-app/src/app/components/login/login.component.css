@@ -68,16 +68,20 @@ input:focus {
   box-shadow: 0 0 0 3px var(--amber-dim);
 }
 
+/* زرار الإجراء الأساسي: بياخد لون العلامة الأساسي وبياخد لون النص المخصص ليه من
+   نفس الثيم. قبل كده كان اللون مكتوب ثابت (#1A1300) لأنه اتظبط على الأمبر
+   القديم الفاتح — ومع أي ثيم تاني بيقع تحت حد التباين المطلوب (3.49:1 مقاسة).
+   --mx-text-on-accent معرّف لكل وضع عشان يتوافق مع اللون اللي جنبه أيًا كان. */
 button[type="submit"] {
-  background: var(--amber);
-  color: #1A1300;
+  background: var(--mx-accent);
+  color: var(--mx-text-on-accent);
   padding: 11px;
   margin-top: 6px;
   border-radius: var(--radius-sm);
 }
 
 button[type="submit"]:hover {
-  background: #FFCB63;
+  background: var(--mx-accent-hover);
   opacity: 1;
 }
 

@@ -26,6 +26,16 @@ export class ThemeService {
   }
 
   private applyTheme(theme: AppTheme): void {
+    // بيتحط الاتنين عن قصد:
+    //
+    // data-theme على <html> هو العقد اللي نظام التصميم المشترك بيقرا منه — من
+    // غيره الـ tokens بتتحدد من إعداد نظام التشغيل بدل زرار التبديل في التطبيق،
+    // يعني الزرار بيبان مكسور.
+    //
+    // وكلاس light-theme على body لسه مستخدم في قواعد داخل كومبوننتات
+    // (:host-context(body.light-theme))، فشيله هيكسّرها. الاتنين بيتحطوا مع بعض
+    // من نفس المصدر فمستحيل يختلفوا.
+    document.documentElement.setAttribute('data-theme', theme);
     document.body.classList.toggle('light-theme', theme === 'light');
   }
 

@@ -1,22 +1,32 @@
+/* نظام التصميم المشترك. tokens.css فيه كل اللي مش بيتغير بين المنتجات ومفيهوش
+   ألوان؛ ملف الثيم هو اللي بيجيب الألوان. Subscription Tracker متخصصله Modern Teal.
+
+   ملحوظة مهمة عن الترتيب: التطبيق ده كان داكن-أولاً (:root داكن + كلاس
+   body.light-theme للفاتح)، والنظام المشترك بالعكس (:root فاتح +
+   [data-theme="dark"] للداكن). بعد ما الـ tokens بقت بتتقرا من --mx-*، اللي
+   بيحدد الوضع بقى data-theme على <html> اللي ThemeService بيحطه — مش الكلاس. */
+@import './design-system/tokens.css';
+@import './design-system/themes/modern-teal.css';
+
 :root {
-  --bg: #0B1120;
-  --bg-elevated: #0F1729;
-  --surface: #131D33;
-  --surface-hover: #182543;
-  --border: #24304C;
-  --border-strong: #344266;
+  --bg: var(--mx-surface-base);
+  --bg-elevated: var(--mx-surface-raised);
+  --surface: var(--mx-surface);
+  --surface-hover: var(--mx-surface-sunk);
+  --border: var(--mx-border);
+  --border-strong: var(--mx-border-strong);
 
-  --text-primary: #EAF0FF;
-  --text-secondary: #8592B0;
-  --text-muted: #566085;
+  --text-primary: var(--mx-text);
+  --text-secondary: var(--mx-text-secondary);
+  --text-muted: var(--mx-text-muted);
 
-  --amber: #F5B841;
-  --amber-dim: #3A2E14;
-  --cyan: #35D0C6;
-  --cyan-dim: #12332F;
-  --danger: #FF5D5D;
-  --danger-dim: #3A1A1A;
-  --success: #35D0C6;
+  --amber: var(--mx-accent-alt);
+  --amber-dim: var(--mx-accent-alt-subtle);
+  --cyan: var(--mx-accent);
+  --cyan-dim: var(--mx-accent-subtle);
+  --danger: var(--mx-danger);
+  --danger-dim: var(--mx-danger-subtle);
+  --success: var(--mx-success);
 
   --font-display: 'Sora', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -32,24 +42,24 @@
    ملحوظة: الألوان المميزة (amber/cyan/danger) أغمق شوية هنا عن نسخة الداكن،
    لأنها هنا بتتعرض كنص فوق خلفية بيضا مباشرة، فمحتاجة تباين أعلى يفضل مقروء */
 body.light-theme {
-  --bg: #F4F6FB;
-  --bg-elevated: #FFFFFF;
-  --surface: #FFFFFF;
-  --surface-hover: #EEF1F8;
-  --border: #DCE1EC;
-  --border-strong: #C2C9DA;
+  --bg: var(--mx-surface-base);
+  --bg-elevated: var(--mx-surface-raised);
+  --surface: var(--mx-surface);
+  --surface-hover: var(--mx-surface-sunk);
+  --border: var(--mx-border);
+  --border-strong: var(--mx-border-strong);
 
-  --text-primary: #12172B;
-  --text-secondary: #5B6478;
-  --text-muted: #8891A6;
+  --text-primary: var(--mx-text);
+  --text-secondary: var(--mx-text-secondary);
+  --text-muted: var(--mx-text-muted);
 
-  --amber: #B8790A;
-  --amber-dim: #FBF0DC;
-  --cyan: #0E8F86;
-  --cyan-dim: #E1F7F5;
-  --danger: #D64545;
-  --danger-dim: #FCE8E8;
-  --success: #0E8F86;
+  --amber: var(--mx-accent-alt);
+  --amber-dim: var(--mx-accent-alt-subtle);
+  --cyan: var(--mx-accent);
+  --cyan-dim: var(--mx-accent-subtle);
+  --danger: var(--mx-danger);
+  --danger-dim: var(--mx-danger-subtle);
+  --success: var(--mx-success);
 
   --shadow-card: 0 1px 2px rgba(20, 24, 40, 0.06), 0 12px 32px -12px rgba(20, 24, 40, 0.12);
   --shadow-modal: 0 32px 64px -16px rgba(20, 24, 40, 0.2);
