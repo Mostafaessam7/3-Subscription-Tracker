@@ -20,10 +20,9 @@
 ## هيكل المشاريع الأربعة
 
 ```
-CleanArch/
-├── SubscriptionTracker.sln          ← هيتولد لما تشغّل setup-solution.sh
+CleanArch-updated/
+├── SubscriptionTracker.slnx         ← الـ Solution (متسجّل في الريبو، مش محتاج تولّده)
 ├── global.json
-├── setup-solution.sh                ← شغّله مرة واحدة بعد فك الضغط
 └── src/
     ├── SubscriptionTracker.Domain/          ← الطبقة الأعمق - مفيهاش أي Dependency خارجي
     │   ├── Entities/                        (User, Subscription, Category, PaymentMethod, Tag)
@@ -97,22 +96,19 @@ Api  →  Application  →  Domain
 
 ## ⚠️ خطوات إجبارية قبل التشغيل
 
-### 1. تجميع الـ Solution (مرة واحدة بس)
+### 1. استرجاع الـ Packages
+
+`SubscriptionTracker.slnx` متسجّل في الريبو، فمفيش خطوة تجميع Solution:
+
 ```bash
-cd CleanArch
-chmod +x setup-solution.sh   # لو محتاج
-./setup-solution.sh
-```
-لو مش عايز تستخدم الـ Script، الأوامر يدوي:
-```bash
-dotnet new sln -n SubscriptionTracker
-dotnet sln add src/SubscriptionTracker.Domain/SubscriptionTracker.Domain.csproj
-dotnet sln add src/SubscriptionTracker.Application/SubscriptionTracker.Application.csproj
-dotnet sln add src/SubscriptionTracker.Infrastructure/SubscriptionTracker.Infrastructure.csproj
-dotnet sln add src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj
-dotnet sln add src/SubscriptionTracker.Tests/SubscriptionTracker.Tests.csproj
+cd CleanArch-updated
 dotnet restore
 ```
+
+> كان فيه `setup-solution.sh` بيولّد الـ Solution من الصفر. اتشال في تنظيف 2026-08-29:
+> الـ `.slnx` بقى متسجّل، فالسكريبت كان هيعمل ملف Solution تاني (`.sln`) جنبه ويخلي أوامر
+> `dotnet` غامضة بين الاتنين. الخطوة دي كانت أول خطوة في الـ README، يعني اتباع التوثيق
+> حرفيًا كان بيكسر الإعداد.
 
 ### 2. Migration جديدة بالكامل (مهم جدًا تقرا الجزء ده)
 
@@ -138,7 +134,7 @@ dotnet ef database update \
 ```bash
 dotnet run --project src/SubscriptionTracker.Api
 ```
-أو لو فاتح بـ Visual Studio: افتح `SubscriptionTracker.sln` بعد ما تشغّل `setup-solution.sh`، وحدد `SubscriptionTracker.Api` كمشروع بدء التشغيل (Startup Project).
+أو لو فاتح بـ Visual Studio: افتح `SubscriptionTracker.slnx` وحدد `SubscriptionTracker.Api` كمشروع بدء التشغيل (Startup Project).
 
 ### 4. Swagger / OpenAPI
 

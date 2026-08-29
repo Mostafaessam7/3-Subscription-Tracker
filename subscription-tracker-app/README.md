@@ -257,7 +257,7 @@ npm test
 |---|---|
 | `utils/billing-cycle.util.spec.ts` | تحويل دورة الدفع لمكافئ شهري/سنوي — نفس منطق الـ Bug اللي اتصلح في P2 |
 | `services/subscription.service.spec.ts` | كل استدعاءات HTTP (`getAllForUser`, `create`, `delete`, `duplicate`, `toggleFavorite`...) عن طريق `HttpClientTestingModule` — بيتأكد من الـ Method والـ URL والـ Body المتبعتين من غير ما يكلم API حقيقي |
-| `services/auth.service.spec.ts` | تسجيل الدخول/الخروج، تخزين الـ Token في `localStorage`، وانتهاء صلاحية الـ Token (`isLoggedIn`) |
+| `services/auth.service.spec.ts` | تسجيل الدخول/الخروج، حفظ بيانات المستخدم للعرض، وحالة الجلسة (`isLoggedIn`). بيتأكد صراحةً إن التوكن **مش** بيتكتب في `localStorage` (`subscription_tracker_token` لازم يفضل `null`) — دي الحاجة اللي لو رجعت تكسر نقل التوكن للكوكي وهي شكلها شغال |
 | `services/toast.service.spec.ts` | إضافة/إزالة Toast، والإزالة التلقائية بعد 3 ثواني (`jasmine.clock()`) |
 | `components/toast/toast.component.spec.ts` | العرض الفعلي للـ Toasts في الـ DOM حسب حالة الـ Service |
 | `services/admin.service.spec.ts` | استدعاءات `/api/admin/*` (users, stats, role update) |
@@ -281,7 +281,20 @@ npx playwright install chromium   # مرة واحدة بس
 npm run e2e
 ```
 
-**20 Test** بتغطي: تسجيل/دخول/خروج، نسيان/إعادة تعيين كلمة السر، بانر تأكيد الإيميل وإعادة الإرسال، مسح الحساب، إضافة/تعديل/حذف اشتراك، ومنع مستخدم عادي من `/admin` مقابل دخول Admin حقيقي.
+**28 Test** موزّعين كده:
+
+| الملف | عدد | بيغطي إيه |
+|---|---|---|
+| `auth.spec.ts` | 7 | تسجيل/دخول/خروج، نسيان وإعادة تعيين كلمة السر |
+| `account.spec.ts` | 7 | بانر تأكيد الإيميل وإعادة الإرسال، مسح الحساب |
+| `subscription.spec.ts` | 4 | إضافة/تعديل/حذف اشتراك |
+| `admin.spec.ts` | 2 | منع مستخدم عادي من `/admin` مقابل دخول Admin حقيقي |
+| `accessibility.spec.ts` | 4 | فحص axe على `/login` و `/register` والداشبورد (وضع داكن وفاتح) |
+| `dialog-a11y.spec.ts` | 4 | سلوك الـ dialogs بالكيبورد: حبس التركيز، الإغلاق بـ Escape، ورجوع التركيز |
+
+> الملفين الأخيرين مكمّلين لبعض ومش مكرّرين: `accessibility.spec.ts` بيشغّل axe على الـ markup،
+> و`dialog-a11y.spec.ts` بيقيس **سلوك** مش axe بيشوفه — غياب حبس التركيز مبيظهرش في أي قاعدة axe،
+> فالصفحة كانت بتعدّي الفحص وهي مكسورة بالكيبورد فعليًا.
 
 > ⚠️ **مش متغطي عمدًا بـ E2E**: Rate Limiting - مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند (فاكتوري معزولة بسقف صغير خاص بيها)، لكن محاولة تكرار نفس الاختبار هنا هتقفل باقي الـ Auth Endpoints لباقي الـ E2E Suite (نفس الـ IP). راجع [`e2e/README.md`](e2e/README.md) للتفاصيل.
 
@@ -316,7 +329,8 @@ npm run build
 ## ملاحظات مهمة
 
 - **تسجيل الدخول إجباري**: أي حد يفتح الرابط الرئيسي (`/`) من غير ما يكون مسجل دخول هيتحول تلقائيًا لصفحة `/login` (بفضل `auth.guard.ts`).
-- **الـ Token** بيتخزن في `localStorage` وبيتضاف تلقائيًا لكل طلب HTTP عن طريق `auth.interceptor.ts` — مش محتاج تضيفه يدوي في أي Service.
+- **الـ Token** بيتخزن في **كوكي HttpOnly** بيبعتها الـ API، مش في `localStorage`. `auth.interceptor.ts` بيحط `withCredentials: true` على كل طلب عشان المتصفح يبعت الكوكي — مفيش `Authorization` Header بيتحط يدوي. الهدف إن أي كود JavaScript على الصفحة (بما فيه أي XSS) ميقدرش يقرا التوكن أصلًا. اللي بيفضل في `localStorage` هو بيانات المستخدم للعرض بس (`subscription_tracker_user`)، مش أي بيانات اعتماد.
+- **CSRF**: لأن المتصفح بيبعت الكوكي تلقائيًا، فيه حماية double-submit — كوكي `XSRF-TOKEN` (مقروءة من JS عن قصد) بترجع في هيدر `X-XSRF-TOKEN`. راجع `CsrfProtectionMiddleware` على الباك اند.
 - **صفحة التفاصيل**: دوس على اسم أي اشتراك في القائمة عشان تفتح `/subscriptions/{id}` وتشوف كل التفاصيل، وتقدر تعدّل أو تحذف من هناك مباشرة.
 - **التصنيفات**: قائمة ثابتة في `models/categories.const.ts` — لازم تفضل **مطابقة تمامًا** لقائمة `SubscriptionCategories.All` في الباك اند، وإلا الفلتر مش هيلاقي نتائج صح.
 - **CORS**: تأكد إن الـ Backend مسموحله بمكالمات من `http://localhost:4200` (متظبط بالفعل في `Program.cs` بتاع الـ API).

@@ -27,8 +27,7 @@
 
 ```bash
 cd CleanArch-updated
-chmod +x setup-solution.sh
-./setup-solution.sh
+dotnet restore
 ```
 
 راجع تفصيلًا كامل لخطوات الـ Migrations في [CleanArch-updated/README.md](CleanArch-updated/README.md#️-خطوات-إجبارية-قبل-التشغيل)، وقسم "الإعدادات" تحت لإعداد `appsettings.json`.
@@ -62,12 +61,13 @@ npm start
 ## إزاي البيانات بتتحرك بين المشروعين
 
 ```
-Angular (localhost:4200)  →  HTTP + JWT Token  →  ASP.NET Core API (localhost:5000)  →  SQL Server
+Angular (localhost:4200)  →  HTTP + كوكي HttpOnly  →  ASP.NET Core API (localhost:5000)  →  SQL Server
 ```
 
-- كل طلب من الفرونت اند بيمر على `auth.interceptor.ts` اللي بيضيف الـ JWT Token تلقائيًا.
+- التوكن في **كوكي HttpOnly**، مش في `localStorage`. `auth.interceptor.ts` بيحط `withCredentials: true` على كل طلب عشان المتصفح يبعت الكوكي؛ مفيش `Authorization` Header بيتحط يدوي. المقصود إن أي JavaScript على الصفحة (بما فيه XSS) ميقدرش يقرا التوكن.
+- عشان المتصفح بيبعت الكوكي تلقائيًا، فيه حماية CSRF بـ double-submit: كوكي `XSRF-TOKEN` (مقروءة من JS عن قصد) بترجع في هيدر `X-XSRF-TOKEN`.
 - الـ API بيتحقق من الـ Token، ولو فيه `{userId}` في الرابط بيتأكد إن صاحب الطلب مصرّح له (نفسه أو Admin).
-- الـ CORS متظبط في `Program.cs` بتاع الـ API عشان يسمح بطلبات من `http://localhost:4200`.
+- الـ CORS بياخد الـ Origins من `appsettings` (مش Hardcoded)، و**لازم** يكون فيه `AllowCredentials()` — من غيره المتصفح بيرفض كل رد فيه كوكي والدخول بيفشل من غير أي خطأ من السيرفر.
 
 ## الإعدادات (Configuration)
 
@@ -105,15 +105,17 @@ docker compose up --build
 
 | المشروع | الأمر | التفاصيل |
 |---|---|---|
-| Backend | `dotnet test src/SubscriptionTracker.Tests` (من `CleanArch-updated`) | xUnit (Unit + Integration لكل الـ Controllers) — راجع [قسم Testing في README الباك اند](CleanArch-updated/README.md#testing) |
-| Frontend | `npm test` (من `subscription-tracker-app`) | Karma + Jasmine (كل الـ Components والـ Services) — راجع [قسم Testing في README الفرونت اند](subscription-tracker-app/README.md#testing) |
-| Frontend (E2E) | `npm run e2e` (من `subscription-tracker-app`) | Playwright — النظام كامل حقيقي (Frontend + Backend). راجع [e2e/README.md](subscription-tracker-app/e2e/README.md) |
+| Backend | `dotnet test SubscriptionTracker.slnx` (من `CleanArch-updated`) | 109 Test — xUnit (Unit + Integration لكل الـ Controllers) — راجع [قسم Testing في README الباك اند](CleanArch-updated/README.md#testing) |
+| Frontend | `npm test` (من `subscription-tracker-app`) | 169 Test — Karma + Jasmine (كل الـ Components والـ Services) — راجع [قسم Testing في README الفرونت اند](subscription-tracker-app/README.md#testing) |
+| Frontend (E2E) | `npm run e2e` (من `subscription-tracker-app`) | 28 Test — Playwright على النظام كامل حقيقي (Frontend + Backend)، شامل فحص الإتاحة. راجع [e2e/README.md](subscription-tracker-app/e2e/README.md) |
 
 ## CI (GitHub Actions)
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) بيشغّل تلقائيًا على كل `push`/`pull_request` لـ `main`:
 - **Backend**: `dotnet build` لكل المشاريع الخمسة + `dotnet test`
 - **Frontend**: `npm ci` + `ng test` (Chrome Headless) + `npm run build`
+
+[`.github/workflows/e2e.yml`](.github/workflows/e2e.yml) بيشغّل Playwright كامل على نفس الأحداث، بـ SQL Server حقيقي كـ service container. منفصل عن `ci.yml` لأنه محتاج الباك اند والفرونت اند شغالين مع بعض وقاعدة بيانات حقيقية — واختبارات الإتاحة اتنين منها محتاجين داشبورد بمستخدم مسجّل دخول، فمش ممكن تتعمل كفحص ثابت.
 
 ## CD (نشر تلقائي على Azure)
 
@@ -142,16 +144,9 @@ docker compose up --build
 - [CONTRIBUTING.md](CONTRIBUTING.md) — سير العمل المتوقع، قواعد الكود، إزاي تشغّل الاختبارات قبل أي Commit.
 - [CHANGELOG.md](CHANGELOG.md) — تاريخ التغييرات المهمة في المشروع.
 
-## حاجات ناقصة/معروفة (Known Gaps)
+## حالة المشروع
 
-- **CD على Azure غير مُختبر فعليًا** (راجع تحذير قسم CD فوق) — الكود مكتوب حسب أفضل الممارسات المعروفة لكن محتاج تجربة على بيئة حقيقية.
-- **مفيش Provisioning تلقائي** لموارد Azure (App Services, SQL Database) — لازم تتعمل يدوي مرة واحدة قبل أول Deploy.
-- **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`) — محتاج دومين إنتاج حقيقي قبل أي Deploy فعلي. ونفس الدومين لازم يتحط في `Cors:AllowedOrigins` في `appsettings.Production.json`.
-- **Rate Limiting لسه مش متغطي بـ E2E عمدًا** — مغطى بالكامل ومضمون بـ `RateLimitingTests.cs` على الباك اند (فاكتوري معزولة بسقف صغير خاص بيها)، لكن تكرار نفس الاختبار في E2E هيقفل باقي الـ Auth Endpoints لباقي الـ Suite (نفس الـ IP). راجع [`e2e/README.md`](subscription-tracker-app/e2e/README.md) للتفاصيل.
-- **7 ثغرات أمنية جديدة (3 عالية، 4 متوسطة) في أدوات الـ Build فقط** (`less`/`webpack-dev-server`/`image-size`/`uuid` - Transitive عن طريق `@angular-devkit/build-angular`) — ظهرت بعد ترقية Angular لـ v22 (مش من كودنا، ومش بتتشحن في الـ Production Bundle، بس بتشتغل وقت الـ `ng serve`/`ng build`). ⚠️ **`npm audit fix --force` هنا مش حل حقيقي** — بيحاول ينزّل `@angular-devkit/build-angular` لإصدار `0.1002.1` القديم جدًا (من عصر Webpack قبل Angular 11)، يعني هيكسر كل تولشين v22 اللي اتعمل. اتجرّب فعليًا (`--dry-run`) واتأكد إنه مش قابل للتطبيق، فسايبناه لحد ما `@angular-devkit/build-angular` يطلع إصدار جديد بيصلّح الـ Dependency دي فعليًا من غير Downgrade.
-
-> ✅ **اتصلح في جولة 2026-08-28**: CI بقى على Node 22.12 (بدل 18 اللي كان مش متوافق مع Angular 22)، الـ CORS Origins بقت من `appsettings` بدل ما تكون Hardcoded جوه `Program.cs`، وثغرة `System.Security.Cryptography.Xml` العالية اتقفلت بـ Pin على `10.0.11` (`dotnet build` بقى **0 Warnings**). راجع [GAPS.md](GAPS.md) فجوة 15.
-
-> ✅ **اتصلح**: Forgot Password/Reset Password، Email Verification (تأكيد الإيميل بعد التسجيل)، Rate Limiting على كل Endpoints الـ Auth (منع Brute-force)، قواعد كلمة سر أقوى (8 حروف + حرف كبير/صغير/رقم)، Delete Account، Integration Tests لكل الـ Controllers، Component Tests لكل الـ Components، E2E Tests (Playwright - دلوقتي 20 Test شاملين تأكيد الإيميل ومسح الحساب)، وثغرة `AutoMapper` الأمنية (اتشال نهائيًا واتستبدل بـ Mapping يدوي بسيط - راجع [README الباك اند](CleanArch-updated/README.md#أهم-التغييرات-التقنية)). **وكمان ترقية Angular من v18 لـ v22 (4 Majors) على فرع `angular-upgrade`** — رقّعت الـ 8 ثغرات العالية في `@angular/core` نفسه بالكامل (Build + كل الـ 169 Test بينجحوا بعد كل خطوة ترقية). كمان اتضاف `CODEOWNERS` و Issue/PR Templates (`.github/`). راجع [CHANGELOG.md](CHANGELOG.md) و[GAPS.md](GAPS.md) للتفاصيل.
+[PROJECT-STATUS.md](PROJECT-STATUS.md) فيه الحالة الكاملة والمحدّثة: اللي اتقفل، القرارات
+المعتمدة، اللي لسه مفتوح، الـ technical debt، والحاجات اللي اتأجّلت عن قصد وليه. ابدأ منه.
 
 راجع الـ README الخاص بكل مشروع للتفاصيل الكاملة (الـ Architecture، الفيتشرز، الـ Bugs اللي اتصلحت، والقرارات التصميمية).

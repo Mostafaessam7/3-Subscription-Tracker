@@ -4,6 +4,24 @@
 
 ## [Unreleased]
 
+### تنظيف وتوثيق (2026-08-29)
+- **`PROJECT-STATUS.md` جديد**: حالة المشروع الكاملة في مكان واحد — اللي اتقفل، القرارات
+  المعتمدة، اللي لسه مفتوح، الـ technical debt، والحاجات المؤجَّلة عن قصد وليه.
+- **اتشال `setup-solution.sh`**: `SubscriptionTracker.slnx` بقى متسجّل في الريبو، فالسكريبت كان
+  هيولّد ملف Solution تاني جنبه ويخلي أوامر `dotnet` غامضة. المشكلة إن ده كان **أول خطوة في
+  الـ README**، يعني اتباع التوثيق حرفيًا كان بيكسر الإعداد.
+- **اتشال `src/SubscriptionTracker.Api/SubscriptionTracker.Api.slnx`** — ملف Solution تايه جوه
+  مجلد مشروع الـ API، مش مرجّع من أي حتة.
+- **اتشال worktree قديم** (`.claude/worktrees/`, ‎579 MB) — نضيف، والكوميت بتاعه (`463dbcc`)
+  موجود في `main` أصلًا، فمفيش شغل مش متدمج اتفقد.
+- **اتقفل تحذير `AV0015`**: `ApiVersionReader` بقى مضبوط صراحةً على `UrlSegmentApiVersionReader`.
+  المسارات URL-segment (`api/v1/...`) والحزمة كانت مستخدمة القارئ الافتراضي (QueryString) —
+  كانت شغالة بالصدفة بفضل `AssumeDefaultVersionWhenUnspecified`. `dotnet build` رجع **0 Warnings**.
+- **توثيق اتصلح**: الـ README كان لسه بيقول إن التوكن في `localStorage` وبيتضاف كـ `Authorization`
+  Header — ده اتغير لكوكي HttpOnly، والوصف القديم كان هيودّي أي حد جديد في الاتجاه الغلط. كمان
+  عدد الـ E2E اتحدّث (20 → 28) واتضاف وصف `e2e.yml`.
+- Tests: **109 Backend**, **169 Karma**, **28 E2E** — كلهم بينجحوا.
+
 ### إضافات — Security Headers (2026-08-26)
 - `SecurityHeadersMiddleware.cs` جديد (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`) - الـ API ماكانش عليه أي Headers أمنية خالص قبل كده.
 - `app.UseHsts()` اتفعّلت في غير الـ Development (بتتعارض مع `localhost` وقت التطوير).

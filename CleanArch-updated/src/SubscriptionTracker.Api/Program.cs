@@ -85,6 +85,12 @@ try
             // بيرجع api-supported-versions في الـ Response Headers، فالعميل يقدر يكتشف الإصدارات
             // المتاحة من غير توثيق خارجي
             options.ReportApiVersions = true;
+
+            // الإصدار بيتقرا من المسار نفسه (api/v1/...) زي ما VersionedRouteConvention بتولّده.
+            // من غير السطر ده الحزمة بتستخدم QueryStringApiVersionReader الافتراضي — بتشتغل صح
+            // بالصدفة لأن AssumeDefaultVersionWhenUnspecified بيغطي أي طلب مفيهوش ?api-version،
+            // لكنها بتطلع تحذير AV0015 وبتخلي الإعداد بيوصف نظام إصدارات مش اللي إحنا مستخدمينه.
+            options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
         })
         .AddMvc()
         .AddApiExplorer(options =>
