@@ -37,6 +37,24 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+    // Optional Azure Key Vault integration. Set KeyVault__Uri to pull secrets from a vault instead
+    // of (or on top of) environment variables. Off by default, so nothing changes for anyone not
+    // using Azure - and deliberately registered before SecretsValidator runs, so a value supplied
+    // by the vault counts as configured.
+    //
+    // DefaultAzureCredential resolves a managed identity in Azure, or `az login` locally.
+    //
+    // Key Vault secret names cannot contain ':', so they use '--' instead: a secret named
+    // "Jwt--Key" maps onto the Jwt:Key configuration entry.
+    var keyVaultUri = builder.Configuration["KeyVault:Uri"];
+
+    if (!string.IsNullOrWhiteSpace(keyVaultUri))
+    {
+        builder.Configuration.AddAzureKeyVault(
+            new Uri(keyVaultUri),
+            new Azure.Identity.DefaultAzureCredential());
+    }
+
     // بيستبدل الـ Logging الافتراضي بتاع ASP.NET Core بالكامل بـ Serilog، وبيقرا إعدادات إضافية
     // من appsettings.json لو موجودة (قسم "Serilog") فوق الإعداد الأساسي اللي فوق
     builder.Host.UseSerilog((context, services, configuration) => configuration
