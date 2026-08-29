@@ -7,10 +7,11 @@ import { PaymentMethodService } from '../../services/payment-method.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { PaymentMethod, PaymentMethodType } from '../../models/subscription.model';
+import { DialogDirective } from '../../directives/dialog.directive';
 
 @Component({
     selector: 'app-payment-method-manager',
-    imports: [FormsModule, TranslateModule],
+    imports: [FormsModule, TranslateModule, DialogDirective],
     templateUrl: './payment-method-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './payment-method-manager.component.css'

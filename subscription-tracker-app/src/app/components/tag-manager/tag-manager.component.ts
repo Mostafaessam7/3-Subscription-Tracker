@@ -7,12 +7,13 @@ import { TagService } from '../../services/tag.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { Tag } from '../../models/subscription.model';
+import { DialogDirective } from '../../directives/dialog.directive';
 
 const DEFAULT_COLORS = ['#818CF8', '#35D0C6', '#F5B841', '#4ADE80', '#FB7185', '#38BDF8'];
 
 @Component({
     selector: 'app-tag-manager',
-    imports: [FormsModule, TranslateModule],
+    imports: [FormsModule, TranslateModule, DialogDirective],
     templateUrl: './tag-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './tag-manager.component.css'

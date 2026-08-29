@@ -7,12 +7,13 @@ import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { Category } from '../../models/subscription.model';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
+import { DialogDirective } from '../../directives/dialog.directive';
 
 const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '#FB7185', '#94A3B8'];
 
 @Component({
     selector: 'app-category-manager',
-    imports: [FormsModule, TranslateModule, CategoryNamePipe],
+    imports: [FormsModule, TranslateModule, CategoryNamePipe, DialogDirective],
     templateUrl: './category-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './category-manager.component.css'

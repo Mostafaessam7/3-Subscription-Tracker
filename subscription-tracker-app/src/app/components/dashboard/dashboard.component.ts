@@ -32,6 +32,7 @@ import { PaymentMethodManagerComponent } from '../payment-method-manager/payment
 import { TagManagerComponent } from '../tag-manager/tag-manager.component';
 import { CategorySpendingChartComponent } from '../category-spending-chart/category-spending-chart.component';
 import { VantaBackgroundDirective } from '../../directives/vanta-background.directive';
+import { DialogDirective } from '../../directives/dialog.directive';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 type SortOption = 'RenewalDate' | 'Cost' | 'Name';
@@ -52,7 +53,8 @@ type SortOption = 'RenewalDate' | 'Cost' | 'Name';
     TagManagerComponent,
     CategorySpendingChartComponent,
     VantaBackgroundDirective,
-    CategoryNamePipe
+    CategoryNamePipe,
+    DialogDirective
 ],
     templateUrl: './dashboard.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,

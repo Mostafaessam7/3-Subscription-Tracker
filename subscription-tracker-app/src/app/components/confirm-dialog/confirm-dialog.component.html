@@ -1,7 +1,8 @@
 @if (dialogService.state(); as state) {
   <div class="modal-overlay" (click)="dialogService.respond(false)">
-    <div class="confirm-card" (click)="$event.stopPropagation()">
-      <p class="message">{{ state.message }}</p>
+    <div class="confirm-card" (click)="$event.stopPropagation()"
+         appDialog="confirm-dialog-message" (dismissed)="dialogService.respond(false)">
+      <p class="message" id="confirm-dialog-message">{{ state.message }}</p>
       <div class="actions">
         <button class="btn-secondary" (click)="dialogService.respond(false)">{{ 'form.cancel' | translate }}</button>
         <button class="btn-danger" (click)="dialogService.respond(true)">{{ 'detail.delete' | translate }}</button>

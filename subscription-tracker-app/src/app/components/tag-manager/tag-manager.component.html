@@ -1,9 +1,10 @@
 @if (open) {
   <div class="modal-overlay" (click)="close()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content" (click)="$event.stopPropagation()"
+         appDialog="tag-manager-title" (dismissed)="close()">
       <div class="manager-card">
         <div class="manager-header">
-          <h3>{{ 'tags.manage' | translate }}</h3>
+          <h3 id="tag-manager-title">{{ 'tags.manage' | translate }}</h3>
           <button type="button" class="close-btn" (click)="close()" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <div class="tag-rows">

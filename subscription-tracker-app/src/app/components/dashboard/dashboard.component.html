@@ -189,7 +189,8 @@
 
 @if (showForm) {
   <div class="modal-overlay" (click)="onCancel()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content" (click)="$event.stopPropagation()"
+         appDialog="subscription-form-title" (dismissed)="onCancel()">
       <app-subscription-form
         [editingSubscription]="editingSubscription"
         (save)="onSave($event)"
@@ -201,10 +202,11 @@
 
 @if (showBudgetForm) {
   <div class="modal-overlay" (click)="cancelBudgetForm()">
-    <div class="modal-content budget-modal" (click)="$event.stopPropagation()">
+    <div class="modal-content budget-modal" (click)="$event.stopPropagation()"
+         appDialog="budget-form-title" (dismissed)="cancelBudgetForm()">
       <div class="budget-form-card">
         <div class="form-header">
-          <h3>{{ 'budget.formTitle' | translate }}</h3>
+          <h3 id="budget-form-title">{{ 'budget.formTitle' | translate }}</h3>
           <button type="button" class="close-btn" (click)="cancelBudgetForm()" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <label class="budget-input-label">

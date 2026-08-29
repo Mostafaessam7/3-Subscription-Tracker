@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
   <div class="form-header">
-    <h3>{{ (editingSubscription ? 'form.editTitle' : 'form.addTitle') | translate }}</h3>
+    <h3 id="subscription-form-title">{{ (editingSubscription ? 'form.editTitle' : 'form.addTitle') | translate }}</h3>
     <button type="button" class="close-btn" (click)="cancel.emit()" [attr.aria-label]="'common.close' | translate">✕</button>
   </div>
 
