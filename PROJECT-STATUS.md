@@ -109,3 +109,25 @@
 | **Rate Limiting مش متغطي بـ E2E** | مغطى بالكامل بـ `RateLimitingTests.cs` على الباك اند (فاكتوري معزولة بسقف صغير). تكراره في E2E هيستهلك سقف الـ Auth لباقي الـ Suite (نفس الـ IP) ويخلي اختبارات تانية تفشل بالغلط |
 | **مفيش `appsettings.Staging.json`** | التفريع بالبيئة بيغطي الحالة بالفعل، وإضافته بتخلق مكان جديد للأسرار من غير مكسب |
 | **مفيش نبش لتاريخ Git** | مفيش حاجة اتنشرت، والعملية دي مدمّرة |
+
+---
+
+## تحديث 2026-08-30 — Key Vault و App Insights و Sentry
+
+التلاتة متوصّلين و**خاملين لحد ما يتظبطوا** — كل واحد بيتسجّل بس لما القيمة بتاعته تبقى موجودة،
+فمفيش أي تغيير في السلوك من غيرهم.
+
+| البند | بيتفعّل بـ |
+|---|---|
+| Azure Key Vault | `KeyVault__Uri` (فوق `SecretsValidator` عشان قيم الـ vault تتحسب متظبطة) |
+| Application Insights | `APPLICATIONINSIGHTS_CONNECTION_STRING` |
+| Sentry | `environment.sentryDsn` |
+
+**Sentry بيتحمّل ديناميك عن قصد.** الـ import العادي كان بيزوّد الـ initial bundle **52 كيلوبايت**
+ويخرق ميزانية الـ 550kb اللي المشروع تعب عشان يوصلها (من 966kb لـ 298kb بالـ lazy routes) —
+اترصد فعليًا في مخرجات الـ build، مش تخمين. بالـ dynamic import الـ bundle بقى **512kb** من غير أي
+تحذير، وSentry بقى chunk لوحده مش بيتحمّل غير في النشرات اللي مستخدماه فعلًا.
+
+**اللي باقي**: `environment.prod.ts` لسه دومين placeholder، والـ `cd.yml` لسه متجربش على Azure
+حقيقي. وbranch protection **مش متاح** على الريبو ده: private، وGitHub بيطلب Pro للحماية على
+الريبوهات الخاصة.
