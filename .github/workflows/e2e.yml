@@ -46,7 +46,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22.12"
+          # Tracks the latest 22.x rather than pinning an exact patch. The Angular CLI states a
+          # *minimum* Node (currently v22.22.3), and the old "22.12" pin fell below it after the
+          # @angular/build migration — CI failed with "The Angular CLI requires a minimum Node.js
+          # version" while local runs on a newer Node passed. Matches PosFlow and POS, which
+          # already use "22" for the same reason.
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: subscription-tracker-app/package-lock.json
 
