@@ -44,7 +44,7 @@ jobs:
           global-json-file: CleanArch-updated/global.json
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           # Tracks the latest 22.x rather than pinning an exact patch. The Angular CLI states a
           # *minimum* Node (currently v22.22.3), and the old "22.12" pin fell below it after the
