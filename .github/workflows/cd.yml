@@ -13,8 +13,6 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  API_IMAGE: ${{ github.repository }}/api
-  FRONTEND_IMAGE: ${{ github.repository }}/frontend
 
 jobs:
   build-and-push:
@@ -34,11 +32,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # GHCR rejects any tag whose repository name is not lowercase, and github.repository keeps
+      # the real casing of both owner and repo ("Mostafaessam7/3-Subscription-Tracker"). Every run
+      # failed with:
+      #   invalid tag "ghcr.io/Mostafaessam7/3-Subscription-Tracker/api:<sha>":
+      #   repository name must be lowercase
+      # so no image has ever reached the registry. Workflow expressions have no lowercase filter,
+      # so the env values are recomputed here in shell, which does have one.
       - name: Set image tags
         id: meta
         run: |
-          echo "api-image=${{ env.REGISTRY }}/${{ env.API_IMAGE }}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          echo "frontend-image=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          repo_lc="${GITHUB_REPOSITORY,,}"
+          echo "api-image=${{ env.REGISTRY }}/${repo_lc}/api:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "frontend-image=${{ env.REGISTRY }}/${repo_lc}/frontend:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "api-latest=${{ env.REGISTRY }}/${repo_lc}/api:latest" >> "$GITHUB_OUTPUT"
+          echo "frontend-latest=${{ env.REGISTRY }}/${repo_lc}/frontend:latest" >> "$GITHUB_OUTPUT"
 
       - name: Build & push API image
         uses: docker/build-push-action@v6
@@ -48,7 +56,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.api-image }}
-            ${{ env.REGISTRY }}/${{ env.API_IMAGE }}:latest
+            ${{ steps.meta.outputs.api-latest }}
 
       - name: Build & push Frontend image
         uses: docker/build-push-action@v6
@@ -58,7 +66,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.frontend-image }}
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
+            ${{ steps.meta.outputs.frontend-latest }}
 
   deploy-api:
     name: Deploy API to Azure Web App
