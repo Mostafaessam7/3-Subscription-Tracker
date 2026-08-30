@@ -60,8 +60,8 @@
 | القرار | التفاصيل |
 |---|---|
 | **Azure** هو هدف النشر الأساسي | لسه متوصّلش (شوف "المفتوح") |
-| **Azure Key Vault** لأسرار الإنتاج | لسه متوصّلش |
-| **App Insights + Sentry** للمراقبة | لسه متوصّلش |
+| **Azure Key Vault** لأسرار الإنتاج | ✅ متوصّل (2026-08-30) — `KeyVault__Uri` بيفعّله |
+| **App Insights + Sentry** للمراقبة | ✅ الاتنين متوصّلين (2026-08-30) — شوف التحديث في آخر الملف |
 | **مفيش Redis هنا** | Redis متفق عليه في PosFlow و Gym Manager و RealEstateCRM بس. المنتج ده مفيهوش الحِمل اللي يبرّر التعقيد |
 | **ثيم Modern Teal** | هوية بصرية خاصة بالمنتج، فوق أرضية Design System مشتركة |
 | **`@angular/cdk` أيوة، `@angular/material` لأ** | الـ CDK اتضاف عشان الـ a11y primitives اللي بتصلّح عيب متقاس. مكتبة المكوّنات نفسها **مترفضت** — هتستبدل واجهة شغالة ومتربطة بالـ tokens ومغطّاة باختبارات، من غير مكسب واضح |
@@ -71,9 +71,8 @@
 ## 3. اللي لسه مفتوح
 
 - **ربط Azure فعليًا** — `cd.yml` مكتوب لكن **متجربش على Azure حقيقي** ولا مرة.
-- **Azure Key Vault** — الأسرار دلوقتي بتيجي من متغيرات البيئة، و`SecretsValidator` بيرفض
-  الـ Placeholders، بس مفيش Key Vault متوصّل.
-- **Application Insights (باك اند) + Sentry (فرونت اند)** — مفيش أي منهم متركّب.
+- ~~**Azure Key Vault**~~ و ~~**App Insights + Sentry**~~ — ✅ التلاتة اتوصّلوا في 2026-08-30،
+  وخاملين لحد ما تتظبط قيمهم. شوف التحديث في آخر الملف.
 - **`environment.prod.ts`** لسه فيه دومين Placeholder (`https://your-production-api.com/api`).
   نفس الدومين لازم يتحط في `Cors:AllowedOrigins` في `appsettings.Production.json` قبل أي نشر.
 - **مفيش Provisioning تلقائي** لموارد Azure (App Services / SQL Database) ولا تشغيل Migrations
