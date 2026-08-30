@@ -1,14 +1,18 @@
 // إعدادات Karma (Test Runner) - بتشغّل كل ملفات *.spec.ts في src/ عن طريق Chrome Headless
+//
+// اتشال منها `@angular-devkit/build-angular` (من الـ frameworks ومن الـ plugins) لما المشروع
+// اتنقل للـ builder الجديد `@angular/build:karma`. الحزمة القديمة اتشالت خالص، فالسطرين دول
+// كانوا بيوقفوا التشغيل بـ "Cannot find module '@angular-devkit/build-angular/plugins/karma'".
+// الـ builder الجديد بيوصّل الملفات المتبنية للـ Karma بنفسه، فمش محتاج framework/plugin زيادة.
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    frameworks: ['jasmine'],
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require('karma-coverage')
     ],
     client: {
       jasmine: {},

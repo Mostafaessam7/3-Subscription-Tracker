@@ -82,15 +82,11 @@
 
 ## 4. Known issues / Technical debt
 
-- **7 ثغرات في أدوات الـ Build** (3 عالية، 4 متوسطة): `less`, `webpack-dev-server`,
-  `image-size`, `uuid`, `sockjs` — كلها Transitive عن طريق `@angular-devkit/build-angular`.
-  مش بتتشحن في bundle الإنتاج، بس بتشتغل وقت `ng serve`/`ng build`.
-  **`npm audit fix --force` مش حل**: بيحاول ينزّل `@angular-devkit/build-angular` لإصدار
-  `0.1002.1` (من عصر ما قبل Angular 11)، يعني بيكسر toolchain v22 بالكامل. اتجرّب بـ `--dry-run`
-  واتأكد إنه مش قابل للتطبيق.
-- **الـ Builders لسه القديمة**: المشروع على `@angular-devkit/build-angular:*` (webpack)، وAngular
-  بيقول عنها deprecated وبيرشّح `@angular/build:*` بدالها. الترحيل ده **هو على الأرجح اللي هيقفل
-  الـ 7 ثغرات** لأنها كلها جاية من شجرة webpack. مش اتعمل هنا لأنه ترحيل نظام بناء، مش تنظيف.
+- ~~**7 ثغرات في أدوات الـ Build**~~ و ~~**الـ Builders القديمة**~~ — ✅ **الاتنين اتقفلوا في
+  2026-08-30**. المشروع اتنقل من `@angular-devkit/build-angular:*` (webpack) لـ `@angular/build:*`،
+  والحزمة القديمة اتشالت خالص. `npm audit` بقى **0 ثغرات** (كان 7: 3 عالية و4 متوسطة) — كلهم كانوا
+  جايين من شجرة webpack (`less`, `webpack-dev-server`, `image-size`, `uuid`, `sockjs`)، فشيل
+  الشجرة شالهم معاها. ده كان التشخيص المسجّل هنا قبل كده، واتأكد إنه صح فعلًا.
 - **`cd.yml` متجربش** — مكتوب حسب أفضل الممارسات المعروفة لـ Azure Web Apps for Containers،
   لكن محتاج Azure Subscription حقيقي عشان يتأكد.
 - **الـ E2E Suite محتاجة جهاز نضيف**. عمليات Chrome اللي بتفضل شغالة بعد تشغيل فشل بتخلي نفس

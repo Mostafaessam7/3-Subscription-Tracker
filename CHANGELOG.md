@@ -4,6 +4,24 @@
 
 ## [Unreleased]
 
+### ترحيل نظام البناء — `@angular-devkit/build-angular` → `@angular/build` (2026-08-30)
+- **`npm audit` بقى 0 ثغرات** (كان **7**: 3 عالية و4 متوسطة). الـ 7 كلهم كانوا Transitive عن طريق
+  `@angular-devkit/build-angular` — `less`, `webpack-dev-server`, `image-size`, `uuid`, `sockjs` —
+  يعني شجرة webpack كلها. شيل الحزمة شال الشجرة ومعاها الثغرات.
+- ده كان **التشخيص المسجّل في `PROJECT-STATUS.md` قبل كده**، واتأكد إنه صح فعلًا مش تخمين.
+- الـ builders التلاتة اتغيّروا: `application` و `dev-server` و `karma` → `@angular/build:*`.
+  الاختبارات فضلت **Karma + Jasmine** زي ما هي، لأن `@angular/build` بيوفّر builder اسمه `karma`
+  كمان — فمفيش أي ملف اختبار اتغيّر.
+- 🐛 **`karma.conf.js` كان لازم يتعدّل**: كان بيعمل `require('@angular-devkit/build-angular/plugins/karma')`
+  وبيحطه في `frameworks` كمان. بعد شيل الحزمة، الأمر كان بيقع بـ
+  `Cannot find module '@angular-devkit/build-angular/plugins/karma'`. الـ builder الجديد بيوصّل
+  الملفات المتبنية للـ Karma بنفسه، فالسطرين اتشالوا.
+- 🐛 **أول محاولة اتعملت غلط واترجعت**: تثبيت `@angular/build` لوحده طلّع `ERESOLVE` (الإصدار
+  الأحدث عايز `compiler-cli@22.1.4` والمشروع على `22.1.3`)، وحليتها مؤقتًا بـ `--legacy-peer-deps`
+  — وده كان هيخلي `npm ci` في الـ CI يفشل. اترجع كله، واتعمل بدلها تعديل واحد على `package.json`
+  (`@angular/build: ^22.1.3`) مع تثبيت نظيف من الصفر، فاتحلّت من غير أي تجاوز للـ peers.
+- Tests: `ng build` (production, **512 kB** initial، من غير تحذير budget)، **169/169 Karma**.
+
 ### تنظيف وتوثيق (2026-08-29)
 - **`PROJECT-STATUS.md` جديد**: حالة المشروع الكاملة في مكان واحد — اللي اتقفل، القرارات
   المعتمدة، اللي لسه مفتوح، الـ technical debt، والحاجات المؤجَّلة عن قصد وليه.
