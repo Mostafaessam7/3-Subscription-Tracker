@@ -1,7 +1,10 @@
 # Frontend (Angular) - Multi-stage build: بيبني الـ Static Files وبيقدّمهم عن طريق Nginx
 # شغّله من جذر الريبو: docker build -f Dockerfile.frontend -t subscription-tracker-app .
 
-FROM node:18-alpine AS build
+# node:22 — the Angular CLI states a minimum of v22.22.3, so node:18 could not run `ng build`
+# at all ("The Angular CLI requires a minimum Node.js version", exit code 3). This was masked
+# until now because the image tag was rejected by GHCR before the build was ever reached.
+FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY subscription-tracker-app/package*.json ./
