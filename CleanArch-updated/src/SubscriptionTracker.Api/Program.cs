@@ -55,6 +55,26 @@ try
             new Azure.Identity.DefaultAzureCredential());
     }
 
+    // Application Insights, registered only when a connection string is present. Set
+    // APPLICATIONINSIGHTS_CONNECTION_STRING (or ApplicationInsights:ConnectionString) to enable it.
+    //
+    // Gated rather than called unconditionally: AddApplicationInsightsTelemetry() with no
+    // connection string still installs the full telemetry pipeline - modules, processors and a
+    // background channel - which then buffers and drops everything it collects. That is pure
+    // overhead in every local run and every test, for output nobody reads.
+    //
+    // Reads from configuration, so a connection string held in Key Vault works: this sits below
+    // the vault registration above deliberately.
+    var appInsightsConnectionString =
+        builder.Configuration["ApplicationInsights:ConnectionString"]
+        ?? builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+
+    if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+    {
+        builder.Services.AddApplicationInsightsTelemetry(options =>
+            options.ConnectionString = appInsightsConnectionString);
+    }
+
     // بيستبدل الـ Logging الافتراضي بتاع ASP.NET Core بالكامل بـ Serilog، وبيقرا إعدادات إضافية
     // من appsettings.json لو موجودة (قسم "Serilog") فوق الإعداد الأساسي اللي فوق
     builder.Host.UseSerilog((context, services, configuration) => configuration
