@@ -59,6 +59,26 @@ jobs:
         working-directory: CleanArch-updated
         run: dotnet build src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj -c Release
 
+      # The API does not migrate on startup (deliberately — schema changes are an explicit step),
+      # so against the fresh service-container database this has to run or there are no tables at
+      # all. Every test registers a user, so without it the whole suite fails at /register with the
+      # frontend simply not navigating.
+      #
+      # This step was missing when the workflow was first added, and the suite had never once been
+      # green in CI as a result. It passed locally only because the local database already had the
+      # schema from earlier work — the "works on my machine" is doing real work in that sentence.
+      - name: Apply migrations
+        working-directory: CleanArch-updated
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=SubscriptionTrackerE2E;User Id=sa;Password=E2E_Test_Pw_123!;TrustServerCertificate=True"
+        run: |
+          dotnet tool install --global dotnet-ef
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet ef database update \
+            --project src/SubscriptionTracker.Infrastructure/SubscriptionTracker.Infrastructure.csproj \
+            --startup-project src/SubscriptionTracker.Api/SubscriptionTracker.Api.csproj \
+            --configuration Release
+
       # Development on purpose: the checked-in placeholder secrets are rejected in
       # any other environment by SecretsValidator, and the rate limiter's
       # Development override (100/min instead of 10) is what lets a suite that
