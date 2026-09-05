@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "subscription-tracker-frontend",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\npm.cmd",
       "runtimeArgs": ["--prefix", "subscription-tracker-app", "start"],
       "port": 4200
     }
