@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SubscriptionService } from '../../services/subscription.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -16,7 +16,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
     selector: 'app-subscription-detail',
-    imports: [CommonModule, RouterLink, TranslateModule, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
+    imports: [CommonModule, RouterLink, TranslatePipe, SubscriptionFormComponent, LanguageSwitchComponent, ThemeSwitchComponent, VantaBackgroundDirective, CategoryNamePipe],
     templateUrl: './subscription-detail.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-detail.component.css'

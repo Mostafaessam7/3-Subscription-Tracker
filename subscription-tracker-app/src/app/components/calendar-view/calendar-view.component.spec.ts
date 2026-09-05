@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { CalendarViewComponent } from './calendar-view.component';
 import { BillingCycle, Currency, Subscription, SubscriptionStatus, UserRole } from '../../models/subscription.model';
 import { environment } from '../../../environments/environment';
@@ -29,8 +29,8 @@ describe('CalendarViewComponent', () => {
     localStorage.setItem('subscription_tracker_token', 'fake-token');
 
     await TestBed.configureTestingModule({
-      imports: [CalendarViewComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [provideRouter([])]
+      imports: [CalendarViewComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CalendarViewComponent);

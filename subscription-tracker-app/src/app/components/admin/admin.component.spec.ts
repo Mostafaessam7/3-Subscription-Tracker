@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { AdminComponent } from './admin.component';
 import { AdminUser, SystemStats } from '../../models/admin.model';
 import { UserRole } from '../../models/subscription.model';
@@ -35,8 +35,8 @@ describe('AdminComponent', () => {
     localStorage.setItem('subscription_tracker_token', 'fake-token');
 
     await TestBed.configureTestingModule({
-      imports: [AdminComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [provideRouter([])]
+      imports: [AdminComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminComponent);

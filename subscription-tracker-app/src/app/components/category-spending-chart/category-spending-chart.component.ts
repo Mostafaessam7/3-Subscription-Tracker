@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CategorySpending } from '../../models/subscription.model';
 import { CategoryNamePipe } from '../../pipes/category-name.pipe';
@@ -13,7 +13,7 @@ interface ChartSlice extends CategorySpending {
 
 @Component({
     selector: 'app-category-spending-chart',
-    imports: [CommonModule, TranslateModule, CategoryNamePipe],
+    imports: [CommonModule, TranslatePipe, CategoryNamePipe],
     templateUrl: './category-spending-chart.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './category-spending-chart.component.css'

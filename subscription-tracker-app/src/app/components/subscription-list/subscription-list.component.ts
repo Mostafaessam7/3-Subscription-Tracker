@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, BillingCycle, SubscriptionStatus, Currency } from '../../models/subscription.model';
 import { billingCycleKey } from '../../utils/billing-cycle.util';
 import { getLogoUrl } from '../../utils/logo.util';
@@ -12,7 +12,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
     selector: 'app-subscription-list',
-    imports: [CommonModule, RouterLink, TranslateModule, CategoryNamePipe],
+    imports: [CommonModule, RouterLink, TranslatePipe, CategoryNamePipe],
     templateUrl: './subscription-list.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-list.component.css'

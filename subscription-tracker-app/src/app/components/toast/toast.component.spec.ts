@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ToastComponent } from './toast.component';
 import { ToastService } from '../../services/toast.service';
 
@@ -9,7 +9,8 @@ describe('ToastComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ToastComponent, TranslateModule.forRoot()]
+      imports: [ToastComponent],
+      providers: [provideTranslateService()]
     });
     fixture = TestBed.createComponent(ToastComponent);
     toastService = TestBed.inject(ToastService);

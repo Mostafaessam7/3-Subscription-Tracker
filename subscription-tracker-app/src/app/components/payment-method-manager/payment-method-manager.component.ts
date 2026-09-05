@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetect
 import { Observable } from 'rxjs';
 
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PaymentMethodService } from '../../services/payment-method.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -11,7 +11,7 @@ import { DialogDirective } from '../../directives/dialog.directive';
 
 @Component({
     selector: 'app-payment-method-manager',
-    imports: [FormsModule, TranslateModule, DialogDirective],
+    imports: [FormsModule, TranslatePipe, DialogDirective],
     templateUrl: './payment-method-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './payment-method-manager.component.css'

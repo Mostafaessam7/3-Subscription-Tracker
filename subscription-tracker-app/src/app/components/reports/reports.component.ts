@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { AuthService } from '../../services/auth.service';
@@ -17,7 +17,7 @@ type ReportPreset = 'all' | 'active' | 'expired' | 'upcoming';
 
 @Component({
     selector: 'app-reports',
-    imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
+    imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, LanguageSwitchComponent, ThemeSwitchComponent, CategoryNamePipe],
     templateUrl: './reports.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './reports.component.css'

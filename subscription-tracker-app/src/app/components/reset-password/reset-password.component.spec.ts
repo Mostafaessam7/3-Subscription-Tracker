@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, provideRouter, Router, convertToParamMap } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ResetPasswordComponent } from './reset-password.component';
 import { environment } from '../../../environments/environment';
 
@@ -14,8 +14,8 @@ describe('ResetPasswordComponent', () => {
 
   function setup(token: string | null): void {
     TestBed.configureTestingModule({
-      imports: [ResetPasswordComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [
+      imports: [ResetPasswordComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), 
         provideRouter([]),
         {
           provide: ActivatedRoute,

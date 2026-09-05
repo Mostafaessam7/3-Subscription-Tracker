@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 
@@ -9,7 +9,8 @@ describe('ConfirmDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConfirmDialogComponent, TranslateModule.forRoot()]
+      imports: [ConfirmDialogComponent],
+      providers: [provideTranslateService()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfirmDialogComponent);

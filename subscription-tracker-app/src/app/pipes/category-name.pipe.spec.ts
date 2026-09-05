@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { CategoryNamePipe } from './category-name.pipe';
 
 describe('CategoryNamePipe', () => {
@@ -8,7 +8,7 @@ describe('CategoryNamePipe', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()]
+      providers: [provideTranslateService()]
     });
 
     translate = TestBed.inject(TranslateService);

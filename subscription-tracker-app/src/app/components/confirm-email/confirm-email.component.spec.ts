@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, provideRouter, convertToParamMap } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ConfirmEmailComponent } from './confirm-email.component';
 import { environment } from '../../../environments/environment';
 
@@ -13,8 +13,8 @@ describe('ConfirmEmailComponent', () => {
 
   function setup(token: string | null): void {
     TestBed.configureTestingModule({
-      imports: [ConfirmEmailComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [
+      imports: [ConfirmEmailComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), 
         provideRouter([]),
         {
           provide: ActivatedRoute,

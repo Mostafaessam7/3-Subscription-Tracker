@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { throwError } from 'rxjs';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '../../services/auth.service';
@@ -15,8 +15,8 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ForgotPasswordComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [AuthService, provideRouter([])]
+      imports: [ForgotPasswordComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), AuthService, provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ForgotPasswordComponent);

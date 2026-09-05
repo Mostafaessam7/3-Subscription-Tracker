@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CategoryService } from '../../services/category.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -13,7 +13,7 @@ const DEFAULT_COLORS = ['#35D0C6', '#F5B841', '#4ADE80', '#818CF8', '#38BDF8', '
 
 @Component({
     selector: 'app-category-manager',
-    imports: [FormsModule, TranslateModule, CategoryNamePipe, DialogDirective],
+    imports: [FormsModule, TranslatePipe, CategoryNamePipe, DialogDirective],
     templateUrl: './category-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './category-manager.component.css'

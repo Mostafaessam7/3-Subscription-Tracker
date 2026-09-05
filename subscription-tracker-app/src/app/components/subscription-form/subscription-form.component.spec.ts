@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { SubscriptionFormComponent } from './subscription-form.component';
 import { BillingCycle, Currency, Subscription, SubscriptionStatus } from '../../models/subscription.model';
 import { environment } from '../../../environments/environment';
@@ -22,7 +22,8 @@ describe('SubscriptionFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SubscriptionFormComponent, HttpClientTestingModule, TranslateModule.forRoot()]
+      imports: [SubscriptionFormComponent, HttpClientTestingModule],
+      providers: [provideTranslateService()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SubscriptionFormComponent);

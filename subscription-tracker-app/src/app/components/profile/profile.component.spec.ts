@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ProfileComponent } from './profile.component';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -27,8 +27,8 @@ describe('ProfileComponent', () => {
     localStorage.setItem('subscription_tracker_token', 'fake-token');
 
     await TestBed.configureTestingModule({
-      imports: [ProfileComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [provideRouter([])]
+      imports: [ProfileComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileComponent);

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { CategorySpendingChartComponent } from './category-spending-chart.component';
 import { CategorySpending } from '../../models/subscription.model';
 import { environment } from '../../../environments/environment';
@@ -18,7 +18,8 @@ describe('CategorySpendingChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CategorySpendingChartComponent, HttpClientTestingModule, TranslateModule.forRoot()]
+      imports: [CategorySpendingChartComponent, HttpClientTestingModule],
+      providers: [provideTranslateService()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CategorySpendingChartComponent);

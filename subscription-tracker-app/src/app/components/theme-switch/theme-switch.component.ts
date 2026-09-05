@@ -1,11 +1,11 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-theme-switch',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
   template: `
     <button class="theme-btn" (click)="themeService.toggle()" [attr.aria-label]="'theme.toggle' | translate" title="{{ 'theme.toggle' | translate }}">
       {{ themeService.currentTheme() === 'dark' ? '☀️' : '🌙' }}

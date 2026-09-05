@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
@@ -16,8 +16,8 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     localStorage.clear();
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [AuthService, provideRouter([])]
+      imports: [LoginComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), AuthService, provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);

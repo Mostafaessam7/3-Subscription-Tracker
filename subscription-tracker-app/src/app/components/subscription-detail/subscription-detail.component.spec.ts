@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { SubscriptionDetailComponent } from './subscription-detail.component';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { ToastService } from '../../services/toast.service';
@@ -24,8 +24,8 @@ describe('SubscriptionDetailComponent', () => {
 
   function setup(id: string | null): void {
     TestBed.configureTestingModule({
-      imports: [SubscriptionDetailComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [
+      imports: [SubscriptionDetailComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), 
         provideRouter([]),
         {
           provide: ActivatedRoute,

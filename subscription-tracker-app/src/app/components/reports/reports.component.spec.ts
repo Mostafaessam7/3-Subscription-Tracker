@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { ReportsComponent } from './reports.component';
 import { ExportService } from '../../services/export.service';
 import { AnalyticsInsights, BillingCycle, Currency, Subscription, SubscriptionStatus, UserRole } from '../../models/subscription.model';
@@ -34,8 +34,8 @@ describe('ReportsComponent', () => {
     localStorage.setItem('subscription_tracker_token', 'fake-token');
 
     await TestBed.configureTestingModule({
-      imports: [ReportsComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [provideRouter([])]
+      imports: [ReportsComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ReportsComponent);

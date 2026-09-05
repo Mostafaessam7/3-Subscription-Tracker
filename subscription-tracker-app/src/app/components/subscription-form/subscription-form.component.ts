@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BillingCycle, Category, Currency, PaymentMethod, Subscription, SubscriptionStatus, Tag } from '../../models/subscription.model';
 import { billingCycleKey } from '../../utils/billing-cycle.util';
 import { getLogoUrl } from '../../utils/logo.util';
@@ -12,7 +12,7 @@ import { CategoryNamePipe } from '../../pipes/category-name.pipe';
 
 @Component({
     selector: 'app-subscription-form',
-    imports: [ReactiveFormsModule, TranslateModule, CategoryNamePipe],
+    imports: [ReactiveFormsModule, TranslatePipe, CategoryNamePipe],
     templateUrl: './subscription-form.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './subscription-form.component.css'

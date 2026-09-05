@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { PaymentMethodManagerComponent } from './payment-method-manager.component';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { PaymentMethod, PaymentMethodType } from '../../models/subscription.model';
@@ -16,7 +16,8 @@ describe('PaymentMethodManagerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaymentMethodManagerComponent, HttpClientTestingModule, TranslateModule.forRoot()]
+      imports: [PaymentMethodManagerComponent, HttpClientTestingModule],
+      providers: [provideTranslateService()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentMethodManagerComponent);

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, inject, ChangeDetect
 import { Observable } from 'rxjs';
 
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TagService } from '../../services/tag.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
@@ -13,7 +13,7 @@ const DEFAULT_COLORS = ['#818CF8', '#35D0C6', '#F5B841', '#4ADE80', '#FB7185', '
 
 @Component({
     selector: 'app-tag-manager',
-    imports: [FormsModule, TranslateModule, DialogDirective],
+    imports: [FormsModule, TranslatePipe, DialogDirective],
     templateUrl: './tag-manager.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './tag-manager.component.css'

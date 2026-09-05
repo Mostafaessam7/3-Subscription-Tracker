@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { TagManagerComponent } from './tag-manager.component';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { Tag } from '../../models/subscription.model';
@@ -16,7 +16,8 @@ describe('TagManagerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TagManagerComponent, HttpClientTestingModule, TranslateModule.forRoot()]
+      imports: [TagManagerComponent, HttpClientTestingModule],
+      providers: [provideTranslateService()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TagManagerComponent);

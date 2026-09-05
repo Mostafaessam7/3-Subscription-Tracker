@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AuthService } from '../../services/auth.service';
 import { LanguageSwitchComponent } from '../language-switch/language-switch.component';
@@ -17,7 +17,7 @@ interface CalendarDay {
 
 @Component({
     selector: 'app-calendar-view',
-    imports: [CommonModule, RouterLink, TranslateModule, LanguageSwitchComponent, ThemeSwitchComponent],
+    imports: [CommonModule, RouterLink, TranslatePipe, LanguageSwitchComponent, ThemeSwitchComponent],
     templateUrl: './calendar-view.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './calendar-view.component.css'

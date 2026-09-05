@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { DashboardComponent } from './dashboard.component';
 import { SubscriptionStatus, UserRole } from '../../models/subscription.model';
 import { AuthResponse } from '../../models/auth.model';
@@ -46,8 +46,8 @@ describe('DashboardComponent', () => {
     localStorage.setItem('subscription_tracker_user', JSON.stringify(fakeUser));
 
     TestBed.configureTestingModule({
-      imports: [DashboardComponent, HttpClientTestingModule, TranslateModule.forRoot()],
-      providers: [provideRouter([])]
+      imports: [DashboardComponent, HttpClientTestingModule],
+      providers: [provideTranslateService(), provideRouter([])]
     });
 
     fixture = TestBed.createComponent(DashboardComponent);

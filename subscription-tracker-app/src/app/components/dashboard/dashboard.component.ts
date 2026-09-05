@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
@@ -42,7 +42,7 @@ type SortOption = 'RenewalDate' | 'Cost' | 'Name';
     imports: [
     FormsModule,
     RouterLink,
-    TranslateModule,
+    TranslatePipe,
     CountUpDirective,
     SubscriptionListComponent,
     SubscriptionFormComponent,
